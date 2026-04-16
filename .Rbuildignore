@@ -2,7 +2,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^TODO$
-^sandbox/.*
+^sandbox$
 ^vignettes/(?![^\.]*(\.html\.asis|\.html)$).*
 ^cran-comments\.md$
 ^\.github$

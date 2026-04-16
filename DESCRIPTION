@@ -5,12 +5,14 @@ Version: 0.1.8
 Authors@R: c(
   person("Benjamin", "Christoffersen", 
          email = "boennecd@gmail.com", 
-         role = c("cre", "aut"), 
+         role = c("aut"), 
          comment = c(ORCID = "0000-0002-7182-1346")), 
   person("Anthony", "Williams", 
          role = c("cph")),
   person("Boost developers", 
-         role = c("cph")))
+         role = c("cph")),
+  person("Tom", "Palmer", , "remlapmot@hotmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-4655-4511")))
 Description: Provides a parallel estimation method for generalized 
   linear models without compiling with a multithreaded LAPACK or BLAS.
 License: GPL-2

@@ -4,8 +4,14 @@
 \alias{parglm.control}
 \title{Auxiliary for Controlling GLM Fitting in Parallel}
 \usage{
-parglm.control(epsilon = 1e-08, maxit = 25, trace = FALSE,
-  nthreads = 1L, block_size = NULL, method = "LINPACK")
+parglm.control(
+  epsilon = 1e-08,
+  maxit = 25,
+  trace = FALSE,
+  nthreads = 1L,
+  block_size = NULL,
+  method = "LINPACK"
+)
 }
 \arguments{
 \item{epsilon}{positive convergence tolerance.}

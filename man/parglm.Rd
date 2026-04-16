@@ -5,13 +5,36 @@
 \alias{parglm.fit}
 \title{Fitting Generalized Linear Models in Parallel}
 \usage{
-parglm(formula, family = gaussian, data, weights, subset, na.action,
-  start = NULL, offset, control = list(...), contrasts = NULL,
-  model = TRUE, x = FALSE, y = TRUE, ...)
+parglm(
+  formula,
+  family = gaussian,
+  data,
+  weights,
+  subset,
+  na.action,
+  start = NULL,
+  offset,
+  control = list(...),
+  contrasts = NULL,
+  model = TRUE,
+  x = FALSE,
+  y = TRUE,
+  ...
+)
 
-parglm.fit(x, y, weights = rep(1, NROW(x)), start = NULL,
-  etastart = NULL, mustart = NULL, offset = rep(0, NROW(x)),
-  family = gaussian(), control = list(), intercept = TRUE, ...)
+parglm.fit(
+  x,
+  y,
+  weights = rep(1, NROW(x)),
+  start = NULL,
+  etastart = NULL,
+  mustart = NULL,
+  offset = rep(0, NROW(x)),
+  family = gaussian(),
+  control = list(),
+  intercept = TRUE,
+  ...
+)
 }
 \arguments{
 \item{formula}{an object of class \code{\link{formula}}.}

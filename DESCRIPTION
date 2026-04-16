@@ -1,4 +1,3 @@
-Type: Package
 Package: parglm
 Title: Parallel GLM
 Version: 0.1.8

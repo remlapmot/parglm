@@ -10,7 +10,7 @@ linear models without compiling with a multithreaded LAPACK or BLAS. You can ins
 it from Github by calling:
 
 ```r
-devtools::install_github("boennecd/parglm")
+remotes::install_github("boennecd/parglm")
 ```
 
 or from CRAN by calling:

@@ -1,5 +1,5 @@
 Package: parglm
-Title: Parallel GLM
+Title: Parallel Generalised Linear Models
 Version: 0.1.8
 Authors@R: c(
     person("Benjamin", "Christoffersen", , "boennecd@gmail.com", role = "aut",
@@ -10,7 +10,8 @@ Authors@R: c(
            comment = c(ORCID = "0000-0003-4655-4511"))
   )
 Description: Provides a parallel estimation method for generalized linear
-    models without compiling with a multithreaded LAPACK or BLAS.
+    models without compiling with a multithreaded Linear Algebra Package
+    (LAPACK) or Basic Linear Algebra Subprograms (BLAS).
 License: GPL-2
 URL: https://github.com/boennecd/parglm
 BugReports: https://github.com/boennecd/parglm/issues

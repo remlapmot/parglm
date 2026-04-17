@@ -21,7 +21,6 @@ Imports:
 Suggests: 
     knitr,
     microbenchmark,
-    R.rsp,
     rmarkdown,
     speedglm,
     SuppDists,
@@ -30,7 +29,7 @@ LinkingTo:
     Rcpp,
     RcppArmadillo
 VignetteBuilder: 
-    R.rsp
+    knitr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.3

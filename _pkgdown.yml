@@ -4,11 +4,18 @@ template:
   light-switch: true
 development:
   mode: auto
+articles: []
 navbar:
   structure:
+    left: [intro, reference, articles, news]
     right: [search, cran, github, lightswitch]
   components:
     cran:
       icon: fab fa-r-project
       href: https://cran.r-project.org/package=parglm
       aria-label: View on CRAN
+    articles:
+      text: Articles
+      menu:
+      - text: Introduction to the parglm package
+        href: articles/parglm.html

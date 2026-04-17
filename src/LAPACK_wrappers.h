@@ -68,7 +68,7 @@ public:
       const arma::mat &B) const
   {
     arma::mat out = B; /* copy */
-    return qyt(std::move(out));
+    return qyt(out);
   }
   inline arma::vec qyt(
       const arma::vec &B) const {

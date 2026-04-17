@@ -6,3 +6,4 @@
 ^vignettes/(?![^\.]*(\.html\.asis|\.html)$).*
 ^cran-comments\.md$
 ^\.github$
+^_pkgdown\.yml$

@@ -2,7 +2,7 @@ parglm
 ======
 
 [![R-CMD-check](https://github.com/remlapmot/parglm/workflows/R-CMD-check/badge.svg)](https://github.com/remlapmot/parglm/actions)
-[![](https://www.r-pkg.org/badges/version/parglm)](https://CRAN.R-project.org/package=parglm)
+[![CRAN version](https://www.r-pkg.org/badges/version/parglm)](https://CRAN.R-project.org/package=parglm)
 [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/parglm)](https://CRAN.R-project.org/package=parglm)
 
 The `parglm` package provides a parallel estimation method  for generalized 

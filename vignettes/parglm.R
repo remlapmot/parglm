@@ -1,2 +1,2 @@
 setwd("vignettes")
-rmarkdown::render("parglm.Rmd")
+rmarkdown::render("parglm.Rmd.orig")

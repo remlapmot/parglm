@@ -12,8 +12,8 @@ Authors@R: c(
 Description: Provides a parallel estimation method for generalized linear
     models without compiling with a multithreaded LAPACK or BLAS.
 License: GPL-2
-URL: https://github.com/boennecd/parglm
-BugReports: https://github.com/boennecd/parglm/issues
+URL: https://github.com/remlapmot/parglm
+BugReports: https://github.com/remlapmot/parglm/issues
 Imports: 
     Matrix,
     Rcpp

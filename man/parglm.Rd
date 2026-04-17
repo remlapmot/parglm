@@ -104,14 +104,9 @@ any) reduction in computation time if \code{p} is almost equal to \code{n}.
 The current implementation cannot handle \code{p > n}.
 }
 \examples{
-# small example from `help('glm')`. Fitting this model in parallel does
-# not matter as the data set is small
-clotting <- data.frame(
-  u = c(5,10,15,20,30,40,60,80,100),
-  lot1 = c(118,58,42,35,27,25,21,19,18),
-  lot2 = c(69,35,26,21,18,16,13,12,12))
-f1 <- glm   (lot1 ~ log(u), data = clotting, family = Gamma)
-f2 <- parglm(lot1 ~ log(u), data = clotting, family = Gamma,
+# mtcars has 32 rows, sufficient for 2 threads (>= 16 rows per thread)
+f1 <- glm   (mpg ~ wt + hp, data = mtcars, family = Gamma(link = "log"))
+f2 <- parglm(mpg ~ wt + hp, data = mtcars, family = Gamma(link = "log"),
              control = parglm.control(nthreads = 2L))
 all.equal(coef(f1), coef(f2))
 

@@ -7,3 +7,7 @@
 ^cran-comments\.md$
 ^\.github$
 ^_pkgdown\.yml$
+^doc$
+^Meta$
+^docs$
+^pkgdown$

@@ -1,6 +1,8 @@
 # parglm 0.1.8
 * Remove specification of C++11
 * Amend `std::result_of` to `std::invoke_result` in a header file
+* Fix infinite recursion in `QR_base::qyt` by removing `std::move`
+* Require C++17 on Linux, macOS, and Windows
 * New maintainer - Tom Palmer
 
 # parglm 0.1.7

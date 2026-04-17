@@ -53,6 +53,9 @@
 <h2 class="pkg-version" data-toc-text="0.1.8" id="parglm-018">parglm 0.1.8<a class="anchor" aria-label="anchor" href="#parglm-018"></a></h2>
 <ul><li>Remove specification of C++11</li>
 <li>Amend <code>std::result_of</code> to <code>std::invoke_result</code> in a header file</li>
+<li>Fix infinite recursion in <code>QR_base::qyt</code> by removing <code>std::move</code>
+</li>
+<li>Require C++17 on Linux, macOS, and Windows</li>
 <li>New maintainer - Tom Palmer</li>
 </ul></div>
     <div class="section level2">

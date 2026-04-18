@@ -23,11 +23,13 @@ jobs:
       fail-fast: false
       matrix:
         config:
+          - { os: macos-26, r: "devel", http-user-agent: "release" }
           - { os: macos-26, r: "release" }
           - { os: macos-26, r: "oldrel-1" }
           - { os: macos-26, r: "oldrel-2" }
           - { os: macos-15, r: "release" }
           - { os: macos-14, r: "release" }
+          - { os: windows-latest, r: "devel", http-user-agent: "release" }
           - { os: windows-latest, r: "release" }
           - { os: windows-latest, r: "oldrel-1" }
           - { os: windows-latest, r: "oldrel-2" }

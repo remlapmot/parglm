@@ -1,6 +1,6 @@
 ---
 title: "Introduction to the parglm package"
-author: "Benjamin Christoffersen"
+author: "Benjamin Christoffersen and Tom Palmer"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_document
 ---

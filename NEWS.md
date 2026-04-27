@@ -1,3 +1,8 @@
+# parglm (development version)
+
+* Add biglm, fastglm, glm2, and mgcv to the timing comparison in the vignette. And add some timings for fewer observations and fewer coefficients.
+* Bump roxygen2 to 8.0.0
+
 # parglm 0.1.8
 * Remove specification of C++11
 * Amend `std::result_of` to `std::invoke_result` in a header file

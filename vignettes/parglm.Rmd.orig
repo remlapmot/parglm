@@ -55,6 +55,8 @@ library(microbenchmark)
 library(speedglm)
 library(fastglm)
 library(glm2)
+library(biglm)
+library(mgcv)
 library(parglm)
 X_mat <- model.matrix(y ~ ., df)
 cl <- list(
@@ -63,18 +65,20 @@ cl <- list(
   speedglm = quote(speedglm(y ~ ., family = binomial(), data = df)),
   glm2     = quote(glm2    (y ~ ., binomial(), df)),
   fastglm  = quote(fastglm (X_mat, df$y, family = binomial())),
+  biglm    = quote(biglm   (y ~ ., df)),
+  bam      = quote(bam     (y ~ ., family = binomial(), data = df)),
   times = 11L)
 tfunc <- function(method = "LINPACK", nthreads)
   parglm(y ~ ., binomial(), df, control = parglm.control(method = method,
                                                          nthreads = nthreads))
 cl <- c(
   cl, lapply(1:n_threads, function(i) bquote(tfunc(nthreads = .(i)))))
-names(cl)[7:(7L + n_threads - 1L)] <- paste0("parglm-LINPACK-", 1:n_threads)
+names(cl)[9:(9L + n_threads - 1L)] <- paste0("parglm-LINPACK-", 1:n_threads)
 
 cl <- c(
   cl, lapply(1:n_threads, function(i) bquote(tfunc(
     nthreads = .(i), method = "FAST"))))
-names(cl)[(7L + n_threads):(7L + 2L * n_threads - 1L)] <-
+names(cl)[(9L + n_threads):(9L + 2L * n_threads - 1L)] <-
   paste0("parglm-FAST-", 1:n_threads)
 
 cl <- as.call(cl)
@@ -89,12 +93,12 @@ print(s[, c("expr", "min", "mean", "median", "max")], digits  = 3,
       row.names	= FALSE) 
 ```
 
-The plot below shows median run times versus the number of cores. The dashed line
-is the median run time of `glm`, the dotted line is `speedglm`, the dot-dash line
-is `glm2`, and the long-dash line is `fastglm`. We could have used `glm.fit` and
+The plot below shows median run times versus the number of cores. Coloured
+horizontal lines show the single-threaded reference times for `glm`, `speedglm`,
+`glm2`, `fastglm`, `biglm`, and `bam`. We could have used `glm.fit` and
 `parglm.fit`. This would make the relative difference bigger as both call e.g.,
 `model.matrix` and `model.frame` which do take some time. To show this point, we
-first compute how much time this takes and then we make the plot. The continuous
+first compute how much time this takes and then we make the plot. The black solid
 line is the computation time of `model.matrix` and `model.frame`.
 
 ```{r loadmicro, echo = FALSE}
@@ -114,21 +118,23 @@ par(mar = c(4.5, 4.5, .5, .5))
 o <- aggregate(time ~ expr, out, median)[, 2] / 10^9
 ylim <- range(o, 0); ylim[2] <- ylim[2] + .04 * diff(ylim)
 
-o_linpack <- o[-c(1:4, (n_threads + 5L):length(o))]
-o_fast    <- o[-(1:(n_threads + 4L))]
+o_linpack <- o[-c(1:6, (n_threads + 7L):length(o))]
+o_fast    <- o[-(1:(n_threads + 6L))]
+
+ref_cols <- c("black", "red", "blue", "green3", "purple", "orange")
 
 plot(1:n_threads, o_linpack, xlab = "Number of cores", yaxs = "i",
-     ylim = ylim, ylab = "Run time", pch = 16)
+     ylim = ylim, ylab = "Run time (s)", pch = 16)
 points(1:n_threads, o_fast, pch = 1)
-abline(h = o[1], lty = 2)
-abline(h = o[2], lty = 3)
-abline(h = o[3], lty = 4)
-abline(h = o[4], lty = 5)
-abline(h = median(modmat_time$time) / 10^9, lty = 1)
+for (i in 1:6)
+  abline(h = o[i], lty = 2, col = ref_cols[i])
+abline(h = median(modmat_time$time) / 10^9, lty = 1, col = "black")
 legend("topright",
-       legend = c("glm", "speedglm", "glm2", "fastglm", "model.matrix",
-                  "parglm LINPACK", "parglm FAST"),
-       lty = c(2, 3, 4, 5, 1, NA, NA), pch = c(NA, NA, NA, NA, NA, 16, 1),
+       legend = c("glm", "speedglm", "glm2", "fastglm", "biglm", "bam",
+                  "model.matrix", "parglm LINPACK", "parglm FAST"),
+       lty = c(2, 2, 2, 2, 2, 2, 1, NA, NA),
+       col = c(ref_cols, "black", "black", "black"),
+       pch = c(NA, NA, NA, NA, NA, NA, NA, 16, 1),
        bty = "n")
 ```
 

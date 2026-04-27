@@ -169,4 +169,3 @@ microbenchmark::microbenchmark(
 ```{r ses_info}
 sessionInfo()
 ```
-

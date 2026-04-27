@@ -53,23 +53,28 @@ df <- data.frame(y = 1/(1 + exp(-(rowSums(X) - 1))) > runif(n), X)
 # compute and measure time. Setup call to make
 library(microbenchmark)
 library(speedglm)
+library(fastglm)
+library(glm2)
 library(parglm)
+X_mat <- model.matrix(y ~ ., df)
 cl <- list(
-  quote(microbenchmark), 
-  glm      = quote(glm     (y ~ ., binomial(), df)), 
-  speedglm = quote(speedglm(y ~ ., family = binomial(), data = df)), 
+  quote(microbenchmark),
+  glm      = quote(glm     (y ~ ., binomial(), df)),
+  speedglm = quote(speedglm(y ~ ., family = binomial(), data = df)),
+  glm2     = quote(glm2    (y ~ ., binomial(), df)),
+  fastglm  = quote(fastglm (X_mat, df$y, family = binomial())),
   times = 11L)
 tfunc <- function(method = "LINPACK", nthreads)
   parglm(y ~ ., binomial(), df, control = parglm.control(method = method,
                                                          nthreads = nthreads))
 cl <- c(
   cl, lapply(1:n_threads, function(i) bquote(tfunc(nthreads = .(i)))))
-names(cl)[5:(5L + n_threads - 1L)] <- paste0("parglm-LINPACK-", 1:n_threads)
+names(cl)[7:(7L + n_threads - 1L)] <- paste0("parglm-LINPACK-", 1:n_threads)
 
 cl <- c(
   cl, lapply(1:n_threads, function(i) bquote(tfunc(
     nthreads = .(i), method = "FAST"))))
-names(cl)[(5L + n_threads):(5L + 2L * n_threads - 1L)] <- 
+names(cl)[(7L + n_threads):(7L + 2L * n_threads - 1L)] <-
   paste0("parglm-FAST-", 1:n_threads)
 
 cl <- as.call(cl)
@@ -84,13 +89,13 @@ print(s[, c("expr", "min", "mean", "median", "max")], digits  = 3,
       row.names	= FALSE) 
 ```
 
-The plot below shows median run times versus the number of cores. The dashed line 
-is the median run time of `glm` and the dotted line is the median run time of 
-`speedglm`. We could have used `glm.fit` and `parglm.fit`. This would make the 
-relative difference bigger as both call e.g., `model.matrix` and `model.frame` which 
-do take some time. To show this point, we first compute how much times this takes and 
-then we make the plot. The continuous line is the computation time of `model.matrix` and 
-`model.frame`.
+The plot below shows median run times versus the number of cores. The dashed line
+is the median run time of `glm`, the dotted line is `speedglm`, the dot-dash line
+is `glm2`, and the long-dash line is `fastglm`. We could have used `glm.fit` and
+`parglm.fit`. This would make the relative difference bigger as both call e.g.,
+`model.matrix` and `model.frame` which do take some time. To show this point, we
+first compute how much time this takes and then we make the plot. The continuous
+line is the computation time of `model.matrix` and `model.frame`.
 
 ```{r loadmicro, echo = FALSE}
 library(microbenchmark) # in case the previous chunk is not run
@@ -109,20 +114,27 @@ par(mar = c(4.5, 4.5, .5, .5))
 o <- aggregate(time ~ expr, out, median)[, 2] / 10^9
 ylim <- range(o, 0); ylim[2] <- ylim[2] + .04 * diff(ylim)
 
-o_linpack <- o[-c(1:2, (n_threads + 3L):length(o))]
-o_fast    <- o[-(1:(n_threads + 2L))]
+o_linpack <- o[-c(1:4, (n_threads + 5L):length(o))]
+o_fast    <- o[-(1:(n_threads + 4L))]
 
 plot(1:n_threads, o_linpack, xlab = "Number of cores", yaxs = "i",
      ylim = ylim, ylab = "Run time", pch = 16)
 points(1:n_threads, o_fast, pch = 1)
 abline(h = o[1], lty = 2)
 abline(h = o[2], lty = 3)
+abline(h = o[3], lty = 4)
+abline(h = o[4], lty = 5)
 abline(h = median(modmat_time$time) / 10^9, lty = 1)
+legend("topright",
+       legend = c("glm", "speedglm", "glm2", "fastglm", "model.matrix",
+                  "parglm LINPACK", "parglm FAST"),
+       lty = c(2, 3, 4, 5, 1, NA, NA), pch = c(NA, NA, NA, NA, NA, 16, 1),
+       bty = "n")
 ```
 
-The open circles are the `FAST` method and the other circles are the `LINPACK`
-method. Again, the `FAST` method and the `speedglm` package compute the Fisher 
-information and then solves the normal equation. 
+The open circles are the `FAST` method and the filled circles are the `LINPACK`
+method. The `FAST` method, `speedglm`, and `fastglm` all compute the Fisher
+information and solve the normal equation.
 This is advantages in terms of computation cost but may lead to unstable 
 solutions. You can alter the number of observations in each parallel chunk 
 with the `block_size` argument of `parglm.control`.

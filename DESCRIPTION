@@ -18,7 +18,9 @@ BugReports: https://github.com/remlapmot/parglm/issues
 Imports: 
     Matrix,
     Rcpp
-Suggests: 
+Suggests:
+    fastglm,
+    glm2,
     knitr,
     microbenchmark,
     R.rsp,

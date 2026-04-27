@@ -1,6 +1,6 @@
 Package: parglm
 Title: Parallel GLM
-Version: 0.1.8
+Version: 0.1.8.9000
 Authors@R: c(
     person("Benjamin", "Christoffersen", , "boennecd@gmail.com", role = "aut",
            comment = c(ORCID = "0000-0002-7182-1346")),
@@ -19,6 +19,7 @@ Imports:
     Matrix,
     Rcpp
 Suggests:
+    biglm,
     fastglm,
     glm2,
     knitr,

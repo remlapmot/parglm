@@ -1,3 +1,7 @@
+# parglm (development version)
+
+* Add biglm, fastglm, glm2, and mgcv to the timing comparison in the vignette.
+
 # parglm 0.1.8
 * Remove specification of C++11
 * Amend `std::result_of` to `std::invoke_result` in a header file

@@ -28,7 +28,7 @@ stable.
 ```{r set_params, echo = FALSE}
 n <- 1000000L
 p <- 50L
-n_threads <- 18L
+n_threads <- parallel::detectCores(logical = FALSE)
 ```
 
 Below, we perform estimate a logistic regression with `r n` observations 

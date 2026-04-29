@@ -24,7 +24,6 @@ Suggests:
     glm2,
     knitr,
     microbenchmark,
-    R.rsp,
     rmarkdown,
     speedglm,
     SuppDists,
@@ -33,6 +32,6 @@ LinkingTo:
     Rcpp,
     RcppArmadillo
 VignetteBuilder: 
-    R.rsp
+    knitr
 Encoding: UTF-8
 RoxygenNote: 7.3.3

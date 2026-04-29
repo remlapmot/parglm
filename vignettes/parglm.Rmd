@@ -1,0 +1,277 @@
+---
+title: "Introduction to the parglm package"
+author: "Benjamin Christoffersen and Tom Palmer"
+date: "2026-04-29"
+output: rmarkdown::html_document
+---
+
+
+
+The motivation for the `parglm` package is a parallel version of the `glm`
+function. It solves the iteratively re-weighted least squares using a QR
+decomposition with column pivoting with `DGEQP3` function from LAPACK.
+The computation is done in parallel as in the `bam` function in the `mgcv` package. The
+cost is an additional $O(Mp^2 + p^3)$ where $p$ is the number of
+coefficients and $M$ is the number chunks to be computed in parallel.
+The advantage is that you do not need to compile the package with
+an optimized BLAS or LAPACK which supports multithreading. The package also
+includes a method that computes the Fisher information and then solves the normal
+equation as in the `speedglm` package. This is faster but less numerically
+stable.
+
+## Example of computation time
+
+
+
+Below, we perform estimate a logistic regression with 1000000 observations
+and 50 covariates. We vary the number of cores being used with the
+`nthreads` argument to `parglm.control`. The `method` arguments sets which
+method is used. `LINPACK` yields the QR method and `FAST` yields a similar
+method as in the `speedglm` package.
+
+
+``` r
+#####
+# simulate
+n # number of observations
+#> [1] 1000000
+p # number of covariates
+#> [1] 50
+set.seed(68024947)
+X <- matrix(rnorm(n * p, 1/p, 1/sqrt(p)), n, ncol = p)
+df <- data.frame(y = 1/(1 + exp(-(rowSums(X) - 1))) > runif(n), X)
+```
+
+
+
+``` r
+#####
+# compute and measure time. Setup call to make
+library(microbenchmark)
+library(speedglm)
+#> Loading required package: Matrix
+#> Loading required package: MASS
+#> Loading required package: biglm
+#> Loading required package: DBI
+library(fastglm)
+#> Loading required package: bigmemory
+library(glm2)
+#> 
+#> Attaching package: 'glm2'
+#> The following object is masked from 'package:MASS':
+#> 
+#>     crabs
+library(biglm)
+library(mgcv)
+#> Loading required package: nlme
+#> This is mgcv 1.9-4. For overview type '?mgcv'.
+library(parglm)
+#> Error in `library()`:
+#> ! there is no package called 'parglm'
+X_mat <- model.matrix(y ~ ., df)
+cl <- list(
+  quote(microbenchmark),
+  glm      = quote(glm     (y ~ ., binomial(), df)),
+  speedglm = quote(speedglm(y ~ ., family = binomial(), data = df)),
+  glm2     = quote(glm2    (y ~ ., binomial(), df)),
+  fastglm  = quote(fastglm (X_mat, df$y, family = binomial())),
+  biglm    = quote(biglm   (y ~ ., df)),
+  bam      = quote(bam     (y ~ ., family = binomial(), data = df)),
+  times = 11L)
+tfunc <- function(method = "LINPACK", nthreads)
+  parglm(y ~ ., binomial(), df, control = parglm.control(method = method,
+                                                         nthreads = nthreads))
+cl <- c(
+  cl, lapply(1:n_threads, function(i) bquote(tfunc(nthreads = .(i)))))
+names(cl)[9:(9L + n_threads - 1L)] <- paste0("parglm-LINPACK-", 1:n_threads)
+
+cl <- c(
+  cl, lapply(1:n_threads, function(i) bquote(tfunc(
+    nthreads = .(i), method = "FAST"))))
+names(cl)[(9L + n_threads):(9L + 2L * n_threads - 1L)] <-
+  paste0("parglm-FAST-", 1:n_threads)
+
+cl <- as.call(cl)
+cl # the call we make
+#> microbenchmark(glm = glm(y ~ ., binomial(), df), speedglm = speedglm(y ~ 
+#>     ., family = binomial(), data = df), glm2 = glm2(y ~ ., binomial(), 
+#>     df), fastglm = fastglm(X_mat, df$y, family = binomial()), 
+#>     biglm = biglm(y ~ ., df), bam = bam(y ~ ., family = binomial(), 
+#>         data = df), times = 11L, `parglm-LINPACK-1` = tfunc(nthreads = 1L), 
+#>     `parglm-LINPACK-2` = tfunc(nthreads = 2L), `parglm-LINPACK-3` = tfunc(nthreads = 3L), 
+#>     `parglm-LINPACK-4` = tfunc(nthreads = 4L), `parglm-LINPACK-5` = tfunc(nthreads = 5L), 
+#>     `parglm-LINPACK-6` = tfunc(nthreads = 6L), `parglm-LINPACK-7` = tfunc(nthreads = 7L), 
+#>     `parglm-LINPACK-8` = tfunc(nthreads = 8L), `parglm-LINPACK-9` = tfunc(nthreads = 9L), 
+#>     `parglm-LINPACK-10` = tfunc(nthreads = 10L), `parglm-FAST-1` = tfunc(nthreads = 1L, 
+#>         method = "FAST"), `parglm-FAST-2` = tfunc(nthreads = 2L, 
+#>         method = "FAST"), `parglm-FAST-3` = tfunc(nthreads = 3L, 
+#>         method = "FAST"), `parglm-FAST-4` = tfunc(nthreads = 4L, 
+#>         method = "FAST"), `parglm-FAST-5` = tfunc(nthreads = 5L, 
+#>         method = "FAST"), `parglm-FAST-6` = tfunc(nthreads = 6L, 
+#>         method = "FAST"), `parglm-FAST-7` = tfunc(nthreads = 7L, 
+#>         method = "FAST"), `parglm-FAST-8` = tfunc(nthreads = 8L, 
+#>         method = "FAST"), `parglm-FAST-9` = tfunc(nthreads = 9L, 
+#>         method = "FAST"), `parglm-FAST-10` = tfunc(nthreads = 10L, 
+#>         method = "FAST"))
+
+out <- eval(cl)
+#> Warning in microbenchmark(glm = glm(y ~ ., binomial(), df), speedglm = speedglm(y ~ :
+#> less accurate nanosecond times to avoid potential integer overflows
+#> Error in `terms.formula()`:
+#> ! '.' in formula and no 'data' argument
+```
+
+
+``` r
+s <- summary(out) # result from `microbenchmark`
+#> Error in `h()`:
+#> ! error in evaluating the argument 'object' in selecting a method for function 'summary': object 'out' not found
+print(s[, c("expr", "min", "mean", "median", "max")], digits  = 3,
+      row.names	= FALSE)
+#> Error:
+#> ! error in evaluating the argument 'x' in selecting a method for function 'print': object of type 'closure' is not subsettable
+```
+
+The plot below shows median run times versus the number of cores. Coloured
+horizontal lines show the single-threaded reference times for `glm`, `speedglm`,
+`glm2`, `fastglm`, `biglm`, and `bam`. We could have used `glm.fit` and
+`parglm.fit`. This would make the relative difference bigger as both call e.g.,
+`model.matrix` and `model.frame` which do take some time. To show this point, we
+first compute how much time this takes and then we make the plot. The black solid
+line is the computation time of `model.matrix` and `model.frame`.
+
+
+
+
+``` r
+modmat_time <- microbenchmark(
+  modmat_time = {
+    mf <- model.frame(y ~ ., df); model.matrix(terms(mf), mf)
+  }, times = 10)
+modmat_time # time taken by `model.matrix` and `model.frame`
+#> Unit: milliseconds
+#>         expr       min        lq        mean    median         uq        max neval
+#>  modmat_time 75.901045 87.949182 115.3905681 92.080219 151.871749 204.918779    10
+```
+
+
+``` r
+par(mar = c(4.5, 4.5, .5, .5))
+o <- aggregate(time ~ expr, out, median)[, 2] / 10^9
+#> Error:
+#> ! object 'out' not found
+ylim <- range(o, 0); ylim[2] <- ylim[2] + .04 * diff(ylim)
+#> Error:
+#> ! object 'o' not found
+
+o_linpack <- o[-c(1:6, (n_threads + 7L):length(o))]
+#> Error:
+#> ! object 'o' not found
+o_fast    <- o[-(1:(n_threads + 6L))]
+#> Error:
+#> ! object 'o' not found
+
+ref_cols <- c("black", "red", "blue", "green3", "purple", "orange")
+
+plot(1:n_threads, o_linpack, xlab = "Number of cores", yaxs = "i",
+     ylim = ylim, ylab = "Run time (s)", pch = 16)
+#> Error:
+#> ! object 'o_linpack' not found
+points(1:n_threads, o_fast, pch = 1)
+#> Error:
+#> ! object 'o_fast' not found
+for (i in 1:6)
+  abline(h = o[i], lty = 2, col = ref_cols[i])
+#> Error:
+#> ! object 'o' not found
+abline(h = median(modmat_time$time) / 10^9, lty = 1, col = "black")
+#> Error in `int_abline()`:
+#> ! plot.new has not been called yet
+legend("topright",
+       legend = c("glm", "speedglm", "glm2", "fastglm", "biglm", "bam",
+                  "model.matrix", "parglm LINPACK", "parglm FAST"),
+       lty = c(2, 2, 2, 2, 2, 2, 1, NA, NA),
+       col = c(ref_cols, "black", "black", "black"),
+       pch = c(NA, NA, NA, NA, NA, NA, NA, 16, 1),
+       bty = "n")
+#> Error:
+#> ! plot.new has not been called yet
+```
+
+The open circles are the `FAST` method and the filled circles are the `LINPACK`
+method. The `FAST` method, `speedglm`, and `fastglm` all compute the Fisher
+information and solve the normal equation.
+This is advantages in terms of computation cost but may lead to unstable
+solutions. You can alter the number of observations in each parallel chunk
+with the `block_size` argument of `parglm.control`.
+
+The single threaded performance of `parglm` may be slower when there are more coefficients.
+The cause seems to be the difference between the LAPACK and LINPACK implementation.
+This presumably due to either the QR decomposition method and/or the `qr.qty` method.
+On Windows, the `parglm` do seems slower when build with `Rtools` and the reason
+seems so be the `qr.qty` method in LAPACK, `dormqr`, which is slower then the
+LINPACK method, `dqrsl`. Below is an illustration of the
+computation times on this machine.
+
+
+``` r
+qr1 <- qr(X)
+qr2 <- qr(X, LAPACK = TRUE)
+microbenchmark::microbenchmark(
+  `qr LINPACK`     = qr(X),
+  `qr LAPACK`      = qr(X, LAPACK = TRUE),
+  `qr.qty LINPACK` = qr.qty(qr1, df$y),
+  `qr.qty LAPACK`  = qr.qty(qr2, df$y),
+  times = 11)
+#> Unit: milliseconds
+#>            expr         min           lq         mean      median           uq
+#>      qr LINPACK 1210.613355 1233.6329690 1305.5175198 1295.412958 1371.0355515
+#>       qr LAPACK 1375.848316 1389.2720645 1454.8008717 1400.265251 1473.0613045
+#>  qr.qty LINPACK   78.596262   80.7090945  208.7720708  133.422364  276.6767945
+#>   qr.qty LAPACK  549.984865  552.9238065  584.0375455  558.847712  585.2843685
+#>          max neval
+#>  1461.413676    11
+#>  1818.412689    11
+#>   533.635295    11
+#>   732.217237    11
+```
+
+## Session info
+
+
+``` r
+sessionInfo()
+#> R version 4.6.0 (2026-04-24)
+#> Platform: aarch64-apple-darwin23
+#> Running under: macOS Tahoe 26.4.1
+#> 
+#> Matrix products: default
+#> BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib 
+#> LAPACK: /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+#> 
+#> locale:
+#> [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+#> 
+#> time zone: Europe/London
+#> tzcode source: internal
+#> 
+#> attached base packages:
+#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> 
+#> other attached packages:
+#>  [1] mgcv_1.9-4           nlme_3.1-169         glm2_1.2.1           fastglm_0.0.4       
+#>  [5] bigmemory_4.6.4      speedglm_0.3-5       biglm_0.9-3          DBI_1.3.0           
+#>  [9] MASS_7.3-65          Matrix_1.7-5         microbenchmark_1.5.0
+#> 
+#> loaded via a namespace (and not attached):
+#>  [1] jsonlite_2.0.0      compiler_4.6.0      Rcpp_1.1.1-1.1      parallel_4.6.0     
+#>  [5] callr_3.7.6         jquerylib_0.1.4     splines_4.6.0       uuid_1.2-2         
+#>  [9] yaml_2.3.12         fastmap_1.2.0       lattice_0.22-9      R6_2.6.1           
+#> [13] pak_0.9.5           knitr_1.51          pillar_1.11.1       bslib_0.10.0       
+#> [17] rlang_1.2.0         cachem_1.1.0        xfun_0.57           sass_0.4.10        
+#> [21] pkgload_1.5.2       otel_0.2.0          cli_3.6.6           ps_1.9.3           
+#> [25] digest_0.6.39       grid_4.6.0          processx_3.9.0      rstudioapi_0.18.0  
+#> [29] bigmemory.sri_0.1.8 lifecycle_1.0.5     vctrs_0.7.3         glue_1.8.1         
+#> [33] evaluate_1.0.5      codetools_0.2-20    rmarkdown_2.31      tools_4.6.0        
+#> [37] htmltools_0.5.9
+```

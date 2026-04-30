@@ -70,7 +70,7 @@ cl <- list(
   glm      = quote(glm     (y ~ ., binomial(), df)),
   speedglm = quote(speedglm(y ~ ., family = binomial(), data = df)),
   glm2     = quote(glm2    (y ~ ., binomial(), df)),
-  fastglm  = quote(fastglm (X_mat, df$y, family = binomial())),
+  fastglm  = quote(fastglm (X_mat, as.numeric(df$y), family = binomial())),
   biglm    = quote(biglm   (biglm_form, df)),
   bam      = quote(bam     (bam_form, family = binomial(), data = df)),
   times = 11L)

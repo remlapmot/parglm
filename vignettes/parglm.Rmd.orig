@@ -38,9 +38,11 @@ n_threads <- parallel::detectCores(logical = FALSE)
 
 Below, we perform estimate a logistic regression with `r n` observations
 and `r p` covariates. We vary the number of cores being used with the
-`nthreads` argument to `parglm.control`. The `method` arguments sets which
-method is used. `LINPACK` yields the QR method and `FAST` yields a similar
-method as in the `speedglm` package.
+`nthreads` argument to `parglm.control`. The `method` argument sets which
+method is used. `LINPACK` uses the same pivoted QR (`dqrdc2`) as `glm.fit`
+for the final decomposition; `LAPACK` uses `DGEQP3` from LAPACK throughout;
+and `FAST` solves the normal equations from the Fisher information, similar
+to the `speedglm` package.
 
 ```{r sim}
 #####
@@ -88,6 +90,12 @@ cl <- c(
 names(cl)[(9L + n_threads):(9L + 2L * n_threads - 1L)] <-
   paste0("parglm-FAST-", 1:n_threads)
 
+cl <- c(
+  cl, lapply(1:n_threads, function(i) bquote(tfunc(
+    nthreads = .(i), method = "LAPACK"))))
+names(cl)[(9L + 2L * n_threads):(9L + 3L * n_threads - 1L)] <-
+  paste0("parglm-LAPACK-", 1:n_threads)
+
 cl <- as.call(cl)
 cl # the call we make
 
@@ -125,26 +133,29 @@ par(mar = c(4.5, 4.5, .5, .5))
 o <- aggregate(time ~ expr, out, median)[, 2] / 10^9
 ylim <- range(o, 0); ylim[2] <- ylim[2] + .04 * diff(ylim)
 
-o_linpack <- o[-c(1:6, (n_threads + 7L):length(o))]
-o_fast    <- o[-(1:(n_threads + 6L))]
+o_linpack <- o[7L:(n_threads + 6L)]
+o_fast    <- o[(n_threads + 7L):(2L * n_threads + 6L)]
+o_lapack  <- o[(2L * n_threads + 7L):(3L * n_threads + 6L)]
 
 ref_cols <- c("#E69F00", "#56B4E9", "#009E73", "#0072B2", "#D55E00", "#CC79A7")
 ref_lty  <- c("dashed", "dotted", "dotdash", "longdash", "twodash", "1373")
 
 plot(1:n_threads, o_linpack, xlab = "Number of cores", yaxs = "i",
      ylim = ylim, ylab = "Run time (s)", pch = 16, cex = 1.4)
-points(1:n_threads, o_fast, pch = 1, cex = 1.4, lwd = 2)
+points(1:n_threads, o_fast,   pch = 1, cex = 1.4, lwd = 2)
+points(1:n_threads, o_lapack, pch = 4, cex = 1.4, lwd = 2)
 for (i in 1:6)
   abline(h = o[i], lty = ref_lty[i], col = ref_cols[i], lwd = 2)
 abline(h = median(modmat_time$time) / 10^9, lty = "solid", col = "black",
        lwd = 2)
 legend("topright", inset = c(0, 0.05),
        legend = c("glm", "speedglm", "glm2", "fastglm", "biglm", "bam",
-                  "model.matrix", "parglm LINPACK", "parglm FAST"),
-       lty = c(ref_lty, "solid", NA, NA),
-       lwd = c(2, 2, 2, 2, 2, 2, 2, NA, NA),
-       col = c(ref_cols, "black", "black", "black"),
-       pch = c(NA, NA, NA, NA, NA, NA, NA, 16, 1),
+                  "model.matrix", "parglm LINPACK", "parglm FAST",
+                  "parglm LAPACK"),
+       lty = c(ref_lty, "solid", NA, NA, NA),
+       lwd = c(2, 2, 2, 2, 2, 2, 2, NA, NA, NA),
+       col = c(ref_cols, "black", "black", "black", "black"),
+       pch = c(NA, NA, NA, NA, NA, NA, NA, 16, 1, 4),
        bty = "n")
 ```
 

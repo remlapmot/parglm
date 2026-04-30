@@ -128,18 +128,21 @@ ylim <- range(o, 0); ylim[2] <- ylim[2] + .04 * diff(ylim)
 o_linpack <- o[-c(1:6, (n_threads + 7L):length(o))]
 o_fast    <- o[-(1:(n_threads + 6L))]
 
-ref_cols <- c("black", "red", "blue", "green3", "purple", "orange")
+ref_cols <- c("#E69F00", "#56B4E9", "#009E73", "#0072B2", "#D55E00", "#CC79A7")
+ref_lty  <- c("dashed", "dotted", "dotdash", "longdash", "twodash", "1373")
 
 plot(1:n_threads, o_linpack, xlab = "Number of cores", yaxs = "i",
-     ylim = ylim, ylab = "Run time (s)", pch = 16)
-points(1:n_threads, o_fast, pch = 1)
+     ylim = ylim, ylab = "Run time (s)", pch = 16, cex = 1.4)
+points(1:n_threads, o_fast, pch = 1, cex = 1.4, lwd = 2)
 for (i in 1:6)
-  abline(h = o[i], lty = 2, col = ref_cols[i])
-abline(h = median(modmat_time$time) / 10^9, lty = 1, col = "black")
-legend("topright",
+  abline(h = o[i], lty = ref_lty[i], col = ref_cols[i], lwd = 2)
+abline(h = median(modmat_time$time) / 10^9, lty = "solid", col = "black",
+       lwd = 2)
+legend("topright", inset = c(0, 0.05),
        legend = c("glm", "speedglm", "glm2", "fastglm", "biglm", "bam",
                   "model.matrix", "parglm LINPACK", "parglm FAST"),
-       lty = c(2, 2, 2, 2, 2, 2, 1, NA, NA),
+       lty = c(ref_lty, "solid", NA, NA),
+       lwd = c(2, 2, 2, 2, 2, 2, 2, NA, NA),
        col = c(ref_cols, "black", "black", "black"),
        pch = c(NA, NA, NA, NA, NA, NA, NA, 16, 1),
        bty = "n")

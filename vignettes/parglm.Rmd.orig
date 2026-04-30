@@ -119,7 +119,7 @@ modmat_time <- microbenchmark(
 modmat_time # time taken by `model.matrix` and `model.frame`
 ```
 
-```{r show_run_times}
+```{r show_run_times, fig.alt="Plot of runtime versus number of cores.", fig.cap="Plot of runtime versus number of cores."}
 par(mar = c(4.5, 4.5, .5, .5))
 o <- aggregate(time ~ expr, out, median)[, 2] / 10^9
 ylim <- range(o, 0); ylim[2] <- ylim[2] + .04 * diff(ylim)

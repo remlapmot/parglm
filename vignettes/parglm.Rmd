@@ -193,7 +193,7 @@ legend("topright",
        bty = "n")
 ```
 
-![plot of chunk show_run_times](figure/show_run_times-1.png)
+![Plot of runtime versus number of cores.](figure/show_run_times-1.png)
 
 The open circles are the `FAST` method and the filled circles are the `LINPACK`
 method. The `FAST` method, `speedglm`, and `fastglm` all compute the Fisher

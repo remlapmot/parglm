@@ -148,7 +148,7 @@ for (i in 1:6)
   abline(h = o[i], lty = ref_lty[i], col = ref_cols[i], lwd = 2)
 abline(h = median(modmat_time$time) / 10^9, lty = "solid", col = "black",
        lwd = 2)
-legend("topright", inset = c(0, 0.05),
+legend("topright", inset = c(0, 0.05), ncol = 2,
        legend = c("glm", "speedglm", "glm2", "fastglm", "biglm", "bam",
                   "model.matrix", "parglm LINPACK", "parglm FAST",
                   "parglm LAPACK"),

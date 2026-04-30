@@ -63,13 +63,14 @@ library(biglm)
 library(mgcv)
 library(parglm)
 X_mat <- model.matrix(y ~ ., df)
+biglm_form <- reformulate(names(df)[-1], response = "y")
 cl <- list(
   quote(microbenchmark),
   glm      = quote(glm     (y ~ ., binomial(), df)),
   speedglm = quote(speedglm(y ~ ., family = binomial(), data = df)),
   glm2     = quote(glm2    (y ~ ., binomial(), df)),
   fastglm  = quote(fastglm (X_mat, df$y, family = binomial())),
-  biglm    = quote(biglm   (y ~ ., df)),
+  biglm    = quote(biglm   (biglm_form, df)),
   bam      = quote(bam     (y ~ ., family = binomial(), data = df)),
   times = 11L)
 tfunc <- function(method = "LINPACK", nthreads)

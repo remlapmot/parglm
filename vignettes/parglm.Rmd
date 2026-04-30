@@ -29,9 +29,11 @@ stable.
 
 Below, we perform estimate a logistic regression with 1000000 observations
 and 50 covariates. We vary the number of cores being used with the
-`nthreads` argument to `parglm.control`. The `method` arguments sets which
-method is used. `LINPACK` yields the QR method and `FAST` yields a similar
-method as in the `speedglm` package.
+`nthreads` argument to `parglm.control`. The `method` argument sets which
+method is used. `LINPACK` uses the same pivoted QR (`dqrdc2`) as `glm.fit`
+for the final decomposition; `LAPACK` uses `DGEQP3` from LAPACK throughout;
+and `FAST` solves the normal equations from the Fisher information, similar
+to the `speedglm` package.
 
 
 ``` r
@@ -83,6 +85,12 @@ cl <- c(
 names(cl)[(9L + n_threads):(9L + 2L * n_threads - 1L)] <-
   paste0("parglm-FAST-", 1:n_threads)
 
+cl <- c(
+  cl, lapply(1:n_threads, function(i) bquote(tfunc(
+    nthreads = .(i), method = "LAPACK"))))
+names(cl)[(9L + 2L * n_threads):(9L + 3L * n_threads - 1L)] <-
+  paste0("parglm-LAPACK-", 1:n_threads)
+
 cl <- as.call(cl)
 cl # the call we make
 #> microbenchmark(glm = glm(y ~ ., binomial(), df), speedglm = speedglm(y ~ 
@@ -104,7 +112,17 @@ cl # the call we make
 #>         method = "FAST"), `parglm-FAST-8` = tfunc(nthreads = 8L, 
 #>         method = "FAST"), `parglm-FAST-9` = tfunc(nthreads = 9L, 
 #>         method = "FAST"), `parglm-FAST-10` = tfunc(nthreads = 10L, 
-#>         method = "FAST"))
+#>         method = "FAST"), `parglm-LAPACK-1` = tfunc(nthreads = 1L, 
+#>         method = "LAPACK"), `parglm-LAPACK-2` = tfunc(nthreads = 2L, 
+#>         method = "LAPACK"), `parglm-LAPACK-3` = tfunc(nthreads = 3L, 
+#>         method = "LAPACK"), `parglm-LAPACK-4` = tfunc(nthreads = 4L, 
+#>         method = "LAPACK"), `parglm-LAPACK-5` = tfunc(nthreads = 5L, 
+#>         method = "LAPACK"), `parglm-LAPACK-6` = tfunc(nthreads = 6L, 
+#>         method = "LAPACK"), `parglm-LAPACK-7` = tfunc(nthreads = 7L, 
+#>         method = "LAPACK"), `parglm-LAPACK-8` = tfunc(nthreads = 8L, 
+#>         method = "LAPACK"), `parglm-LAPACK-9` = tfunc(nthreads = 9L, 
+#>         method = "LAPACK"), `parglm-LAPACK-10` = tfunc(nthreads = 10L, 
+#>         method = "LAPACK"))
 
 out <- eval(cl)
 #> Warning in microbenchmark(glm = glm(y ~ ., binomial(), df), speedglm = speedglm(y ~ :
@@ -117,32 +135,42 @@ s <- summary(out) # result from `microbenchmark`
 print(s[, c("expr", "min", "mean", "median", "max")], digits  = 3,
       row.names	= FALSE)
 #>               expr   min  mean median   max
-#>                glm  5292  5465   5442  5699
-#>           speedglm  3916  4065   4073  4222
-#>               glm2  5146  5524   5402  5966
-#>            fastglm  1960  2141   2170  2305
-#>              biglm   864   977    923  1202
-#>                bam 11606 12065  12075 12910
-#>   parglm-LINPACK-1  6635  6949   6958  7174
-#>   parglm-LINPACK-2  3934  4051   4053  4186
-#>   parglm-LINPACK-3  2862  3013   2987  3118
-#>   parglm-LINPACK-4  2494  2612   2600  2834
-#>   parglm-LINPACK-5  2099  2277   2238  2624
-#>   parglm-LINPACK-6  1992  2076   2046  2307
-#>   parglm-LINPACK-7  1926  2192   2085  2623
-#>   parglm-LINPACK-8  1840  1947   1924  2084
-#>   parglm-LINPACK-9  1878  1951   1920  2084
-#>  parglm-LINPACK-10  1862  1945   1952  2059
-#>      parglm-FAST-1  3693  3795   3764  4022
-#>      parglm-FAST-2  1972  2151   2137  2594
-#>      parglm-FAST-3  1562  1663   1639  1846
-#>      parglm-FAST-4  1278  1411   1369  1771
-#>      parglm-FAST-5  1160  1252   1209  1509
-#>      parglm-FAST-6  1059  1146   1118  1382
-#>      parglm-FAST-7  1002  1101   1061  1338
-#>      parglm-FAST-8   913  1003    983  1103
-#>      parglm-FAST-9   893  1071   1053  1438
-#>     parglm-FAST-10   899   980    974  1068
+#>                glm  5177  5669   5473  6375
+#>           speedglm  3961  4190   4227  4443
+#>               glm2  5427  5764   5766  6179
+#>            fastglm  2008  2131   2062  2352
+#>              biglm   832   963    922  1203
+#>                bam 11593 12480  12406 14268
+#>   parglm-LINPACK-1  6734  7098   7079  7483
+#>   parglm-LINPACK-2  3932  4044   4036  4182
+#>   parglm-LINPACK-3  2892  3062   3033  3420
+#>   parglm-LINPACK-4  2455  2560   2575  2687
+#>   parglm-LINPACK-5  2164  2344   2244  3103
+#>   parglm-LINPACK-6  2016  2111   2115  2283
+#>   parglm-LINPACK-7  1897  2118   2017  2997
+#>   parglm-LINPACK-8  1872  1953   1935  2059
+#>   parglm-LINPACK-9  1826  2054   1992  2610
+#>  parglm-LINPACK-10  1839  1998   1952  2201
+#>      parglm-FAST-1  3855  3947   3933  4279
+#>      parglm-FAST-2  2029  2195   2202  2430
+#>      parglm-FAST-3  1561  1755   1697  2235
+#>      parglm-FAST-4  1257  1366   1332  1571
+#>      parglm-FAST-5  1138  1283   1215  1713
+#>      parglm-FAST-6  1038  1197   1219  1287
+#>      parglm-FAST-7  1012  1100   1103  1209
+#>      parglm-FAST-8   935  1165   1044  2110
+#>      parglm-FAST-9   941  1146    970  2468
+#>     parglm-FAST-10   909  1045    975  1560
+#>    parglm-LAPACK-1  6876  7259   7151  8802
+#>    parglm-LAPACK-2  3944  4041   4022  4178
+#>    parglm-LAPACK-3  2913  3127   2979  3668
+#>    parglm-LAPACK-4  2465  2612   2530  2967
+#>    parglm-LAPACK-5  2129  2281   2175  2909
+#>    parglm-LAPACK-6  1993  2188   2090  2524
+#>    parglm-LAPACK-7  1949  2069   2037  2293
+#>    parglm-LAPACK-8  1864  1988   1935  2297
+#>    parglm-LAPACK-9  1848  1996   1983  2149
+#>   parglm-LAPACK-10  1815  1949   1928  2124
 ```
 
 The plot below shows median run times versus the number of cores. Coloured
@@ -173,26 +201,29 @@ par(mar = c(4.5, 4.5, .5, .5))
 o <- aggregate(time ~ expr, out, median)[, 2] / 10^9
 ylim <- range(o, 0); ylim[2] <- ylim[2] + .04 * diff(ylim)
 
-o_linpack <- o[-c(1:6, (n_threads + 7L):length(o))]
-o_fast    <- o[-(1:(n_threads + 6L))]
+o_linpack <- o[7L:(n_threads + 6L)]
+o_fast    <- o[(n_threads + 7L):(2L * n_threads + 6L)]
+o_lapack  <- o[(2L * n_threads + 7L):(3L * n_threads + 6L)]
 
 ref_cols <- c("#E69F00", "#56B4E9", "#009E73", "#0072B2", "#D55E00", "#CC79A7")
 ref_lty  <- c("dashed", "dotted", "dotdash", "longdash", "twodash", "1373")
 
 plot(1:n_threads, o_linpack, xlab = "Number of cores", yaxs = "i",
      ylim = ylim, ylab = "Run time (s)", pch = 16, cex = 1.4)
-points(1:n_threads, o_fast, pch = 1, cex = 1.4, lwd = 2)
+points(1:n_threads, o_fast,   pch = 1, cex = 1.4, lwd = 2)
+points(1:n_threads, o_lapack, pch = 4, cex = 1.4, lwd = 2)
 for (i in 1:6)
   abline(h = o[i], lty = ref_lty[i], col = ref_cols[i], lwd = 2)
 abline(h = median(modmat_time$time) / 10^9, lty = "solid", col = "black",
        lwd = 2)
-legend("topright", inset = c(0, 0.05),
+legend("topright", inset = c(0, 0.05), ncol = 2,
        legend = c("glm", "speedglm", "glm2", "fastglm", "biglm", "bam",
-                  "model.matrix", "parglm LINPACK", "parglm FAST"),
-       lty = c(ref_lty, "solid", NA, NA),
-       lwd = c(2, 2, 2, 2, 2, 2, 2, NA, NA),
-       col = c(ref_cols, "black", "black", "black"),
-       pch = c(NA, NA, NA, NA, NA, NA, NA, 16, 1),
+                  "model.matrix", "parglm LINPACK", "parglm FAST",
+                  "parglm LAPACK"),
+       lty = c(ref_lty, "solid", NA, NA, NA),
+       lwd = c(2, 2, 2, 2, 2, 2, 2, NA, NA, NA),
+       col = c(ref_cols, "black", "black", "black", "black"),
+       pch = c(NA, NA, NA, NA, NA, NA, NA, 16, 1, 4),
        bty = "n")
 ```
 

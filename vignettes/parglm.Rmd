@@ -69,7 +69,7 @@ cl <- list(
   speedglm = quote(speedglm(y ~ ., family = binomial(), data = df)),
   glm2     = quote(glm2    (y ~ ., binomial(), df)),
   fastglm  = quote(fastglm (X_mat, as.numeric(df$y), family = binomial())),
-  biglm    = quote(biglm   (biglm_form, df)),
+  bigglm   = quote(bigglm  (biglm_form, df, family = binomial())),
   bam      = quote(bam     (bam_form, family = binomial(), data = df)),
   times = 11L)
 tfunc <- function(method = "LINPACK", nthreads)
@@ -96,8 +96,8 @@ cl # the call we make
 #> microbenchmark(glm = glm(y ~ ., binomial(), df), speedglm = speedglm(y ~ 
 #>     ., family = binomial(), data = df), glm2 = glm2(y ~ ., binomial(), 
 #>     df), fastglm = fastglm(X_mat, as.numeric(df$y), family = binomial()), 
-#>     biglm = biglm(biglm_form, df), bam = bam(bam_form, family = binomial(), 
-#>         data = df), times = 11L, `parglm-LINPACK-1` = tfunc(nthreads = 1L), 
+#>     bigglm = bigglm(biglm_form, df, family = binomial()), bam = bam(bam_form, 
+#>         family = binomial(), data = df), times = 11L, `parglm-LINPACK-1` = tfunc(nthreads = 1L), 
 #>     `parglm-LINPACK-2` = tfunc(nthreads = 2L), `parglm-LINPACK-3` = tfunc(nthreads = 3L), 
 #>     `parglm-LINPACK-4` = tfunc(nthreads = 4L), `parglm-LINPACK-5` = tfunc(nthreads = 5L), 
 #>     `parglm-LINPACK-6` = tfunc(nthreads = 6L), `parglm-LINPACK-7` = tfunc(nthreads = 7L), 
@@ -125,8 +125,6 @@ cl # the call we make
 #>         method = "LAPACK"))
 
 out <- eval(cl)
-#> Warning in microbenchmark(glm = glm(y ~ ., binomial(), df), speedglm = speedglm(y ~ :
-#> less accurate nanosecond times to avoid potential integer overflows
 ```
 
 
@@ -135,47 +133,47 @@ s <- summary(out) # result from `microbenchmark`
 print(s[, c("expr", "min", "mean", "median", "max")], digits  = 3,
       row.names	= FALSE)
 #>               expr   min  mean median   max
-#>                glm  5177  5669   5473  6375
-#>           speedglm  3961  4190   4227  4443
-#>               glm2  5427  5764   5766  6179
-#>            fastglm  2008  2131   2062  2352
-#>              biglm   832   963    922  1203
-#>                bam 11593 12480  12406 14268
-#>   parglm-LINPACK-1  6734  7098   7079  7483
-#>   parglm-LINPACK-2  3932  4044   4036  4182
-#>   parglm-LINPACK-3  2892  3062   3033  3420
-#>   parglm-LINPACK-4  2455  2560   2575  2687
-#>   parglm-LINPACK-5  2164  2344   2244  3103
-#>   parglm-LINPACK-6  2016  2111   2115  2283
-#>   parglm-LINPACK-7  1897  2118   2017  2997
-#>   parglm-LINPACK-8  1872  1953   1935  2059
-#>   parglm-LINPACK-9  1826  2054   1992  2610
-#>  parglm-LINPACK-10  1839  1998   1952  2201
-#>      parglm-FAST-1  3855  3947   3933  4279
-#>      parglm-FAST-2  2029  2195   2202  2430
-#>      parglm-FAST-3  1561  1755   1697  2235
-#>      parglm-FAST-4  1257  1366   1332  1571
-#>      parglm-FAST-5  1138  1283   1215  1713
-#>      parglm-FAST-6  1038  1197   1219  1287
-#>      parglm-FAST-7  1012  1100   1103  1209
-#>      parglm-FAST-8   935  1165   1044  2110
-#>      parglm-FAST-9   941  1146    970  2468
-#>     parglm-FAST-10   909  1045    975  1560
-#>    parglm-LAPACK-1  6876  7259   7151  8802
-#>    parglm-LAPACK-2  3944  4041   4022  4178
-#>    parglm-LAPACK-3  2913  3127   2979  3668
-#>    parglm-LAPACK-4  2465  2612   2530  2967
-#>    parglm-LAPACK-5  2129  2281   2175  2909
-#>    parglm-LAPACK-6  1993  2188   2090  2524
-#>    parglm-LAPACK-7  1949  2069   2037  2293
-#>    parglm-LAPACK-8  1864  1988   1935  2297
-#>    parglm-LAPACK-9  1848  1996   1983  2149
-#>   parglm-LAPACK-10  1815  1949   1928  2124
+#>                glm  5473  5642   5561  6010
+#>           speedglm  4021  4172   4151  4365
+#>               glm2  5526  5838   5663  6868
+#>            fastglm  1977  2221   2186  2642
+#>             bigglm  6585  7076   7061  7663
+#>                bam 12198 12637  12669 13209
+#>   parglm-LINPACK-1  6718  7079   7094  7397
+#>   parglm-LINPACK-2  3878  4155   4130  4864
+#>   parglm-LINPACK-3  2836  3053   3016  3303
+#>   parglm-LINPACK-4  2446  2585   2559  2786
+#>   parglm-LINPACK-5  2138  2251   2219  2538
+#>   parglm-LINPACK-6  1954  2177   2222  2553
+#>   parglm-LINPACK-7  1866  2082   1976  2446
+#>   parglm-LINPACK-8  1825  2000   1992  2193
+#>   parglm-LINPACK-9  1906  2050   1969  2382
+#>  parglm-LINPACK-10  1842  1954   1920  2186
+#>      parglm-FAST-1  3871  4017   4010  4321
+#>      parglm-FAST-2  1994  2282   2285  2595
+#>      parglm-FAST-3  1573  1780   1681  2479
+#>      parglm-FAST-4  1258  1388   1360  1519
+#>      parglm-FAST-5  1161  1262   1243  1499
+#>      parglm-FAST-6  1080  1180   1182  1344
+#>      parglm-FAST-7   996  1129   1027  1577
+#>      parglm-FAST-8   909  1072   1001  1592
+#>      parglm-FAST-9   883  1014   1021  1128
+#>     parglm-FAST-10   926  1092   1049  1478
+#>    parglm-LAPACK-1  7041  7245   7174  7585
+#>    parglm-LAPACK-2  3940  4079   4048  4428
+#>    parglm-LAPACK-3  2898  3074   3007  3543
+#>    parglm-LAPACK-4  2454  2601   2602  2811
+#>    parglm-LAPACK-5  2109  2290   2226  2700
+#>    parglm-LAPACK-6  1973  2169   2096  2887
+#>    parglm-LAPACK-7  1882  2135   2089  2476
+#>    parglm-LAPACK-8  1810  2019   1986  2545
+#>    parglm-LAPACK-9  1828  2016   2019  2265
+#>   parglm-LAPACK-10  1808  1940   1909  2120
 ```
 
 The plot below shows median run times versus the number of cores. Coloured
 horizontal lines show the single-threaded reference times for `glm`, `speedglm`,
-`glm2`, `fastglm`, `biglm`, and `bam`. We could have used `glm.fit` and
+`glm2`, `fastglm`, `bigglm`, and `bam`. We could have used `glm.fit` and
 `parglm.fit`. This would make the relative difference bigger as both call e.g.,
 `model.matrix` and `model.frame` which do take some time. To show this point, we
 first compute how much time this takes and then we make the plot. The black solid
@@ -217,7 +215,7 @@ for (i in 1:6)
 abline(h = median(modmat_time$time) / 10^9, lty = "solid", col = "black",
        lwd = 2)
 legend("topright", inset = c(0, 0.05), ncol = 2,
-       legend = c("glm", "speedglm", "glm2", "fastglm", "biglm", "bam",
+       legend = c("glm", "speedglm", "glm2", "fastglm", "bigglm", "bam",
                   "model.matrix", "parglm LINPACK", "parglm FAST",
                   "parglm LAPACK"),
        lty = c(ref_lty, "solid", NA, NA, NA),

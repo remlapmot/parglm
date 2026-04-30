@@ -74,7 +74,7 @@ cl <- list(
   speedglm = quote(speedglm(y ~ ., family = binomial(), data = df)),
   glm2     = quote(glm2    (y ~ ., binomial(), df)),
   fastglm  = quote(fastglm (X_mat, as.numeric(df$y), family = binomial())),
-  biglm    = quote(biglm   (biglm_form, df)),
+  bigglm   = quote(bigglm  (biglm_form, df, family = binomial())),
   bam      = quote(bam     (bam_form, family = binomial(), data = df)),
   times = 11L)
 tfunc <- function(method = "LINPACK", nthreads)
@@ -110,7 +110,7 @@ print(s[, c("expr", "min", "mean", "median", "max")], digits  = 3,
 
 The plot below shows median run times versus the number of cores. Coloured
 horizontal lines show the single-threaded reference times for `glm`, `speedglm`,
-`glm2`, `fastglm`, `biglm`, and `bam`. We could have used `glm.fit` and
+`glm2`, `fastglm`, `bigglm`, and `bam`. We could have used `glm.fit` and
 `parglm.fit`. This would make the relative difference bigger as both call e.g.,
 `model.matrix` and `model.frame` which do take some time. To show this point, we
 first compute how much time this takes and then we make the plot. The black solid
@@ -149,7 +149,7 @@ for (i in 1:6)
 abline(h = median(modmat_time$time) / 10^9, lty = "solid", col = "black",
        lwd = 2)
 legend("topright", inset = c(0, 0.05), ncol = 2,
-       legend = c("glm", "speedglm", "glm2", "fastglm", "biglm", "bam",
+       legend = c("glm", "speedglm", "glm2", "fastglm", "bigglm", "bam",
                   "model.matrix", "parglm LINPACK", "parglm FAST",
                   "parglm LAPACK"),
        lty = c(ref_lty, "solid", NA, NA, NA),

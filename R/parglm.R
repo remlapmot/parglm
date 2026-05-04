@@ -88,7 +88,7 @@ parglm <- function(
 #' using your number of physical cores if your data set is sufficiently large.
 #' Using the number of physical CPUs/cores may yield the best performance
 #' (check your number e.g., by calling \code{parallel::detectCores(logical = FALSE)}).
-#' @param block_size number of observation to include in each parallel block.
+#' @param block_size number of observations to include in each parallel block.
 #' @param method string specifying which method to use. Either \code{"LINPACK"},
 #' \code{"LAPACK"}, or \code{"FAST"}.
 #'
@@ -183,7 +183,7 @@ parglm.fit <- function(
 
     if(control$nthreads != nthreads_new)
       warning(
-        "Too few observation compared to the number of threads. ",
+        "Too few observations compared to the number of threads. ",
         nthreads_new, " thread(s) will be used instead of ",
         control$nthreads, ".")
 

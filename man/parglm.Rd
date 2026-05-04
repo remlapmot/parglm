@@ -96,7 +96,7 @@ See "\code{vignette("parglm", "parglm")}" for run time examples.
 }
 \details{
 The current implementation uses \code{min(as.integer(n / p), nthreads)}
-threads where \code{n} is the number observations, \code{p} is the
+threads where \code{n} is the number of observations, \code{p} is the
 number of covariates, and \code{nthreads} is the \code{nthreads} element of
 the list
 returned by \code{\link{parglm.control}}. Thus, there is likely little (if

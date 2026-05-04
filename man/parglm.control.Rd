@@ -25,7 +25,7 @@ using your number of physical cores if your data set is sufficiently large.
 Using the number of physical CPUs/cores may yield the best performance
 (check your number e.g., by calling \code{parallel::detectCores(logical = FALSE)}).}
 
-\item{block_size}{number of observation to include in each parallel block.}
+\item{block_size}{number of observations to include in each parallel block.}
 
 \item{method}{string specifying which method to use. Either \code{"LINPACK"},
 \code{"LAPACK"}, or \code{"FAST"}.}

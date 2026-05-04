@@ -2,6 +2,13 @@
 # Must move image files from top level to vignettes/ after knit
 
 if (!requireNamespace("parglm")) stop("Remember to install parglm itself!")
+# Build/install the package first (equivalent to RStudio Build > Install):
+#   devtools::install()
+# or:
+#   pak::local_install()
+# or from the shell:
+#   R CMD INSTALL .
+
 knitr::knit("vignettes/parglm.Rmd.orig", output = "vignettes/parglm.Rmd")
 pngs <- list.files("figure", pattern = "\\.png$", full.names = TRUE)
 if (length(pngs) > 0) {

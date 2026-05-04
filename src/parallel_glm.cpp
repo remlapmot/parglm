@@ -421,10 +421,10 @@ public:
 
       } else if(method == "LINPACK"){
         auto o = get_dqrls_res(data, pool, std::min(1e-07, tol / 1000));
-        R_f_out.reset(new R_F(std::move(o.R_F)));
         for(arma::uword i = 0; i < o.R_F.pivot.n_elem; ++i)
           beta[o.R_F.pivot[i]] = o.coefficients[i];
         rank = o.rank;
+        R_f_out.reset(new R_F(std::move(o.R_F)));
 
       } else if(method == "FAST"){
         auto o = get_inner(data, pool);

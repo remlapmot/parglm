@@ -26,10 +26,10 @@ public:
  * dev is deviance computed for the chunk computed with the current
  * coefficient vector                                                        */
 struct R_F {
-  const arma::mat R;
-  const arma::uvec pivot;
-  const arma::mat F;
-  const arma::mat dev;
+  arma::mat R;
+  arma::uvec pivot;
+  arma::mat F;
+  arma::mat dev;
 
   arma::mat R_rev_piv() const;
 };

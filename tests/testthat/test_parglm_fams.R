@@ -1,4 +1,4 @@
-context("testing results with varrious link functions agianst `glm.fit`")
+context("testing results with various link functions agianst `glm.fit`")
 
 to_check <- c(
   "coefficients", "residuals", "fitted.values", "rank",

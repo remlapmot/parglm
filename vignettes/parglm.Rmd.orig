@@ -289,19 +289,26 @@ invisible(run_and_plot(n = 100000L, p = 50L, n_threads = n_threads))
 invisible(run_and_plot(n = 10000L, p = 50L, n_threads = n_threads))
 ```
 
-## Few coefficients
+## Varying the number of coefficients
 
-The parglm cost has an additive $O(Mp^2 + p^3)$ term where $M$ is the
-number of chunks. With small $p$ this term is negligible, but the per-row
-work also shrinks proportionally to $p^2$, so the thread-pool overhead can
-dominate the actual computation. Below we use `n = 100,000` and `p = 5`:
-parglm now has $M = 10$ chunks available so threading is engaged, but
-each chunk is small enough that the parallel benefit is limited.
+The per-row cost of each method scales roughly with $p^2$ (computing
+$X'WX$ at each IRLS iteration), while parglm's thread-pool overhead is
+roughly fixed per call. The two effects compete: with small $p$ the
+overhead dominates the parallel benefit, while with larger $p$ the
+parallel work amortizes the overhead and parglm pulls ahead. Below we
+contrast `n = 100,000, p = 5` (where the overhead wins) with
+`n = 1,000,000, p = 20` (where the parallel work wins).
 
 ### n = 100,000, p = 5
 
 ```{r run_100k_p5, cache = 1, dependson = "helper", fig.alt="Plot of runtime versus number of cores for n = 100,000 and p = 5.", fig.cap="Plot of runtime versus number of cores for n = 100,000 and p = 5."}
 invisible(run_and_plot(n = 100000L, p = 5L, n_threads = n_threads))
+```
+
+### n = 1,000,000, p = 20
+
+```{r run_1m_p20, cache = 1, dependson = "helper", fig.alt="Plot of runtime versus number of cores for n = 1,000,000 and p = 20.", fig.cap="Plot of runtime versus number of cores for n = 1,000,000 and p = 20."}
+invisible(run_and_plot(n = 1000000L, p = 20L, n_threads = n_threads))
 ```
 
 ## Session info

@@ -5,7 +5,6 @@ template:
   math-rendering: mathjax
 development:
   mode: auto
-articles: []
 navbar:
   structure:
     left: [intro, reference, articles, news]
@@ -15,8 +14,3 @@ navbar:
       icon: fab fa-r-project
       href: https://cran.r-project.org/package=parglm
       aria-label: View on CRAN
-    articles:
-      text: Articles
-      menu:
-      - text: Introduction to the parglm package
-        href: articles/parglm.html

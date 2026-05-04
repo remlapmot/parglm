@@ -185,6 +185,107 @@ microbenchmark::microbenchmark(
   times = 11)
 ```
 
+## Smaller datasets
+
+For smaller datasets the per-call overhead of `parglm`'s thread pool can
+exceed the gains from parallelism. Below we repeat the benchmark for
+`n = 100,000` and `n = 10,000`, dropping `bam` since it is aimed at much
+larger problems. Note the default `block_size` of `parglm.control` is
+`10000`, so when `n = 10,000` the work cannot be split further across
+threads and `parglm` effectively runs single-threaded regardless of
+`nthreads`.
+
+```{r helper, echo = FALSE, cache = 1}
+run_and_plot <- function(n, p, n_threads, times = 11L, seed = 68024947) {
+  set.seed(seed)
+  X <- matrix(rnorm(n * p, 1/p, 1/sqrt(p)), n, ncol = p)
+  df <- data.frame(y = 1/(1 + exp(-(rowSums(X) - 1))) > runif(n), X)
+  X_mat <- model.matrix(y ~ ., df)
+  form  <- reformulate(names(df)[-1], response = "y")
+
+  tfunc <- function(method = "LINPACK", nthreads)
+    parglm(y ~ ., binomial(), df,
+           control = parglm.control(method = method, nthreads = nthreads))
+
+  ref_calls <- list(
+    glm      = bquote(glm     (y ~ ., binomial(), df)),
+    speedglm = bquote(speedglm(y ~ ., family = binomial(), data = df)),
+    glm2     = bquote(glm2    (y ~ ., binomial(), df)),
+    fastglm  = bquote(fastglm (X_mat, as.numeric(df$y), family = binomial())),
+    bigglm   = bquote(bigglm  (form, df, family = binomial())))
+  n_ref <- length(ref_calls)
+
+  par_calls <- c(
+    setNames(lapply(1:n_threads, function(i) bquote(tfunc(nthreads = .(i)))),
+             paste0("parglm-LINPACK-", 1:n_threads)),
+    setNames(lapply(1:n_threads, function(i)
+      bquote(tfunc(nthreads = .(i), method = "FAST"))),
+      paste0("parglm-FAST-", 1:n_threads)),
+    setNames(lapply(1:n_threads, function(i)
+      bquote(tfunc(nthreads = .(i), method = "LAPACK"))),
+      paste0("parglm-LAPACK-", 1:n_threads)))
+
+  cl  <- as.call(c(list(quote(microbenchmark)), ref_calls, par_calls,
+                   list(times = times)))
+  out <- eval(cl)
+
+  modmat_time <- microbenchmark(
+    modmat_time = {
+      mf <- model.frame(y ~ ., df); model.matrix(terms(mf), mf)
+    }, times = 10)
+
+  s <- summary(out)
+  print(s[, c("expr", "min", "mean", "median", "max")], digits = 3,
+        row.names = FALSE)
+
+  o <- aggregate(time ~ expr, out, median)[, 2] / 10^9
+  ylim <- range(o, 0); ylim[2] <- ylim[2] + .04 * diff(ylim)
+
+  o_linpack <- o[(n_ref + 1L):(n_ref + n_threads)]
+  o_fast    <- o[(n_ref + n_threads + 1L):(n_ref + 2L * n_threads)]
+  o_lapack  <- o[(n_ref + 2L * n_threads + 1L):(n_ref + 3L * n_threads)]
+
+  ref_cols <- c("#E69F00", "#56B4E9", "#009E73", "#0072B2",
+                "#D55E00")[seq_len(n_ref)]
+  ref_lty  <- c("dashed", "dotted", "dotdash", "longdash",
+                "twodash")[seq_len(n_ref)]
+
+  par(mar = c(4.5, 4.5, .5, 9))
+  plot(1:n_threads, o_linpack, xlab = "Number of cores", yaxs = "i",
+       ylim = ylim, ylab = "Run time (s)", pch = 16, cex = 1.4)
+  points(1:n_threads, o_fast,   pch = 1, cex = 1.4, lwd = 2)
+  points(1:n_threads, o_lapack, pch = 4, cex = 1.4, lwd = 2)
+  for (i in seq_len(n_ref))
+    abline(h = o[i], lty = ref_lty[i], col = ref_cols[i], lwd = 2)
+  abline(h = median(modmat_time$time) / 10^9, lty = "solid", col = "black",
+         lwd = 2)
+  usr <- par("usr")
+  par(xpd = TRUE)
+  legend(x = usr[2], y = usr[4], xjust = 0, yjust = 1,
+         legend = c(names(ref_calls), "model.matrix", "parglm LINPACK",
+                    "parglm FAST", "parglm LAPACK"),
+         lty = c(ref_lty, "solid", NA, NA, NA),
+         lwd = c(rep(2, n_ref + 1L), NA, NA, NA),
+         col = c(ref_cols, "black", "black", "black", "black"),
+         pch = c(rep(NA, n_ref + 1L), 16, 1, 4),
+         bty = "n")
+
+  invisible(out)
+}
+```
+
+### n = 100,000
+
+```{r run_100k, cache = 1, dependson = "helper", fig.alt="Plot of runtime versus number of cores for n = 100,000.", fig.cap="Plot of runtime versus number of cores for n = 100,000."}
+invisible(run_and_plot(n = 100000L, p = 50L, n_threads = n_threads))
+```
+
+### n = 10,000
+
+```{r run_10k, cache = 1, dependson = "helper", fig.alt="Plot of runtime versus number of cores for n = 10,000.", fig.cap="Plot of runtime versus number of cores for n = 10,000."}
+invisible(run_and_plot(n = 10000L, p = 50L, n_threads = n_threads))
+```
+
 ## Session info
 
 ```{r ses_info}

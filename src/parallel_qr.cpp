@@ -74,47 +74,38 @@ void qr_parallel::submit(std::unique_ptr<qr_data_generator> generator){
 qr_parallel::get_stacks_res_obj qr_parallel::get_stacks_res(){
   get_stacks_res_obj out;
 
-  bool is_first = true;
   arma::mat &R_stack = out.R_stack;
   arma::mat &F_stack = out.F_stack;
   arma::mat &dev     = out.dev;
-  arma::uword &p = out.p, q = 0L, i = 0L;
+  arma::uword &p = out.p;
   p = 0L;
+  arma::uword q = 0L, i = 0L;
 
-  arma::uword num_blocks = futures.size();
-  while(!futures.empty()){
-    auto f = futures.begin();
+  arma::uword const num_blocks = futures.size();
+  bool is_first = true;
+  for(auto &fut : futures){
+    R_F R_Fs_i = fut.get();
+    if(is_first){
+      p = R_Fs_i.R.n_rows;
+      q = R_Fs_i.F.n_rows;
 
-    /* we assume that the first tasks are done first */
-    for(arma::uword j = 0; f != futures.end() and j < n_threads; ++j, ++f){
-      if(f->wait_for(std::chrono::microseconds(1)) ==
-         std::future_status::ready){
-        R_F R_Fs_i = f->get();
-        if(is_first){
-          p = R_Fs_i.R.n_rows;
-          q = R_Fs_i.F.n_rows;
+      R_stack.set_size(p * num_blocks, p);
+      F_stack.set_size(q * num_blocks, R_Fs_i.F.n_cols);
 
-          R_stack.set_size(p * num_blocks, p);
-          F_stack.set_size(q * num_blocks, R_Fs_i.F.n_cols);
+      dev = R_Fs_i.dev;
+      is_first = false;
 
-          dev = R_Fs_i.dev;
-          is_first = false;
+    } else
+      dev += R_Fs_i.dev;
 
-        } else
-          dev += R_Fs_i.dev;
+    R_stack.rows(i * p, (i + 1L) * p - 1L) = R_Fs_i.R_rev_piv();
+    F_stack.rows(i * q, (i + 1L) * q - 1L) = std::move(R_Fs_i.F);
 
-        R_stack.rows(i * p, (i + 1L) * p - 1L) = R_Fs_i.R_rev_piv();
-        F_stack.rows(i * q, (i + 1L) * q - 1L) = std::move(R_Fs_i.F);
-
-        ++i;
-        futures.erase(f);
-        break;
-      }
-    }
+    ++i;
   }
+  futures.clear();
 
   return out;
-
 }
 
 R_F qr_parallel::compute(){

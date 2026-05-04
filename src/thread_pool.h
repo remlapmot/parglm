@@ -181,8 +181,16 @@ class thread_pool
   std::condition_variable cv;
   std::mutex mu;
 
-  void worker_thread()
+  /* per-thread index inside its owning pool; sentinel value for any thread
+   * that is not a worker (e.g., the main thread) */
+  static size_t & my_id_ref() {
+    thread_local size_t my_id = static_cast<size_t>(-1);
+    return my_id;
+  }
+
+  void worker_thread(size_t my_id)
   {
+    my_id_ref() = my_id;
     for(;;){
       function_wrapper task;
 
@@ -237,7 +245,8 @@ public:
       for(unsigned i=0;i<thread_count;++i)
       {
         threads.push_back(
-          std::thread(&thread_pool::worker_thread, this));
+          std::thread(&thread_pool::worker_thread, this,
+                      static_cast<size_t>(i)));
       }
     }
     catch(...)
@@ -262,12 +271,8 @@ public:
 
   // added
   size_t get_id() const {
-    auto const this_id = std::this_thread::get_id();
-    for(size_t i = 0; i < threads.size(); ++i)
-      if(threads[i].get_id() == this_id)
-        return i;
-
-    return threads.size();
+    size_t const id = my_id_ref();
+    return id == static_cast<size_t>(-1) ? threads.size() : id;
   }
 };
 

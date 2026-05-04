@@ -37,3 +37,8 @@ an example of run times and further details.
   : Auxiliary for Controlling GLM Fitting in Parallel
 
 # Articles
+
+### All vignettes
+
+- [Introduction to the parglm
+  package](https://remlapmot.github.io/parglm/dev/articles/parglm.md):

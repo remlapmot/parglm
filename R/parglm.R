@@ -220,7 +220,7 @@ parglm.fit <- function(
 
   residuals <- (y - mu) / mu.eta.val
 
-  dev <- drop(fit$dev) # should mabye re-compute...
+  dev <- drop(fit$dev) # should maybe re-compute...
 
   conv <- fit$conv
   iter <- fit$n_iter

@@ -5,7 +5,7 @@ parglm
 [![CRAN version](https://www.r-pkg.org/badges/version/parglm)](https://CRAN.R-project.org/package=parglm)
 [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/parglm)](https://CRAN.R-project.org/package=parglm)
 
-The `parglm` package provides a parallel estimation method  for generalized 
+The `parglm` package provides a parallel estimation method for generalized 
 linear models without compiling with a multithreaded LAPACK or BLAS. You can install
 the release version from CRAN with
 

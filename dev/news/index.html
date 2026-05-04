@@ -54,6 +54,14 @@
 <h2 class="pkg-version" data-toc-text="development version" id="parglm-development-version">parglm (development version)<a class="anchor" aria-label="anchor" href="#parglm-development-version"></a></h2>
 <ul><li>Add biglm, fastglm, glm2, and mgcv to the timing comparison in the vignette. And add some timings for fewer observations and fewer coefficients.</li>
 <li>Bump roxygen2 to 8.0.0</li>
+<li>Remove busy-wait polling in qr_parallel::get_stacks_res</li>
+<li>Return eta and mu from parallelglm to skip R-side recomputation</li>
+<li>Sum only upper triangle of per-chunk Fisher information in FAST path</li>
+<li>Drop const from R_F members to enable move semantics</li>
+<li>Hoist NA-zeroing of beta out of per-chunk workers</li>
+<li>Use thread_local index for thread_pool::get_id</li>
+<li>Skip intermediate matrix when reverse-pivoting R</li>
+<li>Cache parglm_supported keys to avoid rebuilding family objects per fit</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.8" id="parglm-018">parglm 0.1.8<a class="anchor" aria-label="anchor" href="#parglm-018"></a></h2><p class="text-muted">CRAN release: 2026-04-21</p>

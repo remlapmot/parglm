@@ -134,7 +134,7 @@ decomposition.
 ## Details
 
 The current implementation uses `min(as.integer(n / p), nthreads)`
-threads where `n` is the number observations, `p` is the number of
+threads where `n` is the number of observations, `p` is the number of
 covariates, and `nthreads` is the `nthreads` element of the list
 returned by
 [`parglm.control`](https://remlapmot.github.io/parglm/dev/reference/parglm.control.md).

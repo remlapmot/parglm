@@ -6,6 +6,14 @@
   vignette. And add some timings for fewer observations and fewer
   coefficients.
 - Bump roxygen2 to 8.0.0
+- Remove busy-wait polling in qr_parallel::get_stacks_res
+- Return eta and mu from parallelglm to skip R-side recomputation
+- Sum only upper triangle of per-chunk Fisher information in FAST path
+- Drop const from R_F members to enable move semantics
+- Hoist NA-zeroing of beta out of per-chunk workers
+- Use thread_local index for thread_pool::get_id
+- Skip intermediate matrix when reverse-pivoting R
+- Cache parglm_supported keys to avoid rebuilding family objects per fit
 
 ## parglm 0.1.8
 

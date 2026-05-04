@@ -41,7 +41,7 @@ parglm.control(
 
 - block_size:
 
-  number of observation to include in each parallel block.
+  number of observations to include in each parallel block.
 
 - method:
 

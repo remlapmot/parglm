@@ -10,9 +10,9 @@ if (!requireNamespace("parglm")) stop("Remember to install parglm itself!")
 #   R CMD INSTALL .
 
 knitr::knit("vignettes/parglm.Rmd.orig", output = "vignettes/parglm.Rmd")
-pngs <- list.files("figure", pattern = "\\.png$", full.names = TRUE)
+pngs <- list.files("img", pattern = "\\.png$", full.names = TRUE)
 if (length(pngs) > 0) {
-  dir.create("vignettes/figure", showWarnings = FALSE, recursive = TRUE)
+  dir.create("vignettes/img", showWarnings = FALSE, recursive = TRUE)
   file.rename(pngs, file.path("vignettes", pngs))
-  unlink("figure", recursive = TRUE)
+  unlink("img", recursive = TRUE)
 }

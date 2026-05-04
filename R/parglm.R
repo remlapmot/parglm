@@ -209,10 +209,8 @@ parglm.fit <- function(
   # compute objects as in `glm.fit`
   coef <- drop(fit$coefficients)
   names(coef) <- xnames
-  coef_dot <- ifelse(is.na(coef), 0, coef)
-  eta <- drop(x %*% coef_dot) + offset
-  good <- weights > 0
-  mu <- family$linkinv(eta)
+  eta <- drop(fit$eta)
+  mu  <- drop(fit$mu)
   mu.eta.val <- family$mu.eta(eta)
   good <- (weights > 0) & (mu.eta.val != 0)
   w <- sqrt((weights[good] * mu.eta.val[good]^2) / family$variance(mu)[good])

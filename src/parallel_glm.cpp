@@ -54,6 +54,8 @@ struct parallelglm_res {
   const arma::uword n_iter;
   const bool conv;
   const arma::uword rank;
+  const arma::vec eta;
+  const arma::vec mu;
 };
 
 const double double_one = 1., double_zero = 0.;
@@ -453,7 +455,7 @@ public:
 
     return { beta, *R_f_out.get(), dev,
              std::min(static_cast<arma::uword>(i + 1L), it_max),
-             i < it_max, rank };
+             i < it_max, rank, data.eta, data.mu };
   }
 };
 
@@ -492,5 +494,8 @@ Rcpp::List parallelglm(
 
     Rcpp::Named("n_iter") = result.n_iter,
     Rcpp::Named("conv")   = result.conv,
-    Rcpp::Named("rank")   = result.rank);
+    Rcpp::Named("rank")   = result.rank,
+
+    Rcpp::Named("eta")    = Rcpp::wrap(result.eta),
+    Rcpp::Named("mu")     = Rcpp::wrap(result.mu));
 }

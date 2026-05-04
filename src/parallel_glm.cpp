@@ -189,10 +189,11 @@ class parallelglm_class_QR {
       arma::mat dev_mat(1L, 1L, arma::fill::zeros); /* we compute this later */
 
       if(do_inner){
-        /* do not need to initalize when beta is zero. We do it anyway as we
-         * later perform an addition for all elements */
+        /* dsyrk writes only the upper triangle; the consumer in get_inner
+         * sums upper-only and symmetrises at the end, so the lower triangle
+         * does not need to be initialised here */
         int dsryk_n = X.n_cols, k = X.n_rows;
-        arma::mat C(dsryk_n, dsryk_n, arma::fill::zeros);
+        arma::mat C(dsryk_n, dsryk_n, arma::fill::none);
 
         R_BLAS_LAPACK::dsyrk(
           &char_U /*uplo*/, &char_T /*trans*/, &dsryk_n, &k /*k*/,
@@ -348,14 +349,20 @@ class parallelglm_class_QR {
       auto o = f.get();
 
       if(is_first){
-        out.C = o.X;
-        out.c = o.Y;
+        out.C.zeros(o.X.n_rows, o.X.n_cols);
+        out.c.zeros(o.Y.n_rows, o.Y.n_cols);
         is_first = false;
-        continue;
       }
 
-      /* TODO: could just take the upper part */
-      out.C += o.X;
+      /* o.X has only its upper triangle populated by dsyrk; sum upper-only
+       * here and symmetrise once at the end */
+      arma::uword const p = o.X.n_cols;
+      for(arma::uword j = 0; j < p; ++j){
+        double const * src = o.X.colptr(j);
+        double       * dst = out.C.colptr(j);
+        for(arma::uword i = 0; i <= j; ++i)
+          dst[i] += src[i];
+      }
       out.c += o.Y;
     }
 

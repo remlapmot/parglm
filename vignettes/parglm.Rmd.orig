@@ -129,7 +129,7 @@ modmat_time # time taken by `model.matrix` and `model.frame`
 ```
 
 ```{r show_run_times, fig.alt="Plot of runtime versus number of cores.", fig.cap="Plot of runtime versus number of cores."}
-par(mar = c(4.5, 4.5, .5, .5))
+par(mar = c(4.5, 4.5, .5, 9))
 o <- aggregate(time ~ expr, out, median)[, 2] / 10^9
 ylim <- range(o, 0); ylim[2] <- ylim[2] + .04 * diff(ylim)
 
@@ -148,7 +148,9 @@ for (i in 1:6)
   abline(h = o[i], lty = ref_lty[i], col = ref_cols[i], lwd = 2)
 abline(h = median(modmat_time$time) / 10^9, lty = "solid", col = "black",
        lwd = 2)
-legend("topright", inset = c(0, 0.05), ncol = 2,
+usr <- par("usr")
+par(xpd = TRUE)
+legend(x = usr[2], y = usr[4], xjust = 0, yjust = 1,
        legend = c("glm", "speedglm", "glm2", "fastglm", "bigglm", "bam",
                   "model.matrix", "parglm LINPACK", "parglm FAST",
                   "parglm LAPACK"),

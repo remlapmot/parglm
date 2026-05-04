@@ -165,7 +165,7 @@ legend(x = usr[2], y = usr[4], xjust = 0, yjust = 1,
 The open circles are the `FAST` method and the filled circles are the `LINPACK`
 method. The `FAST` method, `speedglm`, and `fastglm` all compute the Fisher
 information and solve the normal equation.
-This is advantages in terms of computation cost but may lead to unstable
+This is an advantage in terms of computation cost but may lead to unstable
 solutions. You can alter the number of observations in each parallel chunk
 with the `block_size` argument of `parglm.control`.
 

@@ -288,6 +288,21 @@ invisible(run_and_plot(n = 100000L, p = 50L, n_threads = n_threads))
 invisible(run_and_plot(n = 10000L, p = 50L, n_threads = n_threads))
 ```
 
+## Few coefficients
+
+The parglm cost has an additive $O(Mp^2 + p^3)$ term where $M$ is the
+number of chunks. With small $p$ this term is negligible, but the per-row
+work also shrinks proportionally to $p^2$, so the thread-pool overhead can
+dominate the actual computation. Below we use `n = 100,000` and `p = 5`:
+parglm now has $M = 10$ chunks available so threading is engaged, but
+each chunk is small enough that the parallel benefit is limited.
+
+### n = 100,000, p = 5
+
+```{r run_100k_p5, cache = 1, dependson = "helper", fig.alt="Plot of runtime versus number of cores for n = 100,000 and p = 5.", fig.cap="Plot of runtime versus number of cores for n = 100,000 and p = 5."}
+invisible(run_and_plot(n = 100000L, p = 5L, n_threads = n_threads))
+```
+
 ## Session info
 
 ```{r ses_info}

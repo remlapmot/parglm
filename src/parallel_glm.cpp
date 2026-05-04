@@ -23,6 +23,8 @@ inline size_t floor_mult(size_t const num, size_t const denom){
 class data_holder_base {
 public:
   arma::vec *beta;
+  arma::vec beta_clean; /* NA-zeroed copy of beta; populated on the main
+                         * thread before dispatching workers              */
 
   /* These are not const but should not be changed... */
   arma::mat &X;
@@ -40,6 +42,7 @@ public:
     arma::mat &X, arma::vec &Ys, arma::vec &weights, arma::vec &offsets,
     const arma::uword max_threads, const arma::uword p, const arma::uword n,
     const glm_base &family, arma::uword b_size = 10000):
+    beta_clean(p),
     X(X), Ys(Ys), weights(weights), offsets(offsets), eta(Ys.n_elem),
     mu(Ys.n_elem),
     max_threads(max_threads), p(p), n(n), family(std::move(family)),
@@ -246,20 +249,14 @@ class parallelglm_class_QR {
       if(first_it)
         data.family.initialize(eta, y, weight);
       else {
-        /* change `NA`s to zero */
-        arma::vec coef = *data.beta;
-        for(auto c = coef.begin(); c != coef.end(); ++c)
-          if(ISNA(*c))
-            *c = 0.;
-
         std::memcpy(eta.begin(), offset.begin(), sizeof(double) * n);
 
-        int n_i = n, p = coef.n_elem, N = data.X.n_rows;
+        int n_i = n, p = data.beta_clean.n_elem, N = data.X.n_rows;
         R_BLAS_LAPACK::dgemv(
           &char_N, &n_i /*m*/, &p /*n*/, &double_one /*alpha*/,
           data.X.memptr() + i_start /*A*/, &N /*LDA*/,
-          coef.memptr() /*X*/, &int_one /*incx*/, &double_one /*beta*/,
-          eta.memptr() /*Y*/, &int_one /*incy*/);
+          data.beta_clean.memptr() /*X*/, &int_one /*incx*/,
+          &double_one /*beta*/, eta.memptr() /*Y*/, &int_one /*incy*/);
       }
 
       data.family.linkinv(mu, eta);
@@ -270,6 +267,16 @@ class parallelglm_class_QR {
 
   static double set_eta_n_mu(data_holder_base &data, bool first_it,
                              qr_parallel &pool, const bool use_start){
+    /* Workers take the dgemv branch unless first_it && !use_start; populate
+     * the NA-zeroed beta once here so each chunk does not have to. */
+    bool const workers_use_beta = !first_it or use_start;
+    if(workers_use_beta){
+      data.beta_clean = *data.beta;
+      for(auto c = data.beta_clean.begin(); c != data.beta_clean.end(); ++c)
+        if(ISNA(*c))
+          *c = 0.;
+    }
+
     std::vector<std::future<double> > futures;
     uword n = data.X.n_rows, i_start = 0, i_end = 0.;
 

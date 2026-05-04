@@ -37,7 +37,7 @@ p <- 50L
 n_threads <- parallel::detectCores(logical = FALSE)
 ```
 
-Below, we perform estimate a logistic regression with `r n` observations
+Below, we estimate a logistic regression with `r n` observations
 and `r p` covariates. We vary the number of cores being used with the
 `nthreads` argument to `parglm.control`. The `method` argument sets which
 method is used. `LINPACK` uses the same pivoted QR (`dqrdc2`) as `glm.fit`

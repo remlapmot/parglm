@@ -36,9 +36,10 @@ void set_p_qr_working_memory(size_t const max_m, size_t const max_n,
 }
 
 arma::mat R_F::R_rev_piv() const {
-  arma::uvec piv = pivot;
-  piv(piv) = arma::regspace<arma::uvec>(0, 1, piv.n_elem - 1);
-  return R.cols(piv);
+  arma::mat result(R.n_rows, R.n_cols, arma::fill::none);
+  for(arma::uword j = 0; j < R.n_cols; ++j)
+    result.col(pivot[j]) = R.col(j);
+  return result;
 }
 
 qr_parallel::worker::worker
@@ -98,7 +99,13 @@ qr_parallel::get_stacks_res_obj qr_parallel::get_stacks_res(){
     } else
       dev += R_Fs_i.dev;
 
-    R_stack.rows(i * p, (i + 1L) * p - 1L) = R_Fs_i.R_rev_piv();
+    /* write each chunk column directly into R_stack at the position
+     * given by the forward pivot, avoiding an intermediate p-by-p copy */
+    for(arma::uword j = 0; j < R_Fs_i.R.n_cols; ++j){
+      arma::uword const dst_col = R_Fs_i.pivot[j];
+      R_stack.submat(i * p, dst_col, (i + 1L) * p - 1L, dst_col) =
+        R_Fs_i.R.col(j);
+    }
     F_stack.rows(i * q, (i + 1L) * q - 1L) = std::move(R_Fs_i.F);
 
     ++i;

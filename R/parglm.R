@@ -275,8 +275,7 @@ parglm.fit <- function(
 .check_fam <- function(family){
   stopifnot(
     inherits(family, "family"),
-    paste(family$family, family$link) %in%
-      sapply(parglm_supported(), function(x) paste(x$family, x$link)))
+    paste(family$family, family$link) %in% .parglm_supported_keys())
 }
 
 parglm_supported <- function()
@@ -292,6 +291,18 @@ parglm_supported <- function()
 
     inverse.gaussian("1/mu^2"), inverse.gaussian("inverse"),
     inverse.gaussian("identity"), inverse.gaussian("log"))
+
+.parglm_supported_keys <- local({
+  cached <- NULL
+  function() {
+    if (is.null(cached))
+      cached <<- vapply(
+        parglm_supported(),
+        function(x) paste(x$family, x$link),
+        character(1))
+    cached
+  }
+})
 
 #' @importFrom Matrix qr.R
 #' @export

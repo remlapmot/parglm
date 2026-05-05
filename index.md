@@ -11,12 +11,14 @@ generalized linear models without compiling with a multithreaded LAPACK
 or BLAS. You can install the release version from CRAN with
 
 ``` r
+
 install.packages("parglm")
 ```
 
 or install the development version from GitHub by calling:
 
 ``` r
+
 remotes::install_github("remlapmot/parglm")
 ```
 

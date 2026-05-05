@@ -15,8 +15,9 @@ License: GPL-2
 URL: https://github.com/remlapmot/parglm,
     https://remlapmot.github.io/parglm/
 BugReports: https://github.com/remlapmot/parglm/issues
-Imports: 
+Imports:
     Matrix,
+    parallelly,
     Rcpp
 Suggests:
     biglm,

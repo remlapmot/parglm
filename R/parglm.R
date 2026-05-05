@@ -84,10 +84,10 @@ parglm <- function(
 #' @param epsilon positive convergence tolerance.
 #' @param maxit integer giving the maximal number of IWLS iterations.
 #' @param trace logical indicating if output should be produced doing estimation.
-#' @param nthreads number of cores to use. You may get the best performance by
-#' using your number of physical cores if your data set is sufficiently large.
-#' Using the number of physical CPUs/cores may yield the best performance
-#' (check your number e.g., by calling \code{parallel::detectCores(logical = FALSE)}).
+#' @param nthreads number of cores to use. Defaults to
+#' \code{parallelly::availableCores(omit = 1L)}, which leaves one core free.
+#' You may get the best performance by using all available physical cores if
+#' your data set is sufficiently large.
 #' @param block_size number of observations to include in each parallel block.
 #' @param method string specifying which method to use. Either \code{"LINPACK"},
 #' \code{"LAPACK"}, or \code{"FAST"}.
@@ -121,7 +121,8 @@ parglm <- function(
 #'
 #' @export
 parglm.control <- function(
-  epsilon = 1e-08, maxit = 25, trace = FALSE, nthreads = 1L,
+  epsilon = 1e-08, maxit = 25, trace = FALSE,
+  nthreads = parallelly::availableCores(omit = 1L),
   block_size = NULL, method = "LINPACK")
 {
   if (!is.numeric(epsilon) || epsilon <= 0)

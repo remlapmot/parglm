@@ -32,3 +32,24 @@ test_that("Using more threads then rows yields a warning", {
 
   expect_silent(parglm( a ~ b - 1, data = this_df , nthreads = 1))
 })
+
+test_that("default nthreads in parglm.control() uses parallelly::availableCores(omit = 1L)", {
+  expect_equal(
+    parglm.control()$nthreads,
+    parallelly::availableCores(omit = 1L)
+  )
+})
+
+test_that("parglm() works without specifying nthreads", {
+  expect_silent(parglm(mpg ~ wt + hp, data = mtcars, family = Gamma(link = "log")))
+})
+
+test_that("nthreads = 3L is used when set explicitly", {
+  expect_equal(parglm.control(nthreads = 3L)$nthreads, 3L)
+
+  # iris has 150 rows (>= 16 * 3 = 48), so 3 threads should not be reduced
+  expect_silent(
+    parglm(Sepal.Length ~ Sepal.Width + Petal.Length, data = iris,
+           control = parglm.control(nthreads = 3L))
+  )
+})

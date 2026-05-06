@@ -57,7 +57,7 @@
 <span>  epsilon <span class="op">=</span> <span class="fl">1e-08</span>,</span>
 <span>  maxit <span class="op">=</span> <span class="fl">25</span>,</span>
 <span>  trace <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  nthreads <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  nthreads <span class="op">=</span> <span class="fu">parallelly</span><span class="fu">::</span><span class="fu"><a href="https://parallelly.futureverse.org/reference/availableCores.html" class="external-link">availableCores</a></span><span class="op">(</span>omit <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span>,</span>
 <span>  block_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"LINPACK"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -80,10 +80,10 @@
 
 
 <dt id="arg-nthreads">nthreads<a class="anchor" aria-label="anchor" href="#arg-nthreads"></a></dt>
-<dd><p>number of cores to use. You may get the best performance by
-using your number of physical cores if your data set is sufficiently large.
-Using the number of physical CPUs/cores may yield the best performance
-(check your number e.g., by calling <code>parallel::detectCores(logical = FALSE)</code>).</p></dd>
+<dd><p>number of cores to use. Defaults to
+<code>parallelly::availableCores(omit = 1L)</code>, which leaves one core free.
+You may get the best performance by using all available physical cores if
+your data set is sufficiently large.</p></dd>
 
 
 <dt id="arg-block-size">block_size<a class="anchor" aria-label="anchor" href="#arg-block-size"></a></dt>

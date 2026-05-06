@@ -11,7 +11,7 @@ parglm.control(
   epsilon = 1e-08,
   maxit = 25,
   trace = FALSE,
-  nthreads = 1L,
+  nthreads = parallelly::availableCores(omit = 1L),
   block_size = NULL,
   method = "LINPACK"
 )
@@ -33,11 +33,10 @@ parglm.control(
 
 - nthreads:
 
-  number of cores to use. You may get the best performance by using your
-  number of physical cores if your data set is sufficiently large. Using
-  the number of physical CPUs/cores may yield the best performance
-  (check your number e.g., by calling
-  `parallel::detectCores(logical = FALSE)`).
+  number of cores to use. Defaults to
+  `parallelly::availableCores(omit = 1L)`, which leaves one core free.
+  You may get the best performance by using all available physical cores
+  if your data set is sufficiently large.
 
 - block_size:
 

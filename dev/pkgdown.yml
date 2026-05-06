@@ -3,7 +3,7 @@ pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   parglm: parglm.html
-last_built: 2026-05-05T06:02Z
+last_built: 2026-05-06T13:11Z
 urls:
   reference: https://remlapmot.github.io/parglm/reference
   article: https://remlapmot.github.io/parglm/articles

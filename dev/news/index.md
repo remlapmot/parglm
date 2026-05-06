@@ -14,6 +14,9 @@
 - Use thread_local index for thread_pool::get_id
 - Skip intermediate matrix when reverse-pivoting R
 - Cache parglm_supported keys to avoid rebuilding family objects per fit
+- Change the default of `parglm.control(nthreads)` to be
+  `parallelly::availableCores(omit = 1L)` to make better use of
+  available cores
 
 ## parglm 0.1.8
 

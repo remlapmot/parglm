@@ -13,7 +13,8 @@ parglm.control(
   trace = FALSE,
   nthreads = parallelly::availableCores(omit = 1L),
   block_size = NULL,
-  method = "LINPACK"
+  method = "LINPACK",
+  nthreads_auto = missing(nthreads)
 )
 ```
 
@@ -46,6 +47,12 @@ parglm.control(
 
   string specifying which method to use. Either `"LINPACK"`, `"LAPACK"`,
   or `"FAST"`.
+
+- nthreads_auto:
+
+  logical; for internal use only. Records whether `nthreads` was
+  auto-detected (suppresses the thread-reduction warning when the
+  dataset is small). Do not set this argument directly.
 
 ## Value
 

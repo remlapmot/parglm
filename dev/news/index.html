@@ -59,6 +59,9 @@
 <li>Skip intermediate matrix when reverse-pivoting R</li>
 <li>Cache parglm_supported keys to avoid rebuilding family objects per fit</li>
 <li>Change the default of <code>parglm.control(nthreads)</code> to be <code>parallelly::availableCores(omit = 1L)</code> to make better use of available cores</li>
+<li>Implement persistent thread pool</li>
+<li>Replace linked-list task queue with deque under single mutex</li>
+<li>Fuse X chunk copy and weight scaling into one memory pass</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.8" id="parglm-018">parglm 0.1.8<a class="anchor" aria-label="anchor" href="#parglm-018"></a></h2><p class="text-muted">CRAN release: 2026-04-21</p>

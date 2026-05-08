@@ -17,6 +17,9 @@
 - Change the default of `parglm.control(nthreads)` to be
   `parallelly::availableCores(omit = 1L)` to make better use of
   available cores
+- Implement persistent thread pool
+- Replace linked-list task queue with deque under single mutex
+- Fuse X chunk copy and weight scaling into one memory pass
 
 ## parglm 0.1.8
 

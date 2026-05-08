@@ -91,6 +91,9 @@ parglm <- function(
 #' @param block_size number of observations to include in each parallel block.
 #' @param method string specifying which method to use. Either \code{"LINPACK"},
 #' \code{"LAPACK"}, or \code{"FAST"}.
+#' @param nthreads_auto logical; for internal use only. Records whether
+#' \code{nthreads} was auto-detected (suppresses the thread-reduction warning
+#' when the dataset is small). Do not set this argument directly.
 #'
 #' @details
 #' The \code{LINPACK} method uses the same QR method as \code{\link{glm.fit}} for the final QR decomposition.

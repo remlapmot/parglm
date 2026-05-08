@@ -30,6 +30,10 @@ your data set is sufficiently large.}
 
 \item{method}{string specifying which method to use. Either \code{"LINPACK"},
 \code{"LAPACK"}, or \code{"FAST"}.}
+
+\item{nthreads_auto}{logical; for internal use only. Records whether
+\code{nthreads} was auto-detected (suppresses the thread-reduction warning
+when the dataset is small). Do not set this argument directly.}
 }
 \value{
 A list with components named as the arguments.

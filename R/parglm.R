@@ -123,7 +123,8 @@ parglm <- function(
 parglm.control <- function(
   epsilon = 1e-08, maxit = 25, trace = FALSE,
   nthreads = parallelly::availableCores(omit = 1L),
-  block_size = NULL, method = "LINPACK")
+  block_size = NULL, method = "LINPACK",
+  nthreads_auto = missing(nthreads))
 {
   if (!is.numeric(epsilon) || epsilon <= 0)
     stop("value of 'epsilon' must be > 0")
@@ -134,7 +135,7 @@ parglm.control <- function(
     is.null(block_size) || (is.numeric(block_size) && block_size >= 1),
     method %in% c("LAPACK", "LINPACK", "FAST"))
   list(epsilon = epsilon, maxit = maxit, trace = trace, nthreads = nthreads,
-       block_size = block_size, method = method)
+       nthreads_auto = nthreads_auto, block_size = block_size, method = method)
 }
 
 #' @rdname parglm
@@ -182,7 +183,7 @@ parglm.fit <- function(
     if(nthreads_new < 1L)
       nthreads_new <- 1L
 
-    if(control$nthreads != nthreads_new)
+    if(control$nthreads != nthreads_new && !isTRUE(control$nthreads_auto))
       warning(
         "Too few observations compared to the number of threads. ",
         nthreads_new, " thread(s) will be used instead of ",

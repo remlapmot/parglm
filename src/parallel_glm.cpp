@@ -65,18 +65,6 @@ const double double_one = 1., double_zero = 0.;
 const int int_one = 1;
 char char_N = 'N', char_U = 'U', char_T = 'T';
 
-inline void inplace_copy
-  (arma::mat &X, const arma::mat &Y, const arma::uword start,
-   const arma::uword end)
-  {
-    double *x = X.begin();
-    const double *y = Y.begin() + start;
-
-    size_t const n_ele = end - start + 1L;
-    for(unsigned int i = 0; i < X.n_cols;
-        ++i, x += X.n_rows, y += Y.n_rows)
-      std::memcpy(x, y, n_ele * sizeof(double));
-  }
 
 namespace {
 constexpr size_t const max_wk_mem_keep = 10000000L / sizeof(double);
@@ -185,8 +173,13 @@ class parallelglm_class_QR {
 
       const arma::uword p = data.X.n_cols;
       arma::mat X(get_wk_mem(n * p), n, p, false, true);
-      inplace_copy(X, data.X, i_start, i_end);
-      X.each_col() %= w;
+      /* Fused copy-and-scale: one memory pass instead of memcpy + DSCAL. */
+      for(arma::uword j = 0; j < p; ++j){
+        const double *src = data.X.colptr(j) + i_start;
+        double       *dst = X.colptr(j);
+        for(arma::uword i = 0; i < n; ++i)
+          dst[i] = src[i] * w[i];
+      }
       z %= w;
 
       arma::mat dev_mat(1L, 1L, arma::fill::zeros); /* we compute this later */

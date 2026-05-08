@@ -58,9 +58,8 @@ R_F qr_parallel::worker::operator()(){
 }
 
 qr_parallel::qr_parallel(
-  ptr_vec generators, const unsigned int max_threads):
-  n_threads(std::max(static_cast<unsigned>(1L), max_threads)),
-  futures(), th_pool(n_threads)
+  ptr_vec generators, thread_pool &pool):
+  futures(), th_pool(pool)
   {
     while(!generators.empty()){
       submit(std::move(generators.back()));

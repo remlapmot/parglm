@@ -54,7 +54,6 @@ class qr_parallel {
     R_F operator()();
   };
 
-  unsigned int n_threads;
   std::list<std::future<R_F> > futures;
 
   struct get_stacks_res_obj {
@@ -67,9 +66,9 @@ class qr_parallel {
   get_stacks_res_obj get_stacks_res();
 
 public:
-  thread_pool th_pool;
+  thread_pool &th_pool;
 
-  qr_parallel(ptr_vec, const unsigned int);
+  qr_parallel(ptr_vec, thread_pool &);
 
   void submit(std::unique_ptr<qr_data_generator>);
 

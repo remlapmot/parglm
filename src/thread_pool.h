@@ -276,4 +276,8 @@ public:
   }
 };
 
+/* Returns (and lazily creates) a session-scoped thread pool.
+ * Recreated only when n_threads differs from the previous call. */
+thread_pool& get_persistent_pool(unsigned n_threads);
+
 #endif

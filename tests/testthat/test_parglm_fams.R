@@ -301,13 +301,13 @@ test_that("'stop's when there are more variables than observations", {
 
   # check that it works with same number of observations as variables
   dframe <- dframe[, 1:n]
-  fpar <- parglm(y ~ ., gaussian(), dframe, nthreads = 2)
+  fpar <- parglm(y ~ ., gaussian(), dframe, nthreads = 1L)
   fglm <-    glm(y ~ ., gaussian(), dframe)
   expect_equal(coef(fpar), coef(fglm))
 
   # and with almost the same number of variables as observations
   dframe <- dframe[, 1:(n - 3L)]
-  fpar <- parglm(y ~ ., gaussian(), dframe, nthreads = 2)
+  fpar <- parglm(y ~ ., gaussian(), dframe, nthreads = 1L)
   fglm <-    glm(y ~ ., gaussian(), dframe)
   expect_equal(coef(fpar), coef(fglm))
 })

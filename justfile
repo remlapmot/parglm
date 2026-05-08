@@ -8,3 +8,5 @@ test:
     R -e "devtools::test()"
 doc:
     R -e "devtools::document()"
+clear:
+    rm -rf cache

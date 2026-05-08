@@ -10,7 +10,8 @@ parglm.control(
   trace = FALSE,
   nthreads = parallelly::availableCores(omit = 1L),
   block_size = NULL,
-  method = "LINPACK"
+  method = "LINPACK",
+  nthreads_auto = missing(nthreads)
 )
 }
 \arguments{

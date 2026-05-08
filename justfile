@@ -1,5 +1,5 @@
 render:
-    R -e "devtools::install()" && Rscript vignettes/precompile.R
+    R -e "devtools::install()" && Rscript vignettes/precompile.R && oxipng vignettes/img/*.png
 opt:
     oxipng vignettes/img/*.png
 check:

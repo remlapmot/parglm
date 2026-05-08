@@ -231,7 +231,7 @@ test_that("'method' equal to 'LINPACK' behaves as 'glm'", {
   parglm_control <- parglm.control(
     nthreads = 2, maxit = 25L,
     epsilon = .Machine$double.xmin, method = "LINPACK")
-  f1 <- glm(y ~ X, control = glm_control)
+  f1 <- suppressWarnings(glm(y ~ X, control = glm_control))
   f2 <- parglm(y ~ X, control = parglm_control)
 
   expect_equal(f1[to_check], f2[to_check])

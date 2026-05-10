@@ -102,6 +102,12 @@ the list
 returned by \code{\link{parglm.control}}. Thus, there is likely little (if
 any) reduction in computation time if \code{p} is almost equal to \code{n}.
 The current implementation cannot handle \code{p > n}.
+
+Since \code{parglm} returns a standard \code{\link{glm}} object, it is
+compatible with the \pkg{sandwich} package for heteroskedasticity-consistent
+(HC) and cluster-robust standard errors via \code{\link[sandwich]{vcovHC}}
+and \code{\link[sandwich]{vcovCL}}. This requires \code{model = TRUE}
+(the default). See \code{vignette("sandwich", "parglm")} for examples.
 }
 \examples{
 # mtcars has 32 rows, sufficient for 2 threads (>= 16 rows per thread)

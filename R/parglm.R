@@ -288,7 +288,7 @@ parglm.fit <- function(
 }
 
 
-#' @importFrom stats hatvalues model.matrix summary.glm vcov
+#' @importFrom stats coef hatvalues model.matrix summary.glm vcov
 #' @export
 summary.parglm <- function(object, ...) {
   s   <- NextMethod()

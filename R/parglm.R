@@ -142,7 +142,7 @@ parglm.control <- function(
 }
 
 #' @rdname parglm
-#' @importFrom stats gaussian binomial Gamma inverse.gaussian poisson
+#' @importFrom stats gaussian binomial Gamma inverse.gaussian poisson quasipoisson quasibinomial
 #' @export
 parglm.fit <- function(
   x, y, weights = rep(1, NROW(x)), start = NULL, etastart = NULL,
@@ -293,6 +293,11 @@ parglm_supported <- function()
     Gamma("inverse"), Gamma("identity"), Gamma("log"),
 
     poisson("log"), poisson("identity"), poisson("sqrt"),
+
+    quasipoisson("log"), quasipoisson("identity"), quasipoisson("sqrt"),
+
+    quasibinomial("logit"), quasibinomial("probit"), quasibinomial("cauchit"),
+    quasibinomial("log"), quasibinomial("cloglog"),
 
     inverse.gaussian("1/mu^2"), inverse.gaussian("inverse"),
     inverse.gaussian("identity"), inverse.gaussian("log"))

@@ -675,5 +675,23 @@ std::unique_ptr<glm_base> get_fam_obj(const std::string family){
   if(family == "inverse.gaussian_log")
     return std::unique_ptr<glm_base>(new inverse_gaussian_log());
 
+  if(family == "quasipoisson_log")
+    return std::unique_ptr<glm_base>(new poisson_log());
+  if(family == "quasipoisson_identity")
+    return std::unique_ptr<glm_base>(new poisson_identity());
+  if(family == "quasipoisson_sqrt")
+    return std::unique_ptr<glm_base>(new poisson_sqrt());
+
+  if(family == "quasibinomial_logit")
+    return std::unique_ptr<glm_base>(new binomial_logit());
+  if(family == "quasibinomial_probit")
+    return std::unique_ptr<glm_base>(new binomial_probit());
+  if(family == "quasibinomial_cauchit")
+    return std::unique_ptr<glm_base>(new binomial_cauchit());
+  if(family == "quasibinomial_log")
+    return std::unique_ptr<glm_base>(new binomial_log());
+  if(family == "quasibinomial_cloglog")
+    return std::unique_ptr<glm_base>(new binomial_cloglog());
+
   Rcpp::stop("family and link '" + family + "' is not supported");
 }

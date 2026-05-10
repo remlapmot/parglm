@@ -324,6 +324,49 @@ test_that("'stop's when there are more variables than observations", {
   expect_equal(coef(fpar), coef(fglm))
 })
 
+test_that("works with two-column binomial response", {
+  set.seed(42)
+  n <- 500L
+  x1 <- rnorm(n)
+  x2 <- rnorm(n)
+  trials <- sample(1:20, n, replace = TRUE)
+  p <- plogis(0.5 + 0.3 * x1 - 0.2 * x2)
+  successes <- rbinom(n, trials, p)
+  dat <- data.frame(successes = successes, failures = trials - successes,
+                    x1 = x1, x2 = x2)
+
+  glm_control    <- list(maxit = 25L, epsilon = .Machine$double.xmin)
+
+  for (method in c("LAPACK", "LINPACK", "FAST")) {
+    tol <- if(method == "FAST") .Machine$double.eps^(1/5) else
+      .Machine$double.eps^(1/4)
+    parglm_control <- parglm.control(
+      nthreads = 1L, method = method, maxit = 25L,
+      epsilon = .Machine$double.xmin)
+    lab <- paste0("two-col binomial_", method)
+
+    suppressWarnings({
+      f1 <- glm(cbind(successes, failures) ~ x1 + x2, binomial(), dat,
+                control = glm_control)
+      f2 <- parglm(cbind(successes, failures) ~ x1 + x2, binomial(), dat,
+                   control = parglm_control)
+    })
+
+    expect_equal(f1[to_check], f2[to_check], label = lab, tolerance = tol)
+  }
+
+  # quasibinomial with two-column response
+  suppressWarnings({
+    f1 <- glm(cbind(successes, failures) ~ x1 + x2, quasibinomial(), dat,
+              control = glm_control)
+    f2 <- parglm(cbind(successes, failures) ~ x1 + x2, quasibinomial(), dat,
+                 control = parglm.control(nthreads = 1L, maxit = 25L,
+                                          epsilon = .Machine$double.xmin))
+  })
+  expect_equal(f1[to_check], f2[to_check],
+               label = "two-col quasibinomial", tolerance = .Machine$double.eps^(1/4))
+})
+
 test_that("works with quasibinomial and quasipoisson families", {
   n <- 500L
   p <- 2L

@@ -411,14 +411,27 @@ public:
       if(method == "LAPACK"){
         R_f_out.reset(new R_F(get_R_f(data, pool)));
 
-        arma::vec gamma = R_f_out->F.col(0);
-        R_BLAS_LAPACK::triangular_sys_solve(
-          R_f_out->R.memptr(), gamma.memptr(),
-          true /*upper*/, false /*no transpose*/,
-          R_f_out->R.n_rows, 1 /*nrhs*/);
-        for(arma::uword j = 0; j < R_f_out->pivot.n_elem; ++j)
-          beta[R_f_out->pivot[j]] = gamma[j];
-        rank = beta.n_elem;
+        const arma::uword p = R_f_out->R.n_rows;
+        const double rank_tol =
+          std::min(1e-07, tol / 1000) * std::abs(R_f_out->R(0, 0));
+        arma::uword p_rank = p;
+        for(arma::uword j = 0; j < p; ++j){
+          if(std::abs(R_f_out->R(j, j)) <= rank_tol){
+            p_rank = j;
+            break;
+          }
+        }
+        rank = p_rank;
+
+        beta.fill(NA_REAL);
+        if(p_rank > 0){
+          arma::mat R_sub = arma::trimatu(
+            R_f_out->R.submat(0, 0, p_rank - 1, p_rank - 1));
+          arma::vec gamma = R_f_out->F.col(0).head(p_rank);
+          gamma = arma::solve(R_sub, gamma);
+          for(arma::uword j = 0; j < p_rank; ++j)
+            beta[R_f_out->pivot[j]] = gamma[j];
+        }
 
       } else if(method == "LINPACK"){
         auto o = get_dqrls_res(data, pool, std::min(1e-07, tol / 1000));

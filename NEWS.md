@@ -16,6 +16,7 @@
 * Fuse X chunk copy and weight scaling into one memory pass
 * Support `quasibinomial()` and `quasipoisson()` family specification
 * Enable full compatibility with the sandwich package for robust standard errors, including adding comments to the parglm helpfile, a new vignette, and tests
+* Add fastglm's `method = 3L` to the benchmarks in the parglm vignette
 
 # parglm 0.1.8
 

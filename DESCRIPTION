@@ -24,8 +24,10 @@ Suggests:
     fastglm,
     glm2,
     knitr,
+    lmtest,
     microbenchmark,
     rmarkdown,
+    sandwich,
     speedglm,
     SuppDists,
     testthat

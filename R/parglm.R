@@ -55,6 +55,12 @@ NULL
 #' any) reduction in computation time if \code{p} is almost equal to \code{n}.
 #' The current implementation cannot handle \code{p > n}.
 #'
+#' Since \code{parglm} returns a standard \code{\link{glm}} object, it is
+#' compatible with the \pkg{sandwich} package for heteroskedasticity-consistent
+#' (HC) and cluster-robust standard errors via \code{\link[sandwich]{vcovHC}}
+#' and \code{\link[sandwich]{vcovCL}}. This requires \code{model = TRUE}
+#' (the default). See \code{vignette("sandwich", "parglm")} for examples.
+#'
 #' @examples
 #' # mtcars has 32 rows, sufficient for 2 threads (>= 16 rows per thread)
 #' f1 <- glm   (mpg ~ wt + hp, data = mtcars, family = Gamma(link = "log"))
@@ -273,9 +279,23 @@ parglm.fit <- function(
        linear.predictors = eta, deviance = dev, aic = aic.model,
        null.deviance = nulldev, iter = iter, weights = wt,
        prior.weights = weights, df.residual = resdf, df.null = nulldf,
-       y = y, converged = conv, boundary = boundary)
+       y = y, converged = conv, boundary = boundary,
+       class = "parglm")
 }
 
+
+#' @importFrom stats hatvalues model.matrix
+#' @export
+hatvalues.parglm <- function(model, ...) {
+  wts <- model$weights
+  X   <- model.matrix(model)
+  pvt <- model$qr$pivot
+  rnk <- model$rank
+  Xw  <- X[, pvt[seq_len(rnk)], drop = FALSE] * sqrt(wts)
+  R   <- model$R[seq_len(rnk), seq_len(rnk), drop = FALSE]
+  Z   <- forwardsolve(t(R), t(Xw))
+  colSums(Z^2)
+}
 
 .check_fam <- function(family){
   stopifnot(

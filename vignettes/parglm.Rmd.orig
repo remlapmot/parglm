@@ -75,6 +75,7 @@ cl <- list(
   speedglm = quote(speedglm(y ~ ., family = binomial(), data = df)),
   glm2     = quote(glm2    (y ~ ., binomial(), df)),
   fastglm  = quote(fastglm (X_mat, as.numeric(df$y), family = binomial())),
+  fastglm3 = quote(fastglm (X_mat, as.numeric(df$y), family = binomial(), method = 3L)),
   bigglm   = quote(bigglm  (biglm_form, df, family = binomial())),
   bam      = quote(bam     (bam_form, family = binomial(), data = df)),
   times = 11L)
@@ -83,18 +84,18 @@ tfunc <- function(method = "LINPACK", nthreads)
                                                          nthreads = nthreads))
 cl <- c(
   cl, lapply(1:n_threads, function(i) bquote(tfunc(nthreads = .(i)))))
-names(cl)[9:(9L + n_threads - 1L)] <- paste0("parglm-LINPACK-", 1:n_threads)
+names(cl)[10:(10L + n_threads - 1L)] <- paste0("parglm-LINPACK-", 1:n_threads)
 
 cl <- c(
   cl, lapply(1:n_threads, function(i) bquote(tfunc(
     nthreads = .(i), method = "FAST"))))
-names(cl)[(9L + n_threads):(9L + 2L * n_threads - 1L)] <-
+names(cl)[(10L + n_threads):(10L + 2L * n_threads - 1L)] <-
   paste0("parglm-FAST-", 1:n_threads)
 
 cl <- c(
   cl, lapply(1:n_threads, function(i) bquote(tfunc(
     nthreads = .(i), method = "LAPACK"))))
-names(cl)[(9L + 2L * n_threads):(9L + 3L * n_threads - 1L)] <-
+names(cl)[(10L + 2L * n_threads):(10L + 3L * n_threads - 1L)] <-
   paste0("parglm-LAPACK-", 1:n_threads)
 
 cl <- as.call(cl)
@@ -134,37 +135,39 @@ par(mar = c(4.5, 4.5, .5, 9))
 o <- aggregate(time ~ expr, out, median)[, 2] / 10^9
 ylim <- range(o, 0); ylim[2] <- ylim[2] + .04 * diff(ylim)
 
-o_linpack <- o[7L:(n_threads + 6L)]
-o_fast    <- o[(n_threads + 7L):(2L * n_threads + 6L)]
-o_lapack  <- o[(2L * n_threads + 7L):(3L * n_threads + 6L)]
+o_linpack <- o[8L:(n_threads + 7L)]
+o_fast    <- o[(n_threads + 8L):(2L * n_threads + 7L)]
+o_lapack  <- o[(2L * n_threads + 8L):(3L * n_threads + 7L)]
 
-ref_cols <- c("#E69F00", "#56B4E9", "#009E73", "#0072B2", "#D55E00", "#CC79A7")
-ref_lty  <- c("dashed", "dotted", "dotdash", "longdash", "twodash", "1373")
+ref_cols <- c("#E69F00", "#56B4E9", "#009E73", "#0072B2", "#F0E442", "#D55E00", "#CC79A7")
+ref_lty  <- c("dashed", "dotted", "dotdash", "longdash", "44", "twodash", "1373")
 
 plot(1:n_threads, o_linpack, xlab = "Number of cores", yaxs = "i",
      ylim = ylim, ylab = "Run time (s)", pch = 16, cex = 1.4)
 points(1:n_threads, o_fast,   pch = 1, cex = 1.4, lwd = 2)
 points(1:n_threads, o_lapack, pch = 4, cex = 1.4, lwd = 2)
-for (i in 1:6)
+for (i in 1:7)
   abline(h = o[i], lty = ref_lty[i], col = ref_cols[i], lwd = 2)
 abline(h = median(modmat_time$time) / 10^9, lty = "solid", col = "black",
        lwd = 2)
 usr <- par("usr")
 par(xpd = TRUE)
 legend(x = usr[2], y = usr[4], xjust = 0, yjust = 1,
-       legend = c("glm", "speedglm", "glm2", "fastglm", "bigglm", "bam",
-                  "model.matrix", "parglm LINPACK", "parglm FAST",
-                  "parglm LAPACK"),
+       legend = c("glm", "speedglm", "glm2", "fastglm", "fastglm (LDLT)",
+                  "bigglm", "bam", "model.matrix", "parglm LINPACK",
+                  "parglm FAST", "parglm LAPACK"),
        lty = c(ref_lty, "solid", NA, NA, NA),
-       lwd = c(2, 2, 2, 2, 2, 2, 2, NA, NA, NA),
+       lwd = c(2, 2, 2, 2, 2, 2, 2, 2, NA, NA, NA),
        col = c(ref_cols, "black", "black", "black", "black"),
-       pch = c(NA, NA, NA, NA, NA, NA, NA, 16, 1, 4),
+       pch = c(NA, NA, NA, NA, NA, NA, NA, NA, 16, 1, 4),
        bty = "n")
 ```
 
 The open circles are the `FAST` method and the filled circles are the `LINPACK`
-method. The `FAST` method, `speedglm`, and `fastglm` all compute the Fisher
-information and solve the normal equation.
+method. The `FAST` method, `speedglm`, `fastglm`, and `fastglm` (LDLT) all
+compute the Fisher information and solve the normal equation; `fastglm` (LDLT)
+uses an LDLT Cholesky decomposition (method 3) rather than the default
+column-pivoted QR (method 0).
 This is an advantage in terms of computation cost but may lead to unstable
 solutions. You can alter the number of observations in each parallel chunk
 with the `block_size` argument of `parglm.control`.
@@ -211,11 +214,12 @@ run_and_plot <- function(n, p, n_threads, times = 11L, seed = 68024947) {
            control = parglm.control(method = method, nthreads = nthreads))
 
   ref_calls <- list(
-    glm      = bquote(glm     (y ~ ., binomial(), df)),
-    speedglm = bquote(speedglm(y ~ ., family = binomial(), data = df)),
-    glm2     = bquote(glm2    (y ~ ., binomial(), df)),
-    fastglm  = bquote(fastglm (X_mat, as.numeric(df$y), family = binomial())),
-    bigglm   = bquote(bigglm  (form, df, family = binomial())))
+    glm          = bquote(glm     (y ~ ., binomial(), df)),
+    speedglm     = bquote(speedglm(y ~ ., family = binomial(), data = df)),
+    glm2         = bquote(glm2    (y ~ ., binomial(), df)),
+    fastglm      = bquote(fastglm (X_mat, as.numeric(df$y), family = binomial())),
+    `fastglm (LDLT)` = bquote(fastglm(X_mat, as.numeric(df$y), family = binomial(), method = 3L)),
+    bigglm       = bquote(bigglm  (form, df, family = binomial())))
   n_ref <- length(ref_calls)
 
   par_calls <- c(
@@ -248,9 +252,9 @@ run_and_plot <- function(n, p, n_threads, times = 11L, seed = 68024947) {
   o_fast    <- o[(n_ref + n_threads + 1L):(n_ref + 2L * n_threads)]
   o_lapack  <- o[(n_ref + 2L * n_threads + 1L):(n_ref + 3L * n_threads)]
 
-  ref_cols <- c("#E69F00", "#56B4E9", "#009E73", "#0072B2",
+  ref_cols <- c("#E69F00", "#56B4E9", "#009E73", "#0072B2", "#F0E442",
                 "#D55E00")[seq_len(n_ref)]
-  ref_lty  <- c("dashed", "dotted", "dotdash", "longdash",
+  ref_lty  <- c("dashed", "dotted", "dotdash", "longdash", "44",
                 "twodash")[seq_len(n_ref)]
 
   par(mar = c(4.5, 4.5, .5, 9))

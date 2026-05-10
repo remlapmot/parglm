@@ -1,4 +1,3 @@
-make a function which can take a function input which yields the input for
-each chunk to allow for larger data sets that do not fit in memory
-the Armadillo `rows` may be slow when the copy is made?
-fix issue with order in `summary.glm`
+* make a function which can take a function input which yields the input for each chunk to allow for larger data sets that do not fit in memory
+* the Armadillo `rows` may be slow when the copy is made?
+* fix issue with order in `summary.glm`

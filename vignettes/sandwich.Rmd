@@ -1,0 +1,94 @@
+---
+title: "Robust standard errors with parglm and the sandwich package"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Robust standard errors with parglm and the sandwich package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+Since `parglm()` returns a standard `glm` object, it works directly with the
+[`sandwich`](https://cran.r-project.org/package=sandwich) package for
+heteroskedasticity-consistent (HC) and cluster-robust standard errors.
+The [`lmtest`](https://cran.r-project.org/package=lmtest) package provides
+`coeftest()` for displaying results with alternative covariance matrices.
+
+## Setup
+
+```{r setup, message = FALSE}
+library(parglm)
+library(sandwich)
+library(lmtest)
+```
+
+We simulate a Poisson dataset with 20 clusters of 10 observations each,
+where a cluster-level random effect induces within-cluster correlation.
+
+```{r simulate}
+set.seed(1)
+n          <- 200
+cluster_id <- rep(1:20, each = 10)
+x1         <- rnorm(n)
+x2         <- rnorm(n)
+u          <- rep(rnorm(20, sd = 0.5), each = 10)  # cluster random effect
+y          <- rpois(n, exp(0.5 + 0.3 * x1 - 0.2 * x2 + u))
+dat        <- data.frame(y = y, x1 = x1, x2 = x2, cluster = cluster_id)
+```
+
+## Fitting the model
+
+```{r fit}
+fit <- parglm(y ~ x1 + x2, data = dat, family = poisson(),
+              control = parglm.control(nthreads = 2L))
+```
+
+## Standard errors
+
+The default model-based standard errors assume the Poisson variance equals
+the mean. They will be too small here because the cluster random effects
+induce overdispersion.
+
+```{r model-based}
+coeftest(fit)
+```
+
+## Heteroskedasticity-consistent (HC) standard errors
+
+`vcovHC()` computes sandwich standard errors that are robust to
+misspecification of the variance function. HC3 (the default) is recommended
+for small to moderate samples.
+
+```{r hc}
+coeftest(fit, vcov = vcovHC)
+```
+
+## Cluster-robust standard errors
+
+`vcovCL()` accounts for within-cluster correlation, which is the appropriate
+correction here.
+
+```{r cluster}
+coeftest(fit, vcov = vcovCL, cluster = ~cluster)
+```
+
+As expected, the cluster-robust standard errors are larger than the
+model-based ones, reflecting the extra variability due to the cluster
+random effects.
+
+## Covariance matrices directly
+
+The covariance matrices themselves are also available:
+
+```{r vcov}
+vcovHC(fit, type = "HC3")
+vcovCL(fit, cluster = ~cluster)
+```
+
+## Note
+
+`model = TRUE` (the default in `parglm`) must be set so that the model frame
+is stored, allowing `sandwich` to reconstruct the design matrix internally.

@@ -44,6 +44,37 @@ test_that("parglm() works without specifying nthreads", {
   expect_silent(parglm(mpg ~ wt + hp, data = mtcars, family = Gamma(link = "log")))
 })
 
+test_that("summary() and vcov() return coefficients in formula order with LAPACK method", {
+  # With LAPACK (DGEQP3), pivot can be non-trivial when predictors are on
+  # very different scales. summary.glm / vcov.glm return results in pivot
+  # order; summary.parglm / vcov.parglm must reorder to match glm.
+  set.seed(1)
+  n  <- 500
+  x1 <- rnorm(n)
+  x2 <- rnorm(n) * 1e6   # large scale forces non-trivial LAPACK pivot
+  x3 <- rnorm(n) * 1e-6  # small scale
+  y  <- rpois(n, exp(0.5 + 0.3 * x1 + 1e-7 * x2 + 3e5 * x3))
+  df <- data.frame(y = y, x1 = x1, x2 = x2, x3 = x3)
+
+  fg <- glm(y ~ x1 + x2 + x3, data = df, family = poisson())
+  fp <- parglm(y ~ x1 + x2 + x3, data = df, family = poisson(),
+               control = parglm.control(nthreads = 1L, method = "LAPACK"))
+
+  # coefficient names must be in formula order
+  expect_equal(names(coef(fp)), names(coef(fg)))
+
+  # summary coefficient table rows must be in formula order
+  expect_equal(rownames(summary(fp)$coefficients),
+               rownames(summary(fg)$coefficients))
+
+  # vcov row/col names must be in formula order
+  expect_equal(dimnames(vcov(fp)), dimnames(vcov(fg)))
+
+  # values must agree with glm to reasonable tolerance
+  expect_equal(coef(fp), coef(fg), tolerance = 1e-6)
+  expect_equal(vcov(fp), vcov(fg), tolerance = 1e-4)
+})
+
 test_that("nthreads = 3L is used when set explicitly", {
   expect_equal(parglm.control(nthreads = 3L)$nthreads, 3L)
 

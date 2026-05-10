@@ -40,10 +40,22 @@ sim_func <- function(family, n, p){
     X <- abs(X)
     y <- rgamma(n, shape = 1, rate = 1 / family$linkinv(rowSums(X) + inter))
 
-  }  else if(nam %in% c("poissonlog", "poissonidentity", "poissonsqrt")){
+  }  else if(nam %in% c("poissonlog", "poissonidentity", "poissonsqrt",
+                        "quasipoissonlog", "quasipoissonidentity", "quasipoissonsqrt")){
     inter <- 1.5
     X <- abs(X)
     y <- rpois(n, family$linkinv(rowSums(X) + inter))
+
+  } else if(nam %in% c("quasibinomiallogit", "quasibinomialprobit",
+                        "quasibinomialcauchit", "quasibinomialcloglog")){
+    inter <- 1.
+    y <- family$linkinv(rowSums(X) + inter) > runif(n)
+
+  } else if(nam %in% "quasibinomiallog"){
+    inter <- -.5
+    X <- -abs(X)
+    X <- X * .25 / diff(range(rowSums(X)))
+    y <- family$linkinv(rowSums(X) + inter) > runif(n)
 
   } else if(nam %in% c("inverse.gaussian1/mu^2", "inverse.gaussianinverse",
                        "inverse.gaussianidentity", "inverse.gaussianlog")){
@@ -310,4 +322,35 @@ test_that("'stop's when there are more variables than observations", {
   fpar <- parglm(y ~ ., gaussian(), dframe, nthreads = 1L)
   fglm <-    glm(y ~ ., gaussian(), dframe)
   expect_equal(coef(fpar), coef(fglm))
+})
+
+test_that("works with quasibinomial and quasipoisson families", {
+  n <- 500L
+  p <- 2L
+  for(method in c("LAPACK", "LINPACK", "FAST"))
+  for(fa in list(
+    quasibinomial("logit"), quasibinomial("probit"), quasibinomial("cloglog"),
+    quasipoisson("log"), quasipoisson("sqrt")))
+  {
+    tmp <- sim_func(fa, n, p)
+    df <- data.frame(y = tmp$y, tmp$X)
+
+    lab <- paste0(fa$family, "_", fa$link, "_", method)
+    tol <- if(method == "FAST") .Machine$double.eps^(1/5) else
+      .Machine$double.eps^(1/4)
+    frm <- y ~ X1 + X2
+    glm_control    <- list(maxit = 25L, epsilon = .Machine$double.xmin)
+    parglm_control <- parglm.control(
+      nthreads = 2L, method = method, maxit = 25L,
+      epsilon = .Machine$double.xmin)
+    suppressWarnings({
+      f1 <- glm(frm, family = fa, data = df, control = glm_control)
+      f2 <- parglm(frm, family = fa, data = df, control = parglm_control)
+    })
+
+    expect_equal(f1[to_check], f2[to_check], label = lab, tolerance = tol)
+    expect_true(is.na(f2$aic), label = paste(lab, "AIC is NA"))
+    expect_equal(summary(f1)$dispersion, summary(f2)$dispersion,
+                 label = paste(lab, "dispersion"), tolerance = tol)
+  }
 })

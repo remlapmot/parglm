@@ -155,7 +155,7 @@ parglm.fit <- function(
   mustart = NULL, offset = rep(0, NROW(x)), family = gaussian(),
   control = list(), intercept = TRUE, ...){
   .check_fam(family)
-  stopifnot(nrow(x) == length(y))
+  stopifnot(nrow(x) == NROW(y))
   if(NCOL(x) > NROW(x))
     stop("not implemented with more variables than observations")
 
@@ -170,6 +170,15 @@ parglm.fit <- function(
   x <- as.matrix(x)
   xnames <- dimnames(x)[[2L]]
   ynames <- if(is.matrix(y)) rownames(y) else names(y)
+
+  n_trials <- rep(1, NROW(y))
+  if(NCOL(y) == 2L && family$family %in% c("binomial", "quasibinomial")) {
+    n_trials <- y[, 1L] + y[, 2L]
+    y        <- ifelse(n_trials == 0, 0, y[, 1L] / n_trials)
+    weights  <- if(is.null(weights)) n_trials else weights * n_trials
+  } else if(NCOL(y) > 1L)
+    stop("Multi column ", sQuote("y"), " is not supported")
+
   conv <- FALSE
   nobs <- NROW(y)
   nvars <- ncol(x)
@@ -177,8 +186,6 @@ parglm.fit <- function(
 
   if(EMPTY)
     stop("not implemented for empty model")
-  if(NCOL(y) > 1L)
-    stop("Multi column ", sQuote("y"), " is not supported")
 
   if (is.null(weights))
     weights <- rep.int(1, nobs)
@@ -231,7 +238,7 @@ parglm.fit <- function(
 
   residuals <- (y - mu) / mu.eta.val
 
-  dev <- drop(fit$dev) # should maybe re-compute...
+  dev <- sum(family$dev.resids(y, mu, weights))
 
   conv <- fit$conv
   iter <- fit$n_iter
@@ -265,11 +272,8 @@ parglm.fit <- function(
   rank <- fit$rank
   resdf  <- n.ok - rank
   #-----------------------------------------------------------------------------
-  # calculate AIC
-  # we need to initialize n if the family is `binomial`. As of 11/11/2018 two
-  # column ys are not allowed so this is easy
-  n <- rep(1, nobs)
-  aic.model <- family$aic(y, n, mu, weights, dev) + 2*rank
+  # calculate AIC; n_trials is 1 for single-column y, trial counts for two-column binomial
+  aic.model <- family$aic(y, n_trials, mu, weights, dev) + 2*rank
   #-----------------------------------------------------------------------------
   list(coefficients = coef, residuals = residuals, fitted.values = mu,
        # effects = fit$effects, # TODO: add

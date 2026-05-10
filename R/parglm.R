@@ -288,7 +288,34 @@ parglm.fit <- function(
 }
 
 
-#' @importFrom stats hatvalues model.matrix
+#' @importFrom stats hatvalues model.matrix summary.glm vcov
+#' @export
+summary.parglm <- function(object, ...) {
+  s   <- NextMethod()
+  rnk <- object$rank
+  pvt <- object$qr$pivot[seq_len(rnk)]
+  idx <- order(pvt)
+  if (!identical(idx, seq_len(rnk))) {
+    s$coefficients <- s$coefficients[idx, , drop = FALSE]
+    s$cov.unscaled <- s$cov.unscaled[idx, idx, drop = FALSE]
+    if (!is.null(s$cov.scaled))
+      s$cov.scaled <- s$cov.scaled[idx, idx, drop = FALSE]
+  }
+  s
+}
+
+#' @export
+vcov.parglm <- function(object, complete = TRUE, ...) {
+  s   <- summary(object, ...)
+  cf0 <- coef(object)
+  p   <- length(cf0)
+  cf  <- !is.na(cf0)
+  vc  <- matrix(NA_real_, p, p, dimnames = list(names(cf0), names(cf0)))
+  if (any(cf))
+    vc[cf, cf] <- s$dispersion * s$cov.unscaled
+  if (complete) vc else vc[cf, cf, drop = FALSE]
+}
+
 #' @export
 hatvalues.parglm <- function(model, ...) {
   wts <- model$weights

@@ -411,13 +411,13 @@ public:
       if(method == "LAPACK"){
         R_f_out.reset(new R_F(get_R_f(data, pool)));
 
-        /* TODO: can maybe done smarter using that R is triangular befor
-         *       permutation */
-        arma::mat R = R_f_out->R_rev_piv();
-        beta = arma::solve(R.t(), R.t() * R_f_out->F.col(0),
-                           arma::solve_opts::no_approx);
-        beta = arma::solve(R    , beta,
-                           arma::solve_opts::no_approx);
+        arma::vec gamma = R_f_out->F.col(0);
+        R_BLAS_LAPACK::triangular_sys_solve(
+          R_f_out->R.memptr(), gamma.memptr(),
+          true /*upper*/, false /*no transpose*/,
+          R_f_out->R.n_rows, 1 /*nrhs*/);
+        for(arma::uword j = 0; j < R_f_out->pivot.n_elem; ++j)
+          beta[R_f_out->pivot[j]] = gamma[j];
         rank = beta.n_elem;
 
       } else if(method == "LINPACK"){

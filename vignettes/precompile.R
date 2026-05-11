@@ -9,6 +9,7 @@ if (!requireNamespace("parglm")) stop("Remember to install parglm itself!")
 # or from the shell:
 #   R CMD INSTALL .
 
+tictoc::tic()
 knitr::opts_chunk$set(cache.rebuild = TRUE) # uncomment to clear knitr cache
 knitr::knit("vignettes/parglm.Rmd.orig", output = "vignettes/parglm.Rmd")
 pngs <- list.files("img", pattern = "\\.png$", full.names = TRUE)
@@ -17,3 +18,4 @@ if (length(pngs) > 0) {
   file.rename(pngs, file.path("vignettes", pngs))
   unlink("img", recursive = TRUE)
 }
+tictoc::toc()

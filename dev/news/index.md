@@ -29,6 +29,7 @@
 - Add fastglm’s `method = 3L` to the benchmarks in the parglm vignette
 - Allow for two column response for family binomial and quasibinomial
 - Fix issue with order in `summary.glm`
+- Warn rather than error when starting values cannot be found
 
 ## parglm 0.1.8
 

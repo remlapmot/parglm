@@ -1,7 +1,7 @@
 ---
 title: "Introduction to the parglm package"
 author: "Benjamin Christoffersen and Tom Palmer"
-date: "2026-05-08"
+date: "2026-05-11"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to the parglm package}
@@ -55,26 +55,10 @@ df <- data.frame(y = 1/(1 + exp(-(rowSums(X) - 1))) > runif(n), X)
 # compute and measure time. Setup call to make
 library(microbenchmark)
 library(speedglm)
-#> Loading required package: Matrix
-#> Loading required package: MASS
-#> Loading required package: biglm
-#> Loading required package: DBI
 library(fastglm)
 library(glm2)
-#> 
-#> Attaching package: 'glm2'
-#> The following object is masked from 'package:MASS':
-#> 
-#>     crabs
 library(biglm)
 library(mgcv)
-#> Loading required package: nlme
-#> This is mgcv 1.9-4. For overview type '?mgcv'.
-#> 
-#> Attaching package: 'mgcv'
-#> The following object is masked from 'package:fastglm':
-#> 
-#>     negbin
 library(parglm)
 X_mat <- model.matrix(y ~ ., df)
 biglm_form <- reformulate(names(df)[-1], response = "y")
@@ -85,6 +69,7 @@ cl <- list(
   speedglm = quote(speedglm(y ~ ., family = binomial(), data = df)),
   glm2     = quote(glm2    (y ~ ., binomial(), df)),
   fastglm  = quote(fastglm (X_mat, as.numeric(df$y), family = binomial())),
+  fastglm3 = quote(fastglm (X_mat, as.numeric(df$y), family = binomial(), method = 3L)),
   bigglm   = quote(bigglm  (biglm_form, df, family = binomial())),
   bam      = quote(bam     (bam_form, family = binomial(), data = df)),
   times = 11L)
@@ -93,18 +78,18 @@ tfunc <- function(method = "LINPACK", nthreads)
                                                          nthreads = nthreads))
 cl <- c(
   cl, lapply(1:n_threads, function(i) bquote(tfunc(nthreads = .(i)))))
-names(cl)[9:(9L + n_threads - 1L)] <- paste0("parglm-LINPACK-", 1:n_threads)
+names(cl)[10:(10L + n_threads - 1L)] <- paste0("parglm-LINPACK-", 1:n_threads)
 
 cl <- c(
   cl, lapply(1:n_threads, function(i) bquote(tfunc(
     nthreads = .(i), method = "FAST"))))
-names(cl)[(9L + n_threads):(9L + 2L * n_threads - 1L)] <-
+names(cl)[(10L + n_threads):(10L + 2L * n_threads - 1L)] <-
   paste0("parglm-FAST-", 1:n_threads)
 
 cl <- c(
   cl, lapply(1:n_threads, function(i) bquote(tfunc(
     nthreads = .(i), method = "LAPACK"))))
-names(cl)[(9L + 2L * n_threads):(9L + 3L * n_threads - 1L)] <-
+names(cl)[(10L + 2L * n_threads):(10L + 3L * n_threads - 1L)] <-
   paste0("parglm-LAPACK-", 1:n_threads)
 
 cl <- as.call(cl)
@@ -112,38 +97,71 @@ cl # the call we make
 #> microbenchmark(glm = glm(y ~ ., binomial(), df), speedglm = speedglm(y ~ 
 #>     ., family = binomial(), data = df), glm2 = glm2(y ~ ., binomial(), 
 #>     df), fastglm = fastglm(X_mat, as.numeric(df$y), family = binomial()), 
-#>     bigglm = bigglm(biglm_form, df, family = binomial()), bam = bam(bam_form, 
-#>         family = binomial(), data = df), times = 11L, `parglm-LINPACK-1` = tfunc(nthreads = 1L), 
-#>     `parglm-LINPACK-2` = tfunc(nthreads = 2L), `parglm-LINPACK-3` = tfunc(nthreads = 3L), 
-#>     `parglm-LINPACK-4` = tfunc(nthreads = 4L), `parglm-LINPACK-5` = tfunc(nthreads = 5L), 
-#>     `parglm-LINPACK-6` = tfunc(nthreads = 6L), `parglm-LINPACK-7` = tfunc(nthreads = 7L), 
-#>     `parglm-LINPACK-8` = tfunc(nthreads = 8L), `parglm-LINPACK-9` = tfunc(nthreads = 9L), 
-#>     `parglm-LINPACK-10` = tfunc(nthreads = 10L), `parglm-FAST-1` = tfunc(nthreads = 1L, 
-#>         method = "FAST"), `parglm-FAST-2` = tfunc(nthreads = 2L, 
-#>         method = "FAST"), `parglm-FAST-3` = tfunc(nthreads = 3L, 
-#>         method = "FAST"), `parglm-FAST-4` = tfunc(nthreads = 4L, 
-#>         method = "FAST"), `parglm-FAST-5` = tfunc(nthreads = 5L, 
-#>         method = "FAST"), `parglm-FAST-6` = tfunc(nthreads = 6L, 
-#>         method = "FAST"), `parglm-FAST-7` = tfunc(nthreads = 7L, 
-#>         method = "FAST"), `parglm-FAST-8` = tfunc(nthreads = 8L, 
-#>         method = "FAST"), `parglm-FAST-9` = tfunc(nthreads = 9L, 
-#>         method = "FAST"), `parglm-FAST-10` = tfunc(nthreads = 10L, 
-#>         method = "FAST"), `parglm-LAPACK-1` = tfunc(nthreads = 1L, 
-#>         method = "LAPACK"), `parglm-LAPACK-2` = tfunc(nthreads = 2L, 
-#>         method = "LAPACK"), `parglm-LAPACK-3` = tfunc(nthreads = 3L, 
-#>         method = "LAPACK"), `parglm-LAPACK-4` = tfunc(nthreads = 4L, 
-#>         method = "LAPACK"), `parglm-LAPACK-5` = tfunc(nthreads = 5L, 
-#>         method = "LAPACK"), `parglm-LAPACK-6` = tfunc(nthreads = 6L, 
-#>         method = "LAPACK"), `parglm-LAPACK-7` = tfunc(nthreads = 7L, 
-#>         method = "LAPACK"), `parglm-LAPACK-8` = tfunc(nthreads = 8L, 
-#>         method = "LAPACK"), `parglm-LAPACK-9` = tfunc(nthreads = 9L, 
-#>         method = "LAPACK"), `parglm-LAPACK-10` = tfunc(nthreads = 10L, 
-#>         method = "LAPACK"))
+#>     fastglm3 = fastglm(X_mat, as.numeric(df$y), family = binomial(), 
+#>         method = 3L), bigglm = bigglm(biglm_form, df, family = binomial()), 
+#>     bam = bam(bam_form, family = binomial(), data = df), times = 11L, 
+#>     `parglm-LINPACK-1` = tfunc(nthreads = 1L), `parglm-LINPACK-2` = tfunc(nthreads = 2L), 
+#>     `parglm-LINPACK-3` = tfunc(nthreads = 3L), `parglm-LINPACK-4` = tfunc(nthreads = 4L), 
+#>     `parglm-LINPACK-5` = tfunc(nthreads = 5L), `parglm-LINPACK-6` = tfunc(nthreads = 6L), 
+#>     `parglm-LINPACK-7` = tfunc(nthreads = 7L), `parglm-LINPACK-8` = tfunc(nthreads = 8L), 
+#>     `parglm-LINPACK-9` = tfunc(nthreads = 9L), `parglm-LINPACK-10` = tfunc(nthreads = 10L), 
+#>     `parglm-LINPACK-11` = tfunc(nthreads = 11L), `parglm-LINPACK-12` = tfunc(nthreads = 12L), 
+#>     `parglm-LINPACK-13` = tfunc(nthreads = 13L), `parglm-LINPACK-14` = tfunc(nthreads = 14L), 
+#>     `parglm-LINPACK-15` = tfunc(nthreads = 15L), `parglm-LINPACK-16` = tfunc(nthreads = 16L), 
+#>     `parglm-LINPACK-17` = tfunc(nthreads = 17L), `parglm-LINPACK-18` = tfunc(nthreads = 18L), 
+#>     `parglm-LINPACK-19` = tfunc(nthreads = 19L), `parglm-LINPACK-20` = tfunc(nthreads = 20L), 
+#>     `parglm-LINPACK-21` = tfunc(nthreads = 21L), `parglm-LINPACK-22` = tfunc(nthreads = 22L), 
+#>     `parglm-LINPACK-23` = tfunc(nthreads = 23L), `parglm-LINPACK-24` = tfunc(nthreads = 24L), 
+#>     `parglm-FAST-1` = tfunc(nthreads = 1L, method = "FAST"), 
+#>     `parglm-FAST-2` = tfunc(nthreads = 2L, method = "FAST"), 
+#>     `parglm-FAST-3` = tfunc(nthreads = 3L, method = "FAST"), 
+#>     `parglm-FAST-4` = tfunc(nthreads = 4L, method = "FAST"), 
+#>     `parglm-FAST-5` = tfunc(nthreads = 5L, method = "FAST"), 
+#>     `parglm-FAST-6` = tfunc(nthreads = 6L, method = "FAST"), 
+#>     `parglm-FAST-7` = tfunc(nthreads = 7L, method = "FAST"), 
+#>     `parglm-FAST-8` = tfunc(nthreads = 8L, method = "FAST"), 
+#>     `parglm-FAST-9` = tfunc(nthreads = 9L, method = "FAST"), 
+#>     `parglm-FAST-10` = tfunc(nthreads = 10L, method = "FAST"), 
+#>     `parglm-FAST-11` = tfunc(nthreads = 11L, method = "FAST"), 
+#>     `parglm-FAST-12` = tfunc(nthreads = 12L, method = "FAST"), 
+#>     `parglm-FAST-13` = tfunc(nthreads = 13L, method = "FAST"), 
+#>     `parglm-FAST-14` = tfunc(nthreads = 14L, method = "FAST"), 
+#>     `parglm-FAST-15` = tfunc(nthreads = 15L, method = "FAST"), 
+#>     `parglm-FAST-16` = tfunc(nthreads = 16L, method = "FAST"), 
+#>     `parglm-FAST-17` = tfunc(nthreads = 17L, method = "FAST"), 
+#>     `parglm-FAST-18` = tfunc(nthreads = 18L, method = "FAST"), 
+#>     `parglm-FAST-19` = tfunc(nthreads = 19L, method = "FAST"), 
+#>     `parglm-FAST-20` = tfunc(nthreads = 20L, method = "FAST"), 
+#>     `parglm-FAST-21` = tfunc(nthreads = 21L, method = "FAST"), 
+#>     `parglm-FAST-22` = tfunc(nthreads = 22L, method = "FAST"), 
+#>     `parglm-FAST-23` = tfunc(nthreads = 23L, method = "FAST"), 
+#>     `parglm-FAST-24` = tfunc(nthreads = 24L, method = "FAST"), 
+#>     `parglm-LAPACK-1` = tfunc(nthreads = 1L, method = "LAPACK"), 
+#>     `parglm-LAPACK-2` = tfunc(nthreads = 2L, method = "LAPACK"), 
+#>     `parglm-LAPACK-3` = tfunc(nthreads = 3L, method = "LAPACK"), 
+#>     `parglm-LAPACK-4` = tfunc(nthreads = 4L, method = "LAPACK"), 
+#>     `parglm-LAPACK-5` = tfunc(nthreads = 5L, method = "LAPACK"), 
+#>     `parglm-LAPACK-6` = tfunc(nthreads = 6L, method = "LAPACK"), 
+#>     `parglm-LAPACK-7` = tfunc(nthreads = 7L, method = "LAPACK"), 
+#>     `parglm-LAPACK-8` = tfunc(nthreads = 8L, method = "LAPACK"), 
+#>     `parglm-LAPACK-9` = tfunc(nthreads = 9L, method = "LAPACK"), 
+#>     `parglm-LAPACK-10` = tfunc(nthreads = 10L, method = "LAPACK"), 
+#>     `parglm-LAPACK-11` = tfunc(nthreads = 11L, method = "LAPACK"), 
+#>     `parglm-LAPACK-12` = tfunc(nthreads = 12L, method = "LAPACK"), 
+#>     `parglm-LAPACK-13` = tfunc(nthreads = 13L, method = "LAPACK"), 
+#>     `parglm-LAPACK-14` = tfunc(nthreads = 14L, method = "LAPACK"), 
+#>     `parglm-LAPACK-15` = tfunc(nthreads = 15L, method = "LAPACK"), 
+#>     `parglm-LAPACK-16` = tfunc(nthreads = 16L, method = "LAPACK"), 
+#>     `parglm-LAPACK-17` = tfunc(nthreads = 17L, method = "LAPACK"), 
+#>     `parglm-LAPACK-18` = tfunc(nthreads = 18L, method = "LAPACK"), 
+#>     `parglm-LAPACK-19` = tfunc(nthreads = 19L, method = "LAPACK"), 
+#>     `parglm-LAPACK-20` = tfunc(nthreads = 20L, method = "LAPACK"), 
+#>     `parglm-LAPACK-21` = tfunc(nthreads = 21L, method = "LAPACK"), 
+#>     `parglm-LAPACK-22` = tfunc(nthreads = 22L, method = "LAPACK"), 
+#>     `parglm-LAPACK-23` = tfunc(nthreads = 23L, method = "LAPACK"), 
+#>     `parglm-LAPACK-24` = tfunc(nthreads = 24L, method = "LAPACK"))
 
 out <- eval(cl)
-#> Warning in microbenchmark(glm = glm(y ~ ., binomial(), df), speedglm =
-#> speedglm(y ~ : less accurate nanosecond times to avoid potential integer
-#> overflows
 ```
 
 
@@ -151,43 +169,86 @@ out <- eval(cl)
 s <- summary(out) # result from `microbenchmark`
 print(s[, c("expr", "min", "mean", "median", "max")], digits  = 3,
       row.names	= FALSE)
-#>               expr  min mean median  max
-#>                glm 2489 2753   2601 3523
-#>           speedglm  761  910    828 1563
-#>               glm2 2505 2781   2710 3247
-#>            fastglm 2022 2333   2121 3726
-#>             bigglm 6424 6678   6538 7732
-#>                bam 5095 5465   5332 6065
-#>   parglm-LINPACK-1 1864 2030   1974 2493
-#>   parglm-LINPACK-2 1688 1802   1793 1926
-#>   parglm-LINPACK-3 1579 1648   1635 1771
-#>   parglm-LINPACK-4 1557 1663   1629 1815
-#>   parglm-LINPACK-5 1477 1640   1597 1913
-#>   parglm-LINPACK-6 1429 1609   1532 2289
-#>   parglm-LINPACK-7 1411 1515   1492 1726
-#>   parglm-LINPACK-8 1379 1558   1511 1796
-#>   parglm-LINPACK-9 1407 1534   1499 1870
-#>  parglm-LINPACK-10 1385 1505   1489 1684
-#>      parglm-FAST-1  473  669    620 1398
-#>      parglm-FAST-2  375  458    427  587
-#>      parglm-FAST-3  385  491    451  800
-#>      parglm-FAST-4  356  421    397  499
-#>      parglm-FAST-5  358  420    402  541
-#>      parglm-FAST-6  347  462    433  804
-#>      parglm-FAST-7  374  443    387  570
-#>      parglm-FAST-8  343  451    391  746
-#>      parglm-FAST-9  356  449    411  709
-#>     parglm-FAST-10  353  517    441  915
-#>    parglm-LAPACK-1 1865 2082   2029 2553
-#>    parglm-LAPACK-2 1631 1760   1772 1926
-#>    parglm-LAPACK-3 1618 1717   1673 1992
-#>    parglm-LAPACK-4 1538 1676   1695 1789
-#>    parglm-LAPACK-5 1482 1694   1607 2591
-#>    parglm-LAPACK-6 1420 1528   1488 1635
-#>    parglm-LAPACK-7 1420 1543   1510 1737
-#>    parglm-LAPACK-8 1401 1506   1469 1659
-#>    parglm-LAPACK-9 1446 1569   1584 1694
-#>   parglm-LAPACK-10 1383 1506   1463 1781
+#>               expr   min  mean median   max
+#>                glm  6.53  6.93   6.66  8.10
+#>           speedglm  4.46  4.73   4.69  5.12
+#>               glm2  6.53  7.03   6.91  8.13
+#>            fastglm  4.70  5.03   4.93  5.87
+#>           fastglm3  1.58  1.63   1.58  1.83
+#>             bigglm 12.92 14.07  13.72 15.76
+#>                bam 14.43 14.97  14.78 16.06
+#>   parglm-LINPACK-1  7.81  8.00   7.89  8.51
+#>   parglm-LINPACK-2  4.98  5.25   5.26  5.61
+#>   parglm-LINPACK-3  4.17  4.35   4.27  4.81
+#>   parglm-LINPACK-4  3.95  4.20   4.07  4.76
+#>   parglm-LINPACK-5  3.88  4.13   4.01  4.59
+#>   parglm-LINPACK-6  3.90  4.04   4.00  4.44
+#>   parglm-LINPACK-7  3.86  4.06   4.04  4.56
+#>   parglm-LINPACK-8  3.76  4.01   3.94  4.47
+#>   parglm-LINPACK-9  3.91  4.09   4.07  4.32
+#>  parglm-LINPACK-10  3.68  3.82   3.79  4.02
+#>  parglm-LINPACK-11  3.59  3.85   3.76  4.22
+#>  parglm-LINPACK-12  3.39  3.59   3.59  3.78
+#>  parglm-LINPACK-13  3.22  3.42   3.36  3.91
+#>  parglm-LINPACK-14  3.19  3.35   3.31  3.54
+#>  parglm-LINPACK-15  3.19  3.30   3.27  3.54
+#>  parglm-LINPACK-16  3.27  3.44   3.40  3.86
+#>  parglm-LINPACK-17  3.23  3.38   3.35  3.60
+#>  parglm-LINPACK-18  3.27  3.44   3.46  3.75
+#>  parglm-LINPACK-19  3.21  3.40   3.36  3.65
+#>  parglm-LINPACK-20  3.26  3.42   3.40  3.60
+#>  parglm-LINPACK-21  3.30  3.46   3.39  4.00
+#>  parglm-LINPACK-22  3.26  3.45   3.45  3.74
+#>  parglm-LINPACK-23  3.29  3.41   3.38  3.59
+#>  parglm-LINPACK-24  3.28  3.43   3.42  3.60
+#>      parglm-FAST-1  4.24  4.37   4.35  4.56
+#>      parglm-FAST-2  2.55  2.75   2.71  3.09
+#>      parglm-FAST-3  2.10  2.23   2.14  2.49
+#>      parglm-FAST-4  1.81  2.00   1.93  2.46
+#>      parglm-FAST-5  1.73  1.92   1.91  2.21
+#>      parglm-FAST-6  1.71  1.80   1.81  1.96
+#>      parglm-FAST-7  1.76  1.84   1.81  1.97
+#>      parglm-FAST-8  1.70  1.87   1.88  2.03
+#>      parglm-FAST-9  1.70  1.87   1.81  2.06
+#>     parglm-FAST-10  1.67  1.79   1.77  2.11
+#>     parglm-FAST-11  1.70  1.81   1.85  1.91
+#>     parglm-FAST-12  1.60  1.77   1.70  2.05
+#>     parglm-FAST-13  1.57  1.72   1.66  2.01
+#>     parglm-FAST-14  1.56  1.70   1.66  2.04
+#>     parglm-FAST-15  1.52  1.64   1.65  1.72
+#>     parglm-FAST-16  1.53  1.63   1.61  1.78
+#>     parglm-FAST-17  1.52  1.65   1.63  1.75
+#>     parglm-FAST-18  1.53  1.68   1.66  2.00
+#>     parglm-FAST-19  1.54  1.64   1.64  1.79
+#>     parglm-FAST-20  1.54  1.65   1.61  1.93
+#>     parglm-FAST-21  1.56  1.69   1.67  1.93
+#>     parglm-FAST-22  1.54  1.64   1.63  1.78
+#>     parglm-FAST-23  1.54  1.68   1.63  2.01
+#>     parglm-FAST-24  1.57  1.66   1.68  1.76
+#>    parglm-LAPACK-1  7.81  8.05   7.92  8.52
+#>    parglm-LAPACK-2  4.98  5.30   5.18  6.10
+#>    parglm-LAPACK-3  4.16  4.42   4.38  4.79
+#>    parglm-LAPACK-4  3.92  4.22   4.23  4.58
+#>    parglm-LAPACK-5  3.87  4.05   4.04  4.38
+#>    parglm-LAPACK-6  3.91  4.08   4.05  4.30
+#>    parglm-LAPACK-7  3.89  4.17   4.17  4.57
+#>    parglm-LAPACK-8  3.71  4.01   3.93  4.63
+#>    parglm-LAPACK-9  3.86  4.03   3.95  4.43
+#>   parglm-LAPACK-10  3.54  3.87   3.81  4.21
+#>   parglm-LAPACK-11  3.58  3.86   3.74  4.43
+#>   parglm-LAPACK-12  3.38  3.59   3.55  3.98
+#>   parglm-LAPACK-13  3.21  3.40   3.33  3.73
+#>   parglm-LAPACK-14  3.20  3.39   3.39  3.65
+#>   parglm-LAPACK-15  3.21  3.38   3.33  3.70
+#>   parglm-LAPACK-16  3.27  3.43   3.37  3.92
+#>   parglm-LAPACK-17  3.22  3.46   3.43  3.75
+#>   parglm-LAPACK-18  3.26  3.41   3.41  3.58
+#>   parglm-LAPACK-19  3.27  3.48   3.46  3.70
+#>   parglm-LAPACK-20  3.26  3.45   3.38  3.91
+#>   parglm-LAPACK-21  3.32  3.43   3.38  3.64
+#>   parglm-LAPACK-22  3.26  3.44   3.44  3.56
+#>   parglm-LAPACK-23  3.30  3.37   3.36  3.53
+#>   parglm-LAPACK-24  3.28  3.42   3.41  3.57
 ```
 
 The plot below shows median run times versus the number of cores. Coloured
@@ -208,10 +269,8 @@ modmat_time <- microbenchmark(
   }, times = 10)
 modmat_time # time taken by `model.matrix` and `model.frame`
 #> Unit: milliseconds
-#>         expr       min        lq        mean      median         uq        max
-#>  modmat_time 93.452202 95.398841 129.2118116 112.9241885 163.799797 189.640826
-#>  neval
-#>     10
+#>         expr      min       lq      mean    median       uq      max neval
+#>  modmat_time 167.0934 168.0033 202.13173 169.62105 256.1114 292.6249    10
 ```
 
 
@@ -220,31 +279,31 @@ par(mar = c(4.5, 4.5, .5, 9))
 o <- aggregate(time ~ expr, out, median)[, 2] / 10^9
 ylim <- range(o, 0); ylim[2] <- ylim[2] + .04 * diff(ylim)
 
-o_linpack <- o[7L:(n_threads + 6L)]
-o_fast    <- o[(n_threads + 7L):(2L * n_threads + 6L)]
-o_lapack  <- o[(2L * n_threads + 7L):(3L * n_threads + 6L)]
+o_linpack <- o[8L:(n_threads + 7L)]
+o_fast    <- o[(n_threads + 8L):(2L * n_threads + 7L)]
+o_lapack  <- o[(2L * n_threads + 8L):(3L * n_threads + 7L)]
 
-ref_cols <- c("#E69F00", "#56B4E9", "#009E73", "#0072B2", "#D55E00", "#CC79A7")
-ref_lty  <- c("dashed", "dotted", "dotdash", "longdash", "twodash", "1373")
+ref_cols <- c("#E69F00", "#56B4E9", "#009E73", "#0072B2", "#F0E442", "#D55E00", "#CC79A7")
+ref_lty  <- c("dashed", "dotted", "dotdash", "longdash", "44", "twodash", "1373")
 
 plot(1:n_threads, o_linpack, xlab = "Number of cores", yaxs = "i",
      ylim = ylim, ylab = "Run time (s)", pch = 16, cex = 1.4)
 points(1:n_threads, o_fast,   pch = 1, cex = 1.4, lwd = 2)
 points(1:n_threads, o_lapack, pch = 4, cex = 1.4, lwd = 2)
-for (i in 1:6)
+for (i in 1:7)
   abline(h = o[i], lty = ref_lty[i], col = ref_cols[i], lwd = 2)
 abline(h = median(modmat_time$time) / 10^9, lty = "solid", col = "black",
        lwd = 2)
 usr <- par("usr")
 par(xpd = TRUE)
 legend(x = usr[2], y = usr[4], xjust = 0, yjust = 1,
-       legend = c("glm", "speedglm", "glm2", "fastglm", "bigglm", "bam",
-                  "model.matrix", "parglm LINPACK", "parglm FAST",
-                  "parglm LAPACK"),
+       legend = c("glm", "speedglm", "glm2", "fastglm", "fastglm (LDLT)",
+                  "bigglm", "bam", "model.matrix", "parglm LINPACK",
+                  "parglm FAST", "parglm LAPACK"),
        lty = c(ref_lty, "solid", NA, NA, NA),
-       lwd = c(2, 2, 2, 2, 2, 2, 2, NA, NA, NA),
+       lwd = c(2, 2, 2, 2, 2, 2, 2, 2, NA, NA, NA),
        col = c(ref_cols, "black", "black", "black", "black"),
-       pch = c(NA, NA, NA, NA, NA, NA, NA, 16, 1, 4),
+       pch = c(NA, NA, NA, NA, NA, NA, NA, NA, 16, 1, 4),
        bty = "n")
 ```
 
@@ -254,8 +313,10 @@ legend(x = usr[2], y = usr[4], xjust = 0, yjust = 1,
 </div>
 
 The open circles are the `FAST` method and the filled circles are the `LINPACK`
-method. The `FAST` method, `speedglm`, and `fastglm` all compute the Fisher
-information and solve the normal equation.
+method. The `FAST` method, `speedglm`, `fastglm`, and `fastglm` (LDLT) all
+compute the Fisher information and solve the normal equation; `fastglm` (LDLT)
+uses an LDLT Cholesky decomposition (method 3) rather than the default
+column-pivoted QR (method 0).
 This is an advantage in terms of computation cost but may lead to unstable
 solutions. You can alter the number of observations in each parallel chunk
 with the `block_size` argument of `parglm.control`.
@@ -279,16 +340,11 @@ microbenchmark::microbenchmark(
   `qr.qty LAPACK`  = qr.qty(qr2, df$y),
   times = 11)
 #> Unit: milliseconds
-#>            expr        min          lq         mean     median          uq
-#>      qr LINPACK 421.704188 424.8740415 473.99889036 438.571424 475.7963285
-#>       qr LAPACK 370.643116 374.2026335 383.83491073 378.620527 386.9735800
-#>  qr.qty LINPACK  47.407275  47.9204720  59.63522682  48.196853  49.6007135
-#>   qr.qty LAPACK 111.485437 112.0301015 131.62818909 112.267635 112.7435630
-#>         max neval
-#>  670.709365    11
-#>  421.638711    11
-#>  169.130207    11
-#>  324.167443    11
+#>            expr       min         lq         mean    median         uq       max neval
+#>      qr LINPACK 1303.3407 1309.97615 1333.3297909 1336.5294 1351.16970 1386.0776    11
+#>       qr LAPACK 1570.4466 1572.38760 1610.7810455 1584.6732 1628.27650 1735.3382    11
+#>  qr.qty LINPACK  175.6009  176.26365  209.3419091  217.9211  226.50425  253.8996    11
+#>   qr.qty LAPACK  472.6637  473.28745  497.7734182  473.9486  489.94200  646.2730    11
 ```
 
 ## Smaller datasets
@@ -308,42 +364,85 @@ threads and `parglm` effectively runs single-threaded regardless of
 
 ``` r
 invisible(run_and_plot(n = 100000L, p = 50L, n_threads = n_threads))
-#>               expr   min  mean median   max
-#>                glm 171.3 194.5  180.6 292.3
-#>           speedglm  64.5  77.0   70.5 120.4
-#>               glm2 173.5 184.8  180.5 212.2
-#>            fastglm 166.1 185.1  175.5 249.1
-#>             bigglm 630.9 712.7  681.1 876.2
-#>   parglm-LINPACK-1 144.0 151.2  147.5 169.7
-#>   parglm-LINPACK-2 118.3 126.4  123.9 140.2
-#>   parglm-LINPACK-3 112.1 117.7  115.6 134.9
-#>   parglm-LINPACK-4 105.7 109.5  108.9 116.9
-#>   parglm-LINPACK-5  92.1 107.6   98.4 194.2
-#>   parglm-LINPACK-6  85.5 106.3   95.2 185.4
-#>   parglm-LINPACK-7  77.5  93.7   85.4 141.0
-#>   parglm-LINPACK-8  70.9  76.0   73.4  96.8
-#>   parglm-LINPACK-9  67.3  76.4   70.2 133.9
-#>  parglm-LINPACK-10  66.8  78.1   71.4  97.2
-#>      parglm-FAST-1  38.4  41.4   39.5  51.5
-#>      parglm-FAST-2  34.1  37.9   36.3  46.7
-#>      parglm-FAST-3  33.0  36.1   35.3  40.7
-#>      parglm-FAST-4  32.6  37.2   35.8  45.3
-#>      parglm-FAST-5  31.1  34.8   35.2  40.6
-#>      parglm-FAST-6  30.7  34.0   32.1  41.1
-#>      parglm-FAST-7  30.6  33.5   31.5  41.1
-#>      parglm-FAST-8  30.7  36.3   31.5  48.6
-#>      parglm-FAST-9  30.4  47.0   31.8 181.0
-#>     parglm-FAST-10  30.0  32.6   32.2  39.0
-#>    parglm-LAPACK-1 142.0 156.2  155.1 183.3
-#>    parglm-LAPACK-2 118.1 128.1  122.5 158.4
-#>    parglm-LAPACK-3 111.0 119.1  113.5 168.5
-#>    parglm-LAPACK-4 106.2 112.9  108.9 145.7
-#>    parglm-LAPACK-5  92.1  95.2   93.3 104.1
-#>    parglm-LAPACK-6  84.9  93.3   88.0 140.6
-#>    parglm-LAPACK-7  76.9  81.9   80.3  94.0
-#>    parglm-LAPACK-8  72.2  87.3   80.5 134.7
-#>    parglm-LAPACK-9  67.6  77.1   75.5  93.9
-#>   parglm-LAPACK-10  65.5  70.9   67.1  82.1
+#>               expr  min mean median  max
+#>                glm  575  590    581  667
+#>           speedglm  428  446    433  526
+#>               glm2  586  612    588  692
+#>            fastglm  299  309    306  336
+#>     fastglm (LDLT)  153  158    154  200
+#>             bigglm 1143 1307   1306 1469
+#>   parglm-LINPACK-1  679  686    685  711
+#>   parglm-LINPACK-2  383  398    398  414
+#>   parglm-LINPACK-3  325  335    329  401
+#>   parglm-LINPACK-4  265  277    271  337
+#>   parglm-LINPACK-5  232  247    238  311
+#>   parglm-LINPACK-6  211  223    214  268
+#>   parglm-LINPACK-7  196  208    204  260
+#>   parglm-LINPACK-8  185  189    190  192
+#>   parglm-LINPACK-9  174  195    182  275
+#>  parglm-LINPACK-10  165  180    174  228
+#>  parglm-LINPACK-11  161  166    166  171
+#>  parglm-LINPACK-12  151  158    154  183
+#>  parglm-LINPACK-13  148  167    156  297
+#>  parglm-LINPACK-14  144  160    151  258
+#>  parglm-LINPACK-15  139  149    150  158
+#>  parglm-LINPACK-16  144  168    152  264
+#>  parglm-LINPACK-17  145  159    158  170
+#>  parglm-LINPACK-18  141  169    169  213
+#>  parglm-LINPACK-19  155  181    167  293
+#>  parglm-LINPACK-20  156  182    173  234
+#>  parglm-LINPACK-21  168  180    178  193
+#>  parglm-LINPACK-22  173  187    183  227
+#>  parglm-LINPACK-23  181  189    191  196
+#>  parglm-LINPACK-24  178  195    186  250
+#>      parglm-FAST-1  411  417    417  428
+#>      parglm-FAST-2  245  257    250  324
+#>      parglm-FAST-3  194  204    202  243
+#>      parglm-FAST-4  167  183    174  263
+#>      parglm-FAST-5  150  155    156  159
+#>      parglm-FAST-6  139  149    145  198
+#>      parglm-FAST-7  132  152    138  313
+#>      parglm-FAST-8  126  145    127  224
+#>      parglm-FAST-9  122  134    128  204
+#>     parglm-FAST-10  119  122    121  132
+#>     parglm-FAST-11  116  136    123  209
+#>     parglm-FAST-12  113  132    116  273
+#>     parglm-FAST-13  111  116    118  121
+#>     parglm-FAST-14  109  125    113  241
+#>     parglm-FAST-15  107  130    120  202
+#>     parglm-FAST-16  113  139    130  260
+#>     parglm-FAST-17  109  125    124  145
+#>     parglm-FAST-18  104  120    114  182
+#>     parglm-FAST-19  103  115    110  166
+#>     parglm-FAST-20  103  112    111  125
+#>     parglm-FAST-21  101  117    112  175
+#>     parglm-FAST-22  105  116    110  184
+#>     parglm-FAST-23  106  132    117  260
+#>     parglm-FAST-24  106  116    116  138
+#>    parglm-LAPACK-1  680  696    690  763
+#>    parglm-LAPACK-2  384  400    399  418
+#>    parglm-LAPACK-3  316  326    324  339
+#>    parglm-LAPACK-4  262  279    270  332
+#>    parglm-LAPACK-5  233  243    236  302
+#>    parglm-LAPACK-6  210  214    213  221
+#>    parglm-LAPACK-7  196  205    199  268
+#>    parglm-LAPACK-8  184  196    191  259
+#>    parglm-LAPACK-9  173  187    180  264
+#>   parglm-LAPACK-10  167  187    171  257
+#>   parglm-LAPACK-11  161  165    165  171
+#>   parglm-LAPACK-12  152  173    160  263
+#>   parglm-LAPACK-13  149  156    156  165
+#>   parglm-LAPACK-14  145  151    152  154
+#>   parglm-LAPACK-15  142  158    147  235
+#>   parglm-LAPACK-16  144  162    162  180
+#>   parglm-LAPACK-17  143  166    165  219
+#>   parglm-LAPACK-18  151  166    165  177
+#>   parglm-LAPACK-19  157  198    183  401
+#>   parglm-LAPACK-20  142  173    178  187
+#>   parglm-LAPACK-21  182  191    188  225
+#>   parglm-LAPACK-22  161  187    190  203
+#>   parglm-LAPACK-23  175  205    198  270
+#>   parglm-LAPACK-24  179  214    205  282
 ```
 
 <div class="figure" style="text-align: center">
@@ -356,42 +455,85 @@ invisible(run_and_plot(n = 100000L, p = 50L, n_threads = n_threads))
 
 ``` r
 invisible(run_and_plot(n = 10000L, p = 50L, n_threads = n_threads))
-#>               expr   min  mean median   max
-#>                glm 14.49 16.91  16.81 20.95
-#>           speedglm  7.49  8.44   8.16 10.24
-#>               glm2 15.13 17.49  17.13 23.40
-#>            fastglm 15.60 15.94  15.91 16.51
-#>             bigglm 52.76 55.02  53.81 62.90
-#>   parglm-LINPACK-1 16.06 16.40  16.17 17.28
-#>   parglm-LINPACK-2 11.27 11.93  11.96 12.71
-#>   parglm-LINPACK-3 10.16 10.68  10.69 11.38
-#>   parglm-LINPACK-4  9.48 10.11   9.95 12.15
-#>   parglm-LINPACK-5  9.13 16.36   9.95 81.65
-#>   parglm-LINPACK-6  9.08  9.40   9.31  9.85
-#>   parglm-LINPACK-7  8.47  8.90   8.79 10.34
-#>   parglm-LINPACK-8  8.32  9.03   9.02 10.32
-#>   parglm-LINPACK-9  8.42 13.84   8.71 62.77
-#>  parglm-LINPACK-10  8.38  8.65   8.50  9.20
-#>      parglm-FAST-1  4.58  5.02   4.88  5.93
-#>      parglm-FAST-2  4.12  4.55   4.42  5.41
-#>      parglm-FAST-3  4.01  4.40   4.28  5.62
-#>      parglm-FAST-4  4.00  4.50   4.51  5.01
-#>      parglm-FAST-5  4.18  4.57   4.52  5.15
-#>      parglm-FAST-6  3.98  4.39   4.30  5.12
-#>      parglm-FAST-7  4.15  4.51   4.44  5.05
-#>      parglm-FAST-8  4.02  4.54   4.35  5.34
-#>      parglm-FAST-9  4.06  4.68   4.54  5.60
-#>     parglm-FAST-10  4.06  4.44   4.38  5.80
-#>    parglm-LAPACK-1 15.39 16.80  16.39 19.64
-#>    parglm-LAPACK-2 11.58 13.12  12.00 21.14
-#>    parglm-LAPACK-3 10.02 11.46  10.73 14.80
-#>    parglm-LAPACK-4  9.05 10.07   9.93 11.52
-#>    parglm-LAPACK-5  9.48 10.12   9.83 13.03
-#>    parglm-LAPACK-6  8.92  9.82   9.48 12.23
-#>    parglm-LAPACK-7  8.26  9.41   8.97 13.35
-#>    parglm-LAPACK-8  8.10  9.30   8.56 14.05
-#>    parglm-LAPACK-9  7.89  8.32   8.24  9.09
-#>   parglm-LAPACK-10  7.87  8.46   8.32  9.74
+#>               expr  min  mean median   max
+#>                glm 59.1  73.3   63.0 185.1
+#>           speedglm 45.1  62.6   47.0 134.8
+#>               glm2 59.1  89.9   64.1 207.9
+#>            fastglm 24.4  26.8   24.9  34.7
+#>     fastglm (LDLT) 14.6  16.9   15.1  27.2
+#>             bigglm 93.2 103.5  103.7 109.6
+#>   parglm-LINPACK-1 67.3  71.1   69.4  86.6
+#>   parglm-LINPACK-2 39.5  44.0   42.2  51.3
+#>   parglm-LINPACK-3 35.4  38.0   38.2  40.4
+#>   parglm-LINPACK-4 28.9  32.3   31.5  39.1
+#>   parglm-LINPACK-5 25.5  27.5   27.7  29.4
+#>   parglm-LINPACK-6 25.4  26.7   26.6  28.6
+#>   parglm-LINPACK-7 23.4  25.4   24.7  32.7
+#>   parglm-LINPACK-8 22.6  25.8   24.7  34.0
+#>   parglm-LINPACK-9 22.3  26.1   26.0  30.7
+#>  parglm-LINPACK-10 22.3  31.8   26.3  69.6
+#>  parglm-LINPACK-11 21.0  24.3   24.3  27.2
+#>  parglm-LINPACK-12 20.7  24.4   22.9  39.2
+#>  parglm-LINPACK-13 20.6  22.6   22.4  25.7
+#>  parglm-LINPACK-14 20.8  22.5   22.7  23.3
+#>  parglm-LINPACK-15 21.9  24.2   23.1  37.7
+#>  parglm-LINPACK-16 20.4  23.7   22.5  31.2
+#>  parglm-LINPACK-17 22.1  23.8   23.8  27.2
+#>  parglm-LINPACK-18 21.7  23.3   23.4  24.9
+#>  parglm-LINPACK-19 21.8  24.3   24.3  26.0
+#>  parglm-LINPACK-20 21.9  32.0   23.3 106.5
+#>  parglm-LINPACK-21 19.9  23.6   24.0  25.6
+#>  parglm-LINPACK-22 21.2  23.4   23.7  24.1
+#>  parglm-LINPACK-23 21.1  25.1   24.3  34.8
+#>  parglm-LINPACK-24 21.4  23.3   23.5  24.4
+#>      parglm-FAST-1 43.3  45.3   44.9  47.9
+#>      parglm-FAST-2 26.5  43.4   29.2 161.0
+#>      parglm-FAST-3 22.0  25.4   24.3  36.0
+#>      parglm-FAST-4 18.9  24.6   21.2  49.2
+#>      parglm-FAST-5 17.8  19.6   19.3  22.8
+#>      parglm-FAST-6 16.7  18.6   18.7  21.0
+#>      parglm-FAST-7 15.9  20.2   18.7  32.8
+#>      parglm-FAST-8 16.8  18.5   18.3  22.3
+#>      parglm-FAST-9 16.4  17.5   17.6  18.5
+#>     parglm-FAST-10 16.1  17.9   17.1  24.5
+#>     parglm-FAST-11 15.3  20.7   19.6  39.6
+#>     parglm-FAST-12 15.3  19.2   17.8  31.5
+#>     parglm-FAST-13 13.9  18.3   16.6  35.3
+#>     parglm-FAST-14 15.1  16.5   16.5  17.4
+#>     parglm-FAST-15 15.4  16.7   16.8  17.5
+#>     parglm-FAST-16 14.7  15.9   15.7  17.0
+#>     parglm-FAST-17 15.0  18.0   16.9  32.0
+#>     parglm-FAST-18 14.9  18.7   16.6  30.7
+#>     parglm-FAST-19 13.7  16.4   16.3  19.0
+#>     parglm-FAST-20 13.6  15.8   16.3  17.7
+#>     parglm-FAST-21 15.2  17.2   16.6  26.6
+#>     parglm-FAST-22 15.5  16.9   16.4  21.7
+#>     parglm-FAST-23 14.2  16.2   15.8  23.1
+#>     parglm-FAST-24 14.8  16.4   15.1  27.1
+#>    parglm-LAPACK-1 68.1  71.0   69.3  78.5
+#>    parglm-LAPACK-2 40.9  42.7   43.1  44.4
+#>    parglm-LAPACK-3 34.9  37.5   37.3  41.4
+#>    parglm-LAPACK-4 30.5  34.0   31.8  53.3
+#>    parglm-LAPACK-5 26.8  28.3   28.5  29.2
+#>    parglm-LAPACK-6 24.4  39.5   26.7 161.2
+#>    parglm-LAPACK-7 23.9  25.2   25.3  26.7
+#>    parglm-LAPACK-8 23.8  26.3   25.0  36.7
+#>    parglm-LAPACK-9 22.5  24.5   24.1  27.0
+#>   parglm-LAPACK-10 21.8  27.0   25.2  36.2
+#>   parglm-LAPACK-11 21.6  28.7   25.4  65.5
+#>   parglm-LAPACK-12 21.6  24.5   23.7  33.0
+#>   parglm-LAPACK-13 21.4  22.9   23.1  24.6
+#>   parglm-LAPACK-14 21.6  23.3   23.9  25.2
+#>   parglm-LAPACK-15 22.5  23.8   24.0  25.7
+#>   parglm-LAPACK-16 22.4  35.9   23.6 160.0
+#>   parglm-LAPACK-17 23.0  25.3   24.9  29.2
+#>   parglm-LAPACK-18 23.1  24.6   24.3  25.7
+#>   parglm-LAPACK-19 22.1  25.3   24.3  30.3
+#>   parglm-LAPACK-20 23.5  41.5   25.1 195.9
+#>   parglm-LAPACK-21 22.9  25.2   25.4  26.8
+#>   parglm-LAPACK-22 23.8  27.3   25.8  43.9
+#>   parglm-LAPACK-23 24.8  25.7   25.5  26.8
+#>   parglm-LAPACK-24 25.2  27.4   28.0  31.3
 ```
 
 <div class="figure" style="text-align: center">
@@ -414,42 +556,85 @@ contrast `n = 100,000, p = 5` (where the overhead wins) with
 
 ``` r
 invisible(run_and_plot(n = 100000L, p = 5L, n_threads = n_threads))
-#>               expr  min mean median  max
-#>                glm 40.8 43.1   41.3 50.2
-#>           speedglm 30.0 31.4   30.4 37.3
-#>               glm2 42.8 46.4   44.4 54.4
-#>            fastglm 19.4 20.3   19.9 22.0
-#>             bigglm 78.4 82.7   80.7 91.0
-#>   parglm-LINPACK-1 25.6 27.0   26.2 30.7
-#>   parglm-LINPACK-2 20.5 21.9   21.1 24.9
-#>   parglm-LINPACK-3 18.7 20.6   19.2 34.3
-#>   parglm-LINPACK-4 17.9 23.2   18.1 71.9
-#>   parglm-LINPACK-5 17.9 19.8   18.3 35.0
-#>   parglm-LINPACK-6 17.7 18.3   18.2 19.7
-#>   parglm-LINPACK-7 17.4 17.9   17.7 19.1
-#>   parglm-LINPACK-8 17.1 22.1   17.5 67.8
-#>   parglm-LINPACK-9 17.1 18.5   17.7 22.0
-#>  parglm-LINPACK-10 17.4 18.3   17.7 21.4
-#>      parglm-FAST-1 23.5 24.7   24.1 30.9
-#>      parglm-FAST-2 19.0 19.4   19.4 19.9
-#>      parglm-FAST-3 17.5 18.5   17.8 23.0
-#>      parglm-FAST-4 16.9 18.4   17.4 23.4
-#>      parglm-FAST-5 17.2 18.9   17.7 27.5
-#>      parglm-FAST-6 17.0 17.9   17.3 23.9
-#>      parglm-FAST-7 16.7 17.2   17.0 18.4
-#>      parglm-FAST-8 16.4 17.8   16.8 23.0
-#>      parglm-FAST-9 16.6 17.3   16.9 18.8
-#>     parglm-FAST-10 16.5 18.0   16.8 27.2
-#>    parglm-LAPACK-1 25.6 26.2   25.9 29.0
-#>    parglm-LAPACK-2 20.7 24.3   21.2 53.7
-#>    parglm-LAPACK-3 18.6 20.2   19.0 27.2
-#>    parglm-LAPACK-4 17.9 19.4   18.2 27.1
-#>    parglm-LAPACK-5 18.0 19.3   18.4 22.7
-#>    parglm-LAPACK-6 17.7 19.8   18.2 26.1
-#>    parglm-LAPACK-7 17.2 21.8   17.7 61.8
-#>    parglm-LAPACK-8 17.2 17.8   17.6 19.4
-#>    parglm-LAPACK-9 17.1 17.9   17.5 19.0
-#>   parglm-LAPACK-10 17.0 17.9   17.4 19.6
+#>               expr   min  mean median   max
+#>                glm 127.8 135.5  138.7 144.3
+#>           speedglm 101.7 105.7  106.3 111.1
+#>               glm2 132.2 140.0  141.9 144.4
+#>            fastglm  82.7  97.6   86.4 213.0
+#>     fastglm (LDLT)  77.2  80.0   80.7  81.8
+#>             bigglm 173.7 260.1  209.1 506.1
+#>   parglm-LINPACK-1 132.0 135.9  135.1 150.3
+#>   parglm-LINPACK-2  94.1  95.7   95.6  97.4
+#>   parglm-LINPACK-3  81.5  85.4   85.7  91.1
+#>   parglm-LINPACK-4  74.2  77.2   77.1  79.7
+#>   parglm-LINPACK-5  70.6  74.6   74.6  77.5
+#>   parglm-LINPACK-6  69.3 111.6   74.0 306.9
+#>   parglm-LINPACK-7  68.4  71.8   70.9  75.4
+#>   parglm-LINPACK-8  66.3  71.0   71.5  75.6
+#>   parglm-LINPACK-9  64.4  71.7   70.8  80.9
+#>  parglm-LINPACK-10  70.9  74.5   73.4  84.9
+#>  parglm-LINPACK-11  69.3  74.5   75.3  78.5
+#>  parglm-LINPACK-12  65.3  69.2   69.3  74.2
+#>  parglm-LINPACK-13  63.6  72.9   70.4  87.6
+#>  parglm-LINPACK-14  61.5  66.2   65.9  74.3
+#>  parglm-LINPACK-15  61.0  65.5   65.2  68.6
+#>  parglm-LINPACK-16  60.8  65.1   64.7  72.7
+#>  parglm-LINPACK-17  61.1  63.8   64.3  66.1
+#>  parglm-LINPACK-18  59.9  61.9   60.7  64.6
+#>  parglm-LINPACK-19  60.3  63.8   64.5  66.7
+#>  parglm-LINPACK-20  59.9  63.3   63.8  64.6
+#>  parglm-LINPACK-21  57.9  62.7   62.5  66.3
+#>  parglm-LINPACK-22  59.6  62.1   63.0  64.3
+#>  parglm-LINPACK-23  59.3  63.6   63.8  71.0
+#>  parglm-LINPACK-24  59.7  63.1   63.5  67.0
+#>      parglm-FAST-1 128.8 131.8  131.9 134.0
+#>      parglm-FAST-2  90.4  93.3   94.4  95.9
+#>      parglm-FAST-3  79.8  82.1   82.8  84.5
+#>      parglm-FAST-4  73.5  75.5   76.0  77.5
+#>      parglm-FAST-5  70.2  72.8   73.2  74.9
+#>      parglm-FAST-6  67.5  71.2   71.3  77.3
+#>      parglm-FAST-7  65.7  69.0   68.3  77.1
+#>      parglm-FAST-8  64.2  84.1   71.7 215.1
+#>      parglm-FAST-9  64.2  70.9   69.9  78.3
+#>     parglm-FAST-10  63.7  71.7   70.0  87.0
+#>     parglm-FAST-11  61.5  96.9   65.2 391.7
+#>     parglm-FAST-12  61.8  80.4   67.2 195.2
+#>     parglm-FAST-13  61.4  69.5   65.8  85.0
+#>     parglm-FAST-14  61.6  66.1   66.0  72.4
+#>     parglm-FAST-15  60.5  64.5   63.8  69.5
+#>     parglm-FAST-16  60.3  62.6   63.1  65.9
+#>     parglm-FAST-17  60.0  73.6   62.9 190.5
+#>     parglm-FAST-18  59.1  75.5   63.3 193.8
+#>     parglm-FAST-19  60.4  62.7   62.8  64.6
+#>     parglm-FAST-20  57.8  61.8   62.5  64.3
+#>     parglm-FAST-21  59.3  81.1   62.8 268.4
+#>     parglm-FAST-22  59.5  73.1   62.3 185.8
+#>     parglm-FAST-23  56.6  62.0   62.2  64.1
+#>     parglm-FAST-24  58.8  61.4   61.7  63.8
+#>    parglm-LAPACK-1 132.4 158.7  135.7 269.7
+#>    parglm-LAPACK-2  93.3 107.9   95.9 230.2
+#>    parglm-LAPACK-3  83.0  97.9   86.0 222.6
+#>    parglm-LAPACK-4  75.5  78.6   78.9  79.7
+#>    parglm-LAPACK-5  70.9  74.1   74.1  78.5
+#>    parglm-LAPACK-6  69.2  83.9   72.5 204.0
+#>    parglm-LAPACK-7  68.1  71.8   71.7  75.5
+#>    parglm-LAPACK-8  65.5  71.8   71.2  81.4
+#>    parglm-LAPACK-9  66.1  73.1   70.4  83.9
+#>   parglm-LAPACK-10  67.4  73.6   73.5  82.4
+#>   parglm-LAPACK-11  67.2  97.6   72.8 310.1
+#>   parglm-LAPACK-12  66.5  70.6   68.6  75.2
+#>   parglm-LAPACK-13  65.5  81.6   68.9 213.4
+#>   parglm-LAPACK-14  61.4  78.8   68.6 195.2
+#>   parglm-LAPACK-15  60.9  65.2   64.9  71.8
+#>   parglm-LAPACK-16  61.7  65.5   65.0  70.0
+#>   parglm-LAPACK-17  60.6  64.6   64.8  67.8
+#>   parglm-LAPACK-18  59.1  63.3   64.5  66.6
+#>   parglm-LAPACK-19  58.9  74.8   64.8 189.3
+#>   parglm-LAPACK-20  59.6  62.5   63.1  65.4
+#>   parglm-LAPACK-21  60.2  64.0   64.2  68.3
+#>   parglm-LAPACK-22  59.3  74.1   62.8 194.8
+#>   parglm-LAPACK-23  57.8  61.2   60.2  67.2
+#>   parglm-LAPACK-24  59.5  63.0   63.4  64.9
 ```
 
 <div class="figure" style="text-align: center">
@@ -463,41 +648,84 @@ invisible(run_and_plot(n = 100000L, p = 5L, n_threads = n_threads))
 ``` r
 invisible(run_and_plot(n = 1000000L, p = 20L, n_threads = n_threads))
 #>               expr  min mean median  max
-#>                glm  962 1023    980 1265
-#>           speedglm  534  580    561  732
-#>               glm2 1008 1073   1036 1296
-#>            fastglm  546  605    595  759
-#>             bigglm 2490 2760   2717 3072
-#>   parglm-LINPACK-1  555  623    603  725
-#>   parglm-LINPACK-2  473  526    513  696
-#>   parglm-LINPACK-3  447  480    480  522
-#>   parglm-LINPACK-4  433  473    449  558
-#>   parglm-LINPACK-5  427  445    444  477
-#>   parglm-LINPACK-6  417  479    506  528
-#>   parglm-LINPACK-7  438  487    473  600
-#>   parglm-LINPACK-8  407  463    446  572
-#>   parglm-LINPACK-9  411  444    420  565
-#>  parglm-LINPACK-10  393  420    424  452
-#>      parglm-FAST-1  362  380    370  439
-#>      parglm-FAST-2  286  322    300  469
-#>      parglm-FAST-3  264  288    281  327
-#>      parglm-FAST-4  256  290    284  356
-#>      parglm-FAST-5  261  294    286  348
-#>      parglm-FAST-6  243  298    269  479
-#>      parglm-FAST-7  248  277    255  364
-#>      parglm-FAST-8  244  280    266  404
-#>      parglm-FAST-9  244  293    267  377
-#>     parglm-FAST-10  250  276    258  395
-#>    parglm-LAPACK-1  546  600    576  691
-#>    parglm-LAPACK-2  479  511    486  639
-#>    parglm-LAPACK-3  455  552    486 1015
-#>    parglm-LAPACK-4  438  494    477  611
-#>    parglm-LAPACK-5  426  498    496  576
-#>    parglm-LAPACK-6  421  488    452  569
-#>    parglm-LAPACK-7  412  435    434  468
-#>    parglm-LAPACK-8  412  435    425  466
-#>    parglm-LAPACK-9  404  451    424  611
-#>   parglm-LAPACK-10  415  460    444  582
+#>                glm 2456 2529   2534 2652
+#>           speedglm 1740 1828   1832 1911
+#>               glm2 2517 2630   2634 2729
+#>            fastglm 1674 1712   1685 1817
+#>     fastglm (LDLT)  987  998    990 1064
+#>             bigglm 5245 5686   5679 5930
+#>   parglm-LINPACK-1 2271 2338   2345 2385
+#>   parglm-LINPACK-2 1570 1629   1634 1673
+#>   parglm-LINPACK-3 1376 1444   1426 1528
+#>   parglm-LINPACK-4 1292 1365   1347 1534
+#>   parglm-LINPACK-5 1247 1302   1289 1381
+#>   parglm-LINPACK-6 1197 1261   1245 1347
+#>   parglm-LINPACK-7 1213 1279   1239 1582
+#>   parglm-LINPACK-8 1205 1254   1253 1310
+#>   parglm-LINPACK-9 1163 1245   1244 1326
+#>  parglm-LINPACK-10 1072 1144   1127 1304
+#>  parglm-LINPACK-11 1131 1197   1164 1304
+#>  parglm-LINPACK-12 1059 1128   1115 1204
+#>  parglm-LINPACK-13 1016 1158   1156 1485
+#>  parglm-LINPACK-14  992 1055   1040 1140
+#>  parglm-LINPACK-15  985 1046   1007 1139
+#>  parglm-LINPACK-16  987 1022   1000 1105
+#>  parglm-LINPACK-17  966 1032   1024 1110
+#>  parglm-LINPACK-18  949 1044   1030 1253
+#>  parglm-LINPACK-19  957 1022   1000 1260
+#>  parglm-LINPACK-20  948 1029    975 1283
+#>  parglm-LINPACK-21  946 1009    966 1217
+#>  parglm-LINPACK-22  944  997   1001 1072
+#>  parglm-LINPACK-23  938 1013    968 1190
+#>  parglm-LINPACK-24  938 1006   1009 1100
+#>      parglm-FAST-1 1851 1903   1868 1974
+#>      parglm-FAST-2 1248 1291   1275 1345
+#>      parglm-FAST-3 1064 1127   1101 1220
+#>      parglm-FAST-4  983 1033    995 1306
+#>      parglm-FAST-5  939  981    962 1049
+#>      parglm-FAST-6  916  968    970 1076
+#>      parglm-FAST-7  902  963    987 1031
+#>      parglm-FAST-8  889  974    964 1132
+#>      parglm-FAST-9  881  911    891  978
+#>     parglm-FAST-10  860  919    890 1069
+#>     parglm-FAST-11  869  955    942 1135
+#>     parglm-FAST-12  837  874    877  946
+#>     parglm-FAST-13  832  869    841  965
+#>     parglm-FAST-14  827  906    893 1235
+#>     parglm-FAST-15  811  884    843 1077
+#>     parglm-FAST-16  805  875    820 1085
+#>     parglm-FAST-17  803  865    850 1082
+#>     parglm-FAST-18  794  838    812  925
+#>     parglm-FAST-19  792  815    794  900
+#>     parglm-FAST-20  785  841    863  886
+#>     parglm-FAST-21  783  834    801  956
+#>     parglm-FAST-22  782  846    811 1049
+#>     parglm-FAST-23  778  823    830  877
+#>     parglm-FAST-24  780  861    845 1025
+#>    parglm-LAPACK-1 2276 2363   2314 2777
+#>    parglm-LAPACK-2 1574 1637   1604 1783
+#>    parglm-LAPACK-3 1384 1422   1419 1539
+#>    parglm-LAPACK-4 1288 1388   1359 1647
+#>    parglm-LAPACK-5 1245 1312   1313 1419
+#>    parglm-LAPACK-6 1175 1274   1234 1444
+#>    parglm-LAPACK-7 1209 1290   1218 1530
+#>    parglm-LAPACK-8 1153 1220   1199 1480
+#>    parglm-LAPACK-9 1184 1241   1230 1337
+#>   parglm-LAPACK-10 1107 1189   1170 1359
+#>   parglm-LAPACK-11 1095 1164   1169 1228
+#>   parglm-LAPACK-12 1071 1118   1104 1241
+#>   parglm-LAPACK-13 1054 1114   1096 1189
+#>   parglm-LAPACK-14 1007 1040   1037 1073
+#>   parglm-LAPACK-15  975 1045   1014 1160
+#>   parglm-LAPACK-16  980 1034   1012 1106
+#>   parglm-LAPACK-17  971 1030   1040 1093
+#>   parglm-LAPACK-18  950 1021   1016 1124
+#>   parglm-LAPACK-19  952  993    969 1087
+#>   parglm-LAPACK-20  942  994    978 1076
+#>   parglm-LAPACK-21  947 1006   1005 1112
+#>   parglm-LAPACK-22  945  991    998 1066
+#>   parglm-LAPACK-23  940 1001    997 1071
+#>   parglm-LAPACK-24  937 1015   1027 1122
 ```
 
 <div class="figure" style="text-align: center">
@@ -510,16 +738,17 @@ invisible(run_and_plot(n = 1000000L, p = 20L, n_threads = n_threads))
 
 ``` r
 sessionInfo()
-#> R version 4.6.0 (2026-04-24)
-#> Platform: aarch64-apple-darwin23
-#> Running under: macOS Tahoe 26.4.1
+#> R version 4.6.0 (2026-04-24 ucrt)
+#> Platform: x86_64-w64-mingw32/x64
+#> Running under: Windows 11 x64 (build 26200)
 #> 
 #> Matrix products: default
-#> BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib 
-#> LAPACK: /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+#>   LAPACK version 3.12.1
 #> 
 #> locale:
-#> [1] C.UTF-8/C.UTF-8/C.UTF-8/C/C.UTF-8/C.UTF-8
+#> [1] LC_COLLATE=English_United Kingdom.utf8  LC_CTYPE=English_United Kingdom.utf8   
+#> [3] LC_MONETARY=English_United Kingdom.utf8 LC_NUMERIC=C                           
+#> [5] LC_TIME=English_United Kingdom.utf8    
 #> 
 #> time zone: Europe/London
 #> tzcode source: internal
@@ -528,17 +757,14 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#>  [1] parglm_0.1.9         mgcv_1.9-4           nlme_3.1-169        
-#>  [4] glm2_1.2.1           fastglm_0.1.0        speedglm_0.3-5      
-#>  [7] biglm_0.9-3          DBI_1.3.0            MASS_7.3-65         
-#> [10] Matrix_1.7-5         microbenchmark_1.5.0
+#>  [1] mgcv_1.9-4           nlme_3.1-169         glm2_1.2.1           fastglm_0.1.0       
+#>  [5] speedglm_0.3-5       biglm_0.9-3          DBI_1.3.0            MASS_7.3-65         
+#>  [9] Matrix_1.7-5         microbenchmark_1.5.0 parglm_0.1.8.9000   
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.6           knitr_1.51          rlang_1.2.0        
-#>  [4] xfun_0.57           otel_0.2.0          zoo_1.8-15         
-#>  [7] bigmemory_4.6.4     grid_4.6.0          evaluate_1.0.5     
-#> [10] bigmemory.sri_0.1.8 compiler_4.6.0      codetools_0.2-20   
-#> [13] sandwich_3.1-1      Rcpp_1.1.1-1.1      lattice_0.22-9     
-#> [16] digest_0.6.39       parallel_4.6.0      splines_4.6.0      
-#> [19] uuid_1.2-2          tools_4.6.0
+#>  [1] cli_3.6.6           knitr_1.51          rlang_1.2.0         xfun_0.57          
+#>  [5] otel_0.2.0          bigmemory_4.6.4     grid_4.6.0          evaluate_1.0.5     
+#>  [9] bigmemory.sri_0.1.8 compiler_4.6.0      codetools_0.2-20    Rcpp_1.1.1-1.1     
+#> [13] rstudioapi_0.18.0   lattice_0.22-9      digest_0.6.39       parallel_4.6.0     
+#> [17] splines_4.6.0       uuid_1.2-2          tools_4.6.0         tictoc_1.2.1
 ```

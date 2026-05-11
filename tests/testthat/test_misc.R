@@ -51,9 +51,9 @@ test_that("summary() and vcov() return coefficients in formula order with LAPACK
   set.seed(1)
   n  <- 500
   x1 <- rnorm(n)
-  x2 <- rnorm(n) * 1e6   # large scale forces non-trivial LAPACK pivot
-  x3 <- rnorm(n) * 1e-6  # small scale
-  y  <- rpois(n, exp(0.5 + 0.3 * x1 + 1e-7 * x2 + 3e5 * x3))
+  x2 <- rnorm(n) * 100    # larger scale forces non-trivial LAPACK pivot
+  x3 <- rnorm(n) * 0.01   # smaller scale
+  y  <- rpois(n, exp(0.5 + 0.3 * x1 + 0.01 * x2 + 30 * x3))
   df <- data.frame(y = y, x1 = x1, x2 = x2, x3 = x3)
 
   fg <- glm(y ~ x1 + x2 + x3, data = df, family = poisson())

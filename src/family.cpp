@@ -252,7 +252,7 @@ double gaussian_log::mu_eta(double eta) const {
 
 double gaussian_log::initialize(double y, double weight) const {
   if(y <= 0)
-    Rcpp::stop("cannot find valid starting values: please specify some");
+    return 0.;  // log(1): neutral fallback; R-side warning already issued
   return linkfun(y);
 }
 
@@ -284,7 +284,7 @@ double gaussian_inverse::mu_eta(double eta) const {
 
 double gaussian_inverse::initialize(double y, double weight) const {
   if(y == 0)
-    Rcpp::stop("cannot find valid starting values: please specify some");
+    return 1.;  // 1/mu=1 -> mu=1: neutral fallback; R-side warning already issued
   return linkfun(y);
 }
 
@@ -420,7 +420,7 @@ double inverse_gaussian_1_mu_2::mu_eta(double eta) const {
 
 double inverse_gaussian_1_mu_2::initialize(double y, double weight) const {
   if(y <= 0.)
-    Rcpp::stop("positive values only are allowed for the 'inverse.gaussian' family");
+    return 1.;  // 1/mu^2=1 -> mu=1: neutral fallback; R-side warning already issued
   return linkfun(y);
 }
 
@@ -453,7 +453,7 @@ double inverse_gaussian_inverse::mu_eta(double eta) const {
 
 double inverse_gaussian_inverse::initialize(double y, double weight) const {
   if(y <= 0.)
-    Rcpp::stop("positive values only are allowed for the 'inverse.gaussian' family");
+    return 1.;  // 1/mu=1 -> mu=1: neutral fallback; R-side warning already issued
   return linkfun(y);
 }
 
@@ -486,7 +486,7 @@ double inverse_gaussian_identity::mu_eta(double eta) const {
 
 double inverse_gaussian_identity::initialize(double y, double weight) const {
   if(y <= 0.)
-    Rcpp::stop("positive values only are allowed for the 'inverse.gaussian' family");
+    return 1.;  // mu=1: neutral fallback; R-side warning already issued
   return linkfun(y);
 }
 
@@ -518,7 +518,7 @@ double inverse_gaussian_log::mu_eta(double eta) const {
 
 double inverse_gaussian_log::initialize(double y, double weight) const {
   if(y <= 0.)
-    Rcpp::stop("positive values only are allowed for the 'inverse.gaussian' family");
+    return 0.;  // log(1): neutral fallback; R-side warning already issued
   return linkfun(y);
 }
 
@@ -555,7 +555,7 @@ double Gamma_inverse::mu_eta(double eta) const {
 
 double Gamma_inverse::initialize(double y, double weight) const {
   if(y <= 0)
-    Rcpp::stop("non-positive values not allowed for the 'gamma' family");
+    return 1.;  // 1/mu=1 -> mu=1: neutral fallback; R-side warning already issued
   return linkfun(y);
 }
 
@@ -588,7 +588,7 @@ double Gamma_identity::mu_eta(double eta) const {
 
 double Gamma_identity::initialize(double y, double weight) const {
   if(y <= 0)
-    Rcpp::stop("non-positive values not allowed for the 'gamma' family");
+    return 1.;  // mu=1: neutral fallback; R-side warning already issued
   return linkfun(y);
 }
 
@@ -621,7 +621,7 @@ double Gamma_log::mu_eta(double eta) const {
 
 double Gamma_log::initialize(double y, double weight) const {
   if(y <= 0)
-    Rcpp::stop("non-positive values not allowed for the 'gamma' family");
+    return 0.;  // log(1): neutral fallback; R-side warning already issued
   return linkfun(y);
 }
 

@@ -148,7 +148,7 @@ parglm.control <- function(
 }
 
 #' @rdname parglm
-#' @importFrom stats gaussian binomial Gamma inverse.gaussian poisson quasipoisson quasibinomial
+#' @importFrom stats gaussian binomial Gamma inverse.gaussian poisson quasipoisson quasibinomial weighted.mean
 #' @export
 parglm.fit <- function(
   x, y, weights = rep(1, NROW(x)), start = NULL, etastart = NULL,
@@ -216,6 +216,29 @@ parglm.fit <- function(
   block_size <- max(block_size, NCOL(x))
 
   use_start <- !is.null(start)
+
+  # Families whose C++ initialize() requires strictly positive y. When any y
+  # is non-positive or non-finite, compute a safe starting beta from the valid
+  # observations and warn rather than stop, matching glm()/fastglm() behaviour.
+  if (!use_start) {
+    fam_key <- paste0(family$family, "_", family$link)
+    needs_pos_y <- fam_key %in% c(
+      "gaussian_log", "gaussian_inverse",
+      "Gamma_inverse", "Gamma_identity", "Gamma_log",
+      "inverse.gaussian_1/mu^2", "inverse.gaussian_inverse",
+      "inverse.gaussian_identity", "inverse.gaussian_log")
+    if (needs_pos_y && any(!is.finite(y) | y <= 0)) {
+      warning("cannot find valid starting values: using default starting value",
+              call. = FALSE)
+      y_ok <- is.finite(y) & y > 0
+      mu0  <- if (any(y_ok)) weighted.mean(y[y_ok], weights[y_ok]) else 1
+      eta0 <- family$linkfun(mu0)
+      start     <- rep(0, ncol(x))
+      start[1L] <- eta0
+      use_start <- TRUE
+    }
+  }
+
   fit <- parallelglm(
     X = x, Ys = y, family = paste0(family$family, "_", family$link),
     start = if(use_start) start else numeric(ncol(x)), weights = weights,

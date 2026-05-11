@@ -84,3 +84,21 @@ test_that("nthreads = 3L is used when set explicitly", {
            control = parglm.control(nthreads = 3L))
   )
 })
+
+test_that("parglm warns rather than errors when starting values cannot be found", {
+  # gaussian(log) requires y > 0; a zero in the response used to stop()
+  df <- data.frame(y = c(0, 1, 2, 3), x = 1:4)
+  expect_warning(
+    parglm(y ~ x, data = df, family = gaussian(link = "log"),
+           control = parglm.control(nthreads = 1L)),
+    regexp = "cannot find valid starting values"
+  )
+
+  # Gamma(log) requires y > 0; same check
+  df2 <- data.frame(y = c(0.0, 1.5, 2.0, 3.0), x = 1:4)
+  expect_warning(
+    parglm(y ~ x, data = df2, family = Gamma(link = "log"),
+           control = parglm.control(nthreads = 1L)),
+    regexp = "cannot find valid starting values"
+  )
+})

@@ -13,8 +13,14 @@ test_that("'dqrls_wrap' gives the same as `lm.fit`", {
   lm_res   <- lm.fit                  (X, y)
   wrap_res <- parglm:::dqrls_wrap_test(X, y, glm.control()$epsilon)
 
-  expect_equal(lm_res$qr$qr, wrap_res$qr)
-  expect_equal(lm_res$qr$qraux, drop(wrap_res$qraux))
+  # The Householder matrix (qr$qr) and qraux can differ between LAPACK
+  # implementations (e.g. Apple Accelerate on M3 vs M4) while producing
+  # equivalent factorizations. Check the R factor instead, which is unique.
+  wrap_qr <- structure(
+    list(qr = wrap_res$qr, qraux = drop(wrap_res$qraux),
+         pivot = as.integer(drop(wrap_res$pivot)), rank = wrap_res$rank),
+    class = "qr")
+  expect_equal(qr.R(lm_res$qr), qr.R(wrap_qr))
   expect_equal(lm_res$qr$rank, wrap_res$rank)
   expect_equal(lm_res$coefficients[lm_res$qr$pivot],
                drop(wrap_res$coefficients), check.attributes = FALSE)

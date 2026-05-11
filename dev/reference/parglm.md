@@ -142,6 +142,17 @@ Thus, there is likely little (if any) reduction in computation time if
 `p` is almost equal to `n`. The current implementation cannot handle
 `p > n`.
 
+Since `parglm` returns a standard
+[`glm`](https://rdrr.io/r/stats/glm.html) object, it is compatible with
+the sandwich package for heteroskedasticity-consistent (HC) and
+cluster-robust standard errors via
+[`vcovHC`](https://sandwich.R-Forge.R-project.org/reference/vcovHC.html)
+and
+[`vcovCL`](https://sandwich.R-Forge.R-project.org/reference/vcovCL.html).
+This requires `model = TRUE` (the default). See
+[`vignette("sandwich", "parglm")`](https://remlapmot.github.io/parglm/dev/articles/sandwich.md)
+for examples.
+
 ## Examples
 
 ``` r

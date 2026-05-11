@@ -20,6 +20,15 @@
 - Implement persistent thread pool
 - Replace linked-list task queue with deque under single mutex
 - Fuse X chunk copy and weight scaling into one memory pass
+- Support [`quasibinomial()`](https://rdrr.io/r/stats/family.html) and
+  [`quasipoisson()`](https://rdrr.io/r/stats/family.html) family
+  specification
+- Enable full compatibility with the sandwich package for robust
+  standard errors, including adding comments to the parglm helpfile, a
+  new vignette, and tests
+- Add fastglm’s `method = 3L` to the benchmarks in the parglm vignette
+- Allow for two column response for family binomial and quasibinomial
+- Fix issue with order in `summary.glm`
 
 ## parglm 0.1.8
 

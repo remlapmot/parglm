@@ -27,6 +27,10 @@ See "vignette("parglm", "parglm")" for run time examples.'><meta name="robots" c
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/parglm.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/sandwich.html">Robust standard errors with parglm and the sandwich package</a></li>
+  </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -187,6 +191,11 @@ the list
 returned by <code><a href="parglm.control.html">parglm.control</a></code>. Thus, there is likely little (if
 any) reduction in computation time if <code>p</code> is almost equal to <code>n</code>.
 The current implementation cannot handle <code>p &gt; n</code>.</p>
+<p>Since <code>parglm</code> returns a standard <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></code> object, it is
+compatible with the <span class="pkg">sandwich</span> package for heteroskedasticity-consistent
+(HC) and cluster-robust standard errors via <code><a href="https://sandwich.R-Forge.R-project.org/reference/vcovHC.html" class="external-link">vcovHC</a></code>
+and <code><a href="https://sandwich.R-Forge.R-project.org/reference/vcovCL.html" class="external-link">vcovCL</a></code>. This requires <code>model = TRUE</code>
+(the default). See <code><a href="../articles/sandwich.html">vignette("sandwich", "parglm")</a></code> for examples.</p>
     </div>
 
     <div class="section level2">

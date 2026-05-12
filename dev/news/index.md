@@ -2,16 +2,16 @@
 
 ## parglm (development version)
 
-- Add biglm, fastglm, glm2, and mgcv to the timing comparison in the
-  vignette. And add some timings for fewer observations and fewer
-  coefficients.
+- Add **biglm**, **fastglm**, **glm2**, and **mgcv** to the timing
+  comparison in the vignette. And add some timings for fewer
+  observations and fewer coefficients.
 - Bump roxygen2 to 8.0.0
-- Remove busy-wait polling in qr_parallel::get_stacks_res
-- Return eta and mu from parallelglm to skip R-side recomputation
+- Remove busy-wait polling in `qr_parallel::get_stacks_res`
+- Return `eta` and `mu` from `parallelglm` to skip R-side recomputation
 - Sum only upper triangle of per-chunk Fisher information in FAST path
-- Drop const from R_F members to enable move semantics
+- Drop `const` from `R_F` members to enable move semantics
 - Hoist NA-zeroing of beta out of per-chunk workers
-- Use thread_local index for thread_pool::get_id
+- Use thread_local index for `thread_pool::get_id`
 - Skip intermediate matrix when reverse-pivoting R
 - Cache parglm_supported keys to avoid rebuilding family objects per fit
 - Change the default of `parglm.control(nthreads)` to be
@@ -80,6 +80,6 @@ CRAN release: 2019-03-14
 CRAN release: 2019-01-19
 
 - A `FAST` method is added which computes the Fisher information and
-  then solves the normal equation as in `speedglm`.
+  then solves the normal equation as in **speedglm**.
 - One change which decreased the computation time.
 - Minor bug fixes.

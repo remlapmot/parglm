@@ -15,15 +15,15 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/remlapmot/parglm/blob/0.1.8/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/remlapmot/parglm/blob/master/DESCRIPTION)
 
 Christoffersen B, Palmer T (2026). *parglm: Parallel GLM*. R package
-version 0.1.8, <https://github.com/remlapmot/parglm>.
+version 0.1.9, <https://github.com/remlapmot/parglm>.
 
     @Manual{,
       title = {parglm: Parallel GLM},
       author = {Benjamin Christoffersen and Tom Palmer},
       year = {2026},
-      note = {R package version 0.1.8},
+      note = {R package version 0.1.9},
       url = {https://github.com/remlapmot/parglm},
     }

@@ -1,5 +1,45 @@
 # Changelog
 
+## parglm 0.1.9
+
+CRAN release: 2026-05-12
+
+- Add **biglm**, **fastglm**, **glm2**, and **mgcv** to the timing
+  comparison in the parglm.Rmd vignette. And add some timings for fewer
+  observations and fewer coefficients.
+- Bump roxygen2 to 8.0.0
+- Remove busy-wait polling in `qr_parallel::get_stacks_res`
+- Return `eta` and `mu` from `parallelglm` to skip R-side recomputation
+- Sum only upper triangle of per-chunk Fisher information in FAST path
+- Drop `const` from `R_F` members to enable move semantics
+- Hoist NA-zeroing of beta out of per-chunk workers
+- Use thread_local index for `thread_pool::get_id`
+- Skip intermediate matrix when reverse-pivoting R
+- Cache parglm_supported keys to avoid rebuilding family objects per fit
+- Change the default of `parglm.control(nthreads)` to be
+  `parallelly::availableCores(omit = 1L)` to make better use of
+  available cores
+- Replace linked-list task queue with deque under single mutex
+- Fuse X chunk copy and weight scaling into one memory pass
+- Support [`quasibinomial()`](https://rdrr.io/r/stats/family.html) and
+  [`quasipoisson()`](https://rdrr.io/r/stats/family.html) family
+  specification
+- Enable full compatibility with the sandwich package for robust
+  standard errors, including adding comments to the parglm helpfile, a
+  new vignette, and tests
+- Add **fastglm**’s `method = 3L`, and **parglm**’s
+  `parglm.control(method = "LAPACK")` to the benchmarks in the
+  parglm.Rmd vignette
+- Allow for two column response for family binomial and quasibinomial
+- Fix issue with order in `summary.parglm` and `vcov.parglm`
+- Warn rather than error when starting values cannot be found
+- Add `confint.parglm` to fix profile and Wald CI compatibility, and to
+  give compatibility with the **gtsummary** package (e.g.,
+  [`gtsummary::tbl_regression()`](https://www.danieldsjoberg.com/gtsummary/reference/tbl_regression.html))
+- Add `tidy_parglm_robust` for tidying a parglm model with robust
+  standard errors
+- Add **gtsummary** examples to the second vignette
+
 ## parglm 0.1.8
 
 CRAN release: 2026-04-21
@@ -50,6 +90,6 @@ CRAN release: 2019-03-14
 CRAN release: 2019-01-19
 
 - A `FAST` method is added which computes the Fisher information and
-  then solves the normal equation as in `speedglm`.
+  then solves the normal equation as in **speedglm**.
 - One change which decreased the computation time.
 - Minor bug fixes.

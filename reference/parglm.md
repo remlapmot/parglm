@@ -3,7 +3,8 @@
 Function like [`glm`](https://rdrr.io/r/stats/glm.html) which can make
 the computation in parallel. The function supports most families listed
 in [`family`](https://rdrr.io/r/stats/family.html). See
-"`vignette("parglm", "parglm")`" for run time examples.
+"[`vignette("parglm", "parglm")`](https://remlapmot.github.io/parglm/articles/parglm.md)"
+for run time examples.
 
 ## Usage
 
@@ -133,13 +134,24 @@ decomposition.
 ## Details
 
 The current implementation uses `min(as.integer(n / p), nthreads)`
-threads where `n` is the number observations, `p` is the number of
+threads where `n` is the number of observations, `p` is the number of
 covariates, and `nthreads` is the `nthreads` element of the list
 returned by
 [`parglm.control`](https://remlapmot.github.io/parglm/reference/parglm.control.md).
 Thus, there is likely little (if any) reduction in computation time if
 `p` is almost equal to `n`. The current implementation cannot handle
 `p > n`.
+
+Since `parglm` returns a standard
+[`glm`](https://rdrr.io/r/stats/glm.html) object, it is compatible with
+the sandwich package for heteroskedasticity-consistent (HC) and
+cluster-robust standard errors via
+[`vcovHC`](https://sandwich.R-Forge.R-project.org/reference/vcovHC.html)
+and
+[`vcovCL`](https://sandwich.R-Forge.R-project.org/reference/vcovCL.html).
+This requires `model = TRUE` (the default). See
+[`vignette("sandwich", "parglm")`](https://remlapmot.github.io/parglm/articles/sandwich.md)
+for examples.
 
 ## Examples
 

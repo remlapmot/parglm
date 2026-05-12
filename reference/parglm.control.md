@@ -11,9 +11,10 @@ parglm.control(
   epsilon = 1e-08,
   maxit = 25,
   trace = FALSE,
-  nthreads = 1L,
+  nthreads = parallelly::availableCores(omit = 1L),
   block_size = NULL,
-  method = "LINPACK"
+  method = "LINPACK",
+  nthreads_auto = missing(nthreads)
 )
 ```
 
@@ -33,20 +34,25 @@ parglm.control(
 
 - nthreads:
 
-  number of cores to use. You may get the best performance by using your
-  number of physical cores if your data set is sufficiently large. Using
-  the number of physical CPUs/cores may yield the best performance
-  (check your number e.g., by calling
-  `parallel::detectCores(logical = FALSE)`).
+  number of cores to use. Defaults to
+  `parallelly::availableCores(omit = 1L)`, which leaves one core free.
+  You may get the best performance by using all available physical cores
+  if your data set is sufficiently large.
 
 - block_size:
 
-  number of observation to include in each parallel block.
+  number of observations to include in each parallel block.
 
 - method:
 
   string specifying which method to use. Either `"LINPACK"`, `"LAPACK"`,
   or `"FAST"`.
+
+- nthreads_auto:
+
+  logical; for internal use only. Records whether `nthreads` was
+  auto-detected (suppresses the thread-reduction warning when the
+  dataset is small). Do not set this argument directly.
 
 ## Value
 

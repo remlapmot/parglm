@@ -20,6 +20,7 @@
 * Fix issue with order in `summary.parglm` and `vcov.parglm`
 * Warn rather than error when starting values cannot be found
 * Add `confint.parglm` to fix profile and Wald CI compatibility, and to give compatibility with the **gtsummary** package (e.g., `gtsummary::tbl_regression()`)
+* Add `tidy_parglm_robust` for tidying a parglm model with robust standard errors
 
 # parglm 0.1.8
 

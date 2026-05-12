@@ -21,6 +21,8 @@ Imports:
     Rcpp
 Suggests:
     biglm,
+    broom,
+    broom.helpers,
     fastglm,
     glm2,
     gtsummary,

@@ -85,6 +85,48 @@ test_that("nthreads = 3L is used when set explicitly", {
   )
 })
 
+test_that("tbl_regression works for Gaussian, log-link, and logistic parglm models", {
+  skip_if_not_installed("gtsummary")
+  skip_if_not_installed("broom")
+  skip_if_not_installed("broom.helpers")
+
+  ctrl <- parglm.control(nthreads = 1L)
+
+  # Gaussian (identity link)
+  fp_gauss <- parglm(mpg ~ wt + hp, data = mtcars, control = ctrl)
+  expect_no_error(t_gauss <- suppressWarnings(gtsummary::tbl_regression(fp_gauss)))
+  expect_equal(nrow(t_gauss$table_body), 2L)
+
+  # Poisson with log link, exponentiate = TRUE (rate ratios)
+  set.seed(1)
+  df_pois <- data.frame(y = rpois(200, 3), x = rnorm(200))
+  fp_pois <- parglm(y ~ x, data = df_pois, family = poisson(link = "log"),
+                   control = ctrl)
+  expect_no_error(
+    t_pois <- suppressWarnings(gtsummary::tbl_regression(fp_pois, exponentiate = TRUE))
+  )
+  expect_true(all(t_pois$table_body$estimate > 0, na.rm = TRUE))
+
+  # Logistic regression (binomial, logit link), exponentiate = TRUE (odds ratios)
+  df_bin <- data.frame(y = rbinom(200, 1, 0.4), x = rnorm(200))
+  fp_bin <- parglm(y ~ x, data = df_bin, family = binomial(),
+                   control = ctrl)
+  expect_no_error(
+    t_bin <- suppressWarnings(gtsummary::tbl_regression(fp_bin, exponentiate = TRUE))
+  )
+  expect_true(all(t_bin$table_body$estimate > 0, na.rm = TRUE))
+
+  # Binomial with log link, exponentiate = TRUE (risk ratios)
+  fp_bin_log <- parglm(y ~ x, data = df_bin, family = binomial(link = "log"),
+                       control = ctrl)
+  expect_no_error(
+    t_bin_log <- suppressWarnings(
+      gtsummary::tbl_regression(fp_bin_log, exponentiate = TRUE)
+    )
+  )
+  expect_true(all(t_bin_log$table_body$estimate > 0, na.rm = TRUE))
+})
+
 test_that("tidy_parglm_robust returns correct structure and matches coeftest", {
   skip_if_not_installed("sandwich")
   skip_if_not_installed("lmtest")
@@ -124,6 +166,8 @@ test_that("tidy_parglm_robust works as tidy_fun in tbl_regression", {
   skip_if_not_installed("sandwich")
   skip_if_not_installed("lmtest")
   skip_if_not_installed("gtsummary")
+  skip_if_not_installed("broom")
+  skip_if_not_installed("broom.helpers")
 
   fp <- parglm(mpg ~ wt + hp, data = mtcars,
                control = parglm.control(nthreads = 1L))

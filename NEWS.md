@@ -1,4 +1,4 @@
-# parglm (development version)
+# parglm 0.1.9
 
 * Add **biglm**, **fastglm**, **glm2**, and **mgcv** to the timing comparison in the parglm.Rmd vignette. And add some timings for fewer observations and fewer coefficients.
 * Bump roxygen2 to 8.0.0

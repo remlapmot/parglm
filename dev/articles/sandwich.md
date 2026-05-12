@@ -38,7 +38,7 @@ dat        <- data.frame(y = y, x1 = x1, x2 = x2, cluster = cluster_id)
 ``` r
 
 fit <- parglm(y ~ x1 + x2, data = dat, family = poisson(),
-              control = parglm.control(nthreads = 2L))
+              control = parglm.control(nthreads = 1L))
 ```
 
 ## Standard errors

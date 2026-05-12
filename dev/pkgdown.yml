@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   parglm: parglm.html
   sandwich: sandwich.html
-last_built: 2026-05-11T20:34Z
+last_built: 2026-05-12T05:40Z
 urls:
   reference: https://remlapmot.github.io/parglm/reference
   article: https://remlapmot.github.io/parglm/articles

@@ -399,7 +399,7 @@ public:
     arma::uword i, rank = 0L;
     double dev = 0.;
     std::unique_ptr<R_F> R_f_out;
-    thread_pool &th_pool = get_persistent_pool(data.max_threads);
+    thread_pool th_pool(data.max_threads);
     qr_parallel pool(std::vector<std::unique_ptr<qr_data_generator>>(),
                      th_pool);
     for(i = 0; i < it_max; ++i){

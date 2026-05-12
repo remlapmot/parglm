@@ -11,7 +11,6 @@
 * Skip intermediate matrix when reverse-pivoting R
 * Cache parglm_supported keys to avoid rebuilding family objects per fit
 * Change the default of `parglm.control(nthreads)` to be `parallelly::availableCores(omit = 1L)` to make better use of available cores
-* Implement persistent thread pool
 * Replace linked-list task queue with deque under single mutex
 * Fuse X chunk copy and weight scaling into one memory pass
 * Support `quasibinomial()` and `quasipoisson()` family specification

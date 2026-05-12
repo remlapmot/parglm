@@ -8,7 +8,11 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>",
+  eval = requireNamespace("sandwich", quietly = TRUE) &&
+         requireNamespace("lmtest",   quietly = TRUE)
+)
 ```
 
 Since `parglm()` returns a standard `glm` object, it works directly with the

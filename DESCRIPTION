@@ -23,6 +23,7 @@ Suggests:
     biglm,
     fastglm,
     glm2,
+    gtsummary,
     knitr,
     lmtest,
     microbenchmark,

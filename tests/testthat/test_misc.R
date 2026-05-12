@@ -85,6 +85,63 @@ test_that("nthreads = 3L is used when set explicitly", {
   )
 })
 
+test_that("tidy_parglm_robust returns correct structure and matches coeftest", {
+  skip_if_not_installed("sandwich")
+  skip_if_not_installed("lmtest")
+
+  fp <- parglm(mpg ~ wt + hp, data = mtcars,
+               control = parglm.control(nthreads = 1L))
+
+  res <- tidy_parglm_robust(fp)
+  expect_s3_class(res, "data.frame")
+  expect_named(res, c("term", "estimate", "std.error", "statistic", "p.value",
+                      "conf.low", "conf.high"))
+  expect_equal(res$term, c("(Intercept)", "wt", "hp"))
+
+  # estimates match coef()
+  expect_equal(res$estimate, unname(coef(fp)))
+
+  # std.error matches coeftest output
+  ct <- lmtest::coeftest(fp, vcov. = sandwich::vcovHC(fp, type = "HC3"))
+  expect_equal(res$std.error, unname(ct[, "Std. Error"]))
+
+  # conf.int = FALSE omits CI columns
+  res_no_ci <- tidy_parglm_robust(fp, conf.int = FALSE)
+  expect_false("conf.low" %in% names(res_no_ci))
+
+  # vcov. as a function
+  res_fn <- tidy_parglm_robust(fp, vcov. = function(m) sandwich::vcovHC(m, type = "HC3"))
+  expect_equal(res$std.error, res_fn$std.error)
+
+  # exponentiate flips estimates and CIs
+  res_exp <- tidy_parglm_robust(fp, exponentiate = TRUE)
+  expect_equal(res_exp$estimate, exp(res$estimate))
+  expect_equal(res_exp$conf.low,  exp(res$conf.low))
+  expect_equal(res_exp$conf.high, exp(res$conf.high))
+})
+
+test_that("tidy_parglm_robust works as tidy_fun in tbl_regression", {
+  skip_if_not_installed("sandwich")
+  skip_if_not_installed("lmtest")
+  skip_if_not_installed("gtsummary")
+
+  fp <- parglm(mpg ~ wt + hp, data = mtcars,
+               control = parglm.control(nthreads = 1L))
+  expect_no_error(
+    gtsummary::tbl_regression(fp, tidy_fun = tidy_parglm_robust)
+  )
+
+  # logistic with exponentiate
+  set.seed(1)
+  df <- data.frame(y = rbinom(200, 1, 0.5), x = rnorm(200))
+  fp_b <- parglm(y ~ x, data = df, family = binomial(),
+                 control = parglm.control(nthreads = 1L))
+  expect_no_error(
+    gtsummary::tbl_regression(fp_b, exponentiate = TRUE,
+                              tidy_fun = tidy_parglm_robust)
+  )
+})
+
 test_that("parglm warns rather than errors when starting values cannot be found", {
   # gaussian(log) requires y > 0; a zero in the response used to stop()
   df <- data.frame(y = c(0, 1, 2, 3), x = 1:4)

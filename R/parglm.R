@@ -388,6 +388,13 @@ parglm_supported <- function()
   }
 })
 
+#' @export
+confint.parglm <- function(object, parm, level = 0.95, ...) {
+  keep <- intersect(names(object$control), c("epsilon", "maxit", "trace"))
+  object$control <- object$control[keep]
+  NextMethod()
+}
+
 #' @importFrom Matrix qr.R
 #' @export
 qr.R.parglmqr <- function(x, ...){

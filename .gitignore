@@ -26,3 +26,5 @@ docs/
 
 .Rapp.history
 .positai
+
+vignettes/*.html

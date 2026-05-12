@@ -92,6 +92,11 @@ vcovHC(fit, type = "HC3")
 vcovCL(fit, cluster = ~cluster)
 ```
 
+### Note
+
+`model = TRUE` (the default in `parglm`) must be set so that the model frame
+is stored, allowing `sandwich` to reconstruct the design matrix internally.
+
 ## Regression tables with gtsummary
 
 The [`gtsummary`](https://cran.r-project.org/package=gtsummary) package
@@ -134,8 +139,3 @@ earlier.
 ```{r gtsummary-robust, eval = requireNamespace("gtsummary", quietly = TRUE) && requireNamespace("broom", quietly = TRUE) && requireNamespace("broom.helpers", quietly = TRUE)}
 tbl_regression(fit, tidy_fun = tidy_parglm_robust)
 ```
-
-## Note
-
-`model = TRUE` (the default in `parglm`) must be set so that the model frame
-is stored, allowing `sandwich` to reconstruct the design matrix internally.

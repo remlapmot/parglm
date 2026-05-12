@@ -1,8 +1,8 @@
 ---
-title: "Robust standard errors with parglm and the sandwich package"
+title: "Robust standard errors with parglm and the sandwich package and regression tables with gtsummary"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Robust standard errors with parglm and the sandwich package}
+  %\VignetteIndexEntry{Robust standard errors with parglm and the sandwich package and regression tables with gtsummary}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -90,6 +90,49 @@ The covariance matrices themselves are also available:
 ```{r vcov}
 vcovHC(fit, type = "HC3")
 vcovCL(fit, cluster = ~cluster)
+```
+
+## Regression tables with gtsummary
+
+The [`gtsummary`](https://cran.r-project.org/package=gtsummary) package
+produces publication-ready regression tables from model objects.
+`parglm()` models are supported directly because they inherit from `glm`.
+
+```{r gtsummary-setup, eval = requireNamespace("gtsummary", quietly = TRUE) && requireNamespace("broom", quietly = TRUE) && requireNamespace("broom.helpers", quietly = TRUE), message = FALSE}
+library(gtsummary)
+```
+
+### Logistic regression
+
+We fit a logistic regression model with `parglm()` and pass it to
+`tbl_regression()`. Setting `exponentiate = TRUE` displays odds ratios with
+their confidence intervals.
+
+```{r gtsummary-logistic, eval = requireNamespace("gtsummary", quietly = TRUE) && requireNamespace("broom", quietly = TRUE) && requireNamespace("broom.helpers", quietly = TRUE)}
+set.seed(2)
+n2    <- 300
+x1_b  <- rnorm(n2)
+x2_b  <- rnorm(n2)
+y_bin <- rbinom(n2, 1, plogis(0.4 + 0.6 * x1_b - 0.4 * x2_b))
+dat_b <- data.frame(y = y_bin, x1 = x1_b, x2 = x2_b)
+
+fit_logistic <- parglm(y ~ x1 + x2, data = dat_b, family = binomial(),
+                       control = parglm.control(nthreads = 1L))
+
+suppressWarnings(
+  tbl_regression(fit_logistic, exponentiate = TRUE)
+)
+```
+
+### Robust standard errors in a gtsummary table
+
+`tidy_parglm_robust()` is a drop-in `tidy_fun` for `tbl_regression()` that
+replaces the default model-based standard errors with sandwich estimates.
+Here we use cluster-robust standard errors for the Poisson model fitted
+earlier.
+
+```{r gtsummary-robust, eval = requireNamespace("gtsummary", quietly = TRUE) && requireNamespace("broom", quietly = TRUE) && requireNamespace("broom.helpers", quietly = TRUE)}
+tbl_regression(fit, tidy_fun = tidy_parglm_robust)
 ```
 
 ## Note

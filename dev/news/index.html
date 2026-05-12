@@ -52,7 +52,7 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="parglm-development-version">parglm (development version)<a class="anchor" aria-label="anchor" href="#parglm-development-version"></a></h2>
-<ul><li>Add <strong>biglm</strong>, <strong>fastglm</strong>, <strong>glm2</strong>, and <strong>mgcv</strong> to the timing comparison in the vignette. And add some timings for fewer observations and fewer coefficients.</li>
+<ul><li>Add <strong>biglm</strong>, <strong>fastglm</strong>, <strong>glm2</strong>, and <strong>mgcv</strong> to the timing comparison in the parglm.Rmd vignette. And add some timings for fewer observations and fewer coefficients.</li>
 <li>Bump roxygen2 to 8.0.0</li>
 <li>Remove busy-wait polling in <code>qr_parallel::get_stacks_res</code>
 </li>
@@ -69,9 +69,9 @@
 <li>Fuse X chunk copy and weight scaling into one memory pass</li>
 <li>Support <code><a href="https://rdrr.io/r/stats/family.html" class="external-link">quasibinomial()</a></code> and <code><a href="https://rdrr.io/r/stats/family.html" class="external-link">quasipoisson()</a></code> family specification</li>
 <li>Enable full compatibility with the sandwich package for robust standard errors, including adding comments to the parglm helpfile, a new vignette, and tests</li>
-<li>Add fastglm’s <code>method = 3L</code> to the benchmarks in the parglm vignette</li>
+<li>Add <strong>fastglm</strong>’s <code>method = 3L</code>, and <strong>parglm</strong>’s <code>parglm.control(method = "LAPACK")</code> to the benchmarks in the parglm.Rmd vignette</li>
 <li>Allow for two column response for family binomial and quasibinomial</li>
-<li>Fix issue with order in <code>summary.glm</code>
+<li>Fix issue with order in <code>summary.parglm</code> and <code>vcov.parglm</code>
 </li>
 <li>Warn rather than error when starting values cannot be found</li>
 </ul></div>

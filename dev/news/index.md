@@ -3,7 +3,7 @@
 ## parglm (development version)
 
 - Add **biglm**, **fastglm**, **glm2**, and **mgcv** to the timing
-  comparison in the vignette. And add some timings for fewer
+  comparison in the parglm.Rmd vignette. And add some timings for fewer
   observations and fewer coefficients.
 - Bump roxygen2 to 8.0.0
 - Remove busy-wait polling in `qr_parallel::get_stacks_res`
@@ -25,9 +25,11 @@
 - Enable full compatibility with the sandwich package for robust
   standard errors, including adding comments to the parglm helpfile, a
   new vignette, and tests
-- Add fastglm’s `method = 3L` to the benchmarks in the parglm vignette
+- Add **fastglm**’s `method = 3L`, and **parglm**’s
+  `parglm.control(method = "LAPACK")` to the benchmarks in the
+  parglm.Rmd vignette
 - Allow for two column response for family binomial and quasibinomial
-- Fix issue with order in `summary.glm`
+- Fix issue with order in `summary.parglm` and `vcov.parglm`
 - Warn rather than error when starting values cannot be found
 
 ## parglm 0.1.8

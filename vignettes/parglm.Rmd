@@ -55,26 +55,10 @@ df <- data.frame(y = 1/(1 + exp(-(rowSums(X) - 1))) > runif(n), X)
 # compute and measure time. Setup call to make
 library(microbenchmark)
 library(speedglm)
-#> Loading required package: Matrix
-#> Loading required package: MASS
-#> Loading required package: biglm
-#> Loading required package: DBI
 library(fastglm)
 library(glm2)
-#> 
-#> Attaching package: 'glm2'
-#> The following object is masked from 'package:MASS':
-#> 
-#>     crabs
 library(biglm)
 library(mgcv)
-#> Loading required package: nlme
-#> This is mgcv 1.9-4. For overview type '?mgcv'.
-#> 
-#> Attaching package: 'mgcv'
-#> The following object is masked from 'package:fastglm':
-#> 
-#>     negbin
 library(parglm)
 X_mat <- model.matrix(y ~ ., df)
 biglm_form <- reformulate(names(df)[-1], response = "y")
@@ -121,6 +105,13 @@ cl # the call we make
 #>     `parglm-LINPACK-5` = tfunc(nthreads = 5L), `parglm-LINPACK-6` = tfunc(nthreads = 6L), 
 #>     `parglm-LINPACK-7` = tfunc(nthreads = 7L), `parglm-LINPACK-8` = tfunc(nthreads = 8L), 
 #>     `parglm-LINPACK-9` = tfunc(nthreads = 9L), `parglm-LINPACK-10` = tfunc(nthreads = 10L), 
+#>     `parglm-LINPACK-11` = tfunc(nthreads = 11L), `parglm-LINPACK-12` = tfunc(nthreads = 12L), 
+#>     `parglm-LINPACK-13` = tfunc(nthreads = 13L), `parglm-LINPACK-14` = tfunc(nthreads = 14L), 
+#>     `parglm-LINPACK-15` = tfunc(nthreads = 15L), `parglm-LINPACK-16` = tfunc(nthreads = 16L), 
+#>     `parglm-LINPACK-17` = tfunc(nthreads = 17L), `parglm-LINPACK-18` = tfunc(nthreads = 18L), 
+#>     `parglm-LINPACK-19` = tfunc(nthreads = 19L), `parglm-LINPACK-20` = tfunc(nthreads = 20L), 
+#>     `parglm-LINPACK-21` = tfunc(nthreads = 21L), `parglm-LINPACK-22` = tfunc(nthreads = 22L), 
+#>     `parglm-LINPACK-23` = tfunc(nthreads = 23L), `parglm-LINPACK-24` = tfunc(nthreads = 24L), 
 #>     `parglm-FAST-1` = tfunc(nthreads = 1L, method = "FAST"), 
 #>     `parglm-FAST-2` = tfunc(nthreads = 2L, method = "FAST"), 
 #>     `parglm-FAST-3` = tfunc(nthreads = 3L, method = "FAST"), 
@@ -131,6 +122,20 @@ cl # the call we make
 #>     `parglm-FAST-8` = tfunc(nthreads = 8L, method = "FAST"), 
 #>     `parglm-FAST-9` = tfunc(nthreads = 9L, method = "FAST"), 
 #>     `parglm-FAST-10` = tfunc(nthreads = 10L, method = "FAST"), 
+#>     `parglm-FAST-11` = tfunc(nthreads = 11L, method = "FAST"), 
+#>     `parglm-FAST-12` = tfunc(nthreads = 12L, method = "FAST"), 
+#>     `parglm-FAST-13` = tfunc(nthreads = 13L, method = "FAST"), 
+#>     `parglm-FAST-14` = tfunc(nthreads = 14L, method = "FAST"), 
+#>     `parglm-FAST-15` = tfunc(nthreads = 15L, method = "FAST"), 
+#>     `parglm-FAST-16` = tfunc(nthreads = 16L, method = "FAST"), 
+#>     `parglm-FAST-17` = tfunc(nthreads = 17L, method = "FAST"), 
+#>     `parglm-FAST-18` = tfunc(nthreads = 18L, method = "FAST"), 
+#>     `parglm-FAST-19` = tfunc(nthreads = 19L, method = "FAST"), 
+#>     `parglm-FAST-20` = tfunc(nthreads = 20L, method = "FAST"), 
+#>     `parglm-FAST-21` = tfunc(nthreads = 21L, method = "FAST"), 
+#>     `parglm-FAST-22` = tfunc(nthreads = 22L, method = "FAST"), 
+#>     `parglm-FAST-23` = tfunc(nthreads = 23L, method = "FAST"), 
+#>     `parglm-FAST-24` = tfunc(nthreads = 24L, method = "FAST"), 
 #>     `parglm-LAPACK-1` = tfunc(nthreads = 1L, method = "LAPACK"), 
 #>     `parglm-LAPACK-2` = tfunc(nthreads = 2L, method = "LAPACK"), 
 #>     `parglm-LAPACK-3` = tfunc(nthreads = 3L, method = "LAPACK"), 
@@ -140,57 +145,42 @@ cl # the call we make
 #>     `parglm-LAPACK-7` = tfunc(nthreads = 7L, method = "LAPACK"), 
 #>     `parglm-LAPACK-8` = tfunc(nthreads = 8L, method = "LAPACK"), 
 #>     `parglm-LAPACK-9` = tfunc(nthreads = 9L, method = "LAPACK"), 
-#>     `parglm-LAPACK-10` = tfunc(nthreads = 10L, method = "LAPACK"))
+#>     `parglm-LAPACK-10` = tfunc(nthreads = 10L, method = "LAPACK"), 
+#>     `parglm-LAPACK-11` = tfunc(nthreads = 11L, method = "LAPACK"), 
+#>     `parglm-LAPACK-12` = tfunc(nthreads = 12L, method = "LAPACK"), 
+#>     `parglm-LAPACK-13` = tfunc(nthreads = 13L, method = "LAPACK"), 
+#>     `parglm-LAPACK-14` = tfunc(nthreads = 14L, method = "LAPACK"), 
+#>     `parglm-LAPACK-15` = tfunc(nthreads = 15L, method = "LAPACK"), 
+#>     `parglm-LAPACK-16` = tfunc(nthreads = 16L, method = "LAPACK"), 
+#>     `parglm-LAPACK-17` = tfunc(nthreads = 17L, method = "LAPACK"), 
+#>     `parglm-LAPACK-18` = tfunc(nthreads = 18L, method = "LAPACK"), 
+#>     `parglm-LAPACK-19` = tfunc(nthreads = 19L, method = "LAPACK"), 
+#>     `parglm-LAPACK-20` = tfunc(nthreads = 20L, method = "LAPACK"), 
+#>     `parglm-LAPACK-21` = tfunc(nthreads = 21L, method = "LAPACK"), 
+#>     `parglm-LAPACK-22` = tfunc(nthreads = 22L, method = "LAPACK"), 
+#>     `parglm-LAPACK-23` = tfunc(nthreads = 23L, method = "LAPACK"), 
+#>     `parglm-LAPACK-24` = tfunc(nthreads = 24L, method = "LAPACK"))
 
 out <- eval(cl)
-#> Warning in microbenchmark(glm = glm(y ~ ., binomial(), df), speedglm =
-#> speedglm(y ~ : less accurate nanosecond times to avoid potential integer
-#> overflows
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Error in `wt[good] <- w^2`:
+#> ! NAs are not allowed in subscripted assignments
 ```
 
 
 ``` r
 s <- summary(out) # result from `microbenchmark`
+#> Error in `h()`:
+#> ! error in evaluating the argument 'object' in selecting a method for function 'summary': object 'out' not found
 print(s[, c("expr", "min", "mean", "median", "max")], digits  = 3,
       row.names	= FALSE)
-#>               expr  min mean median  max
-#>                glm 2404 2480   2460 2663
-#>           speedglm  725  787    761 1065
-#>               glm2 2427 2526   2482 2976
-#>            fastglm 1895 1992   1940 2162
-#>           fastglm3  547  558    555  585
-#>             bigglm 6173 6416   6379 7011
-#>                bam 4906 5067   5055 5340
-#>   parglm-LINPACK-1 1825 1879   1870 1963
-#>   parglm-LINPACK-2 1646 1704   1676 1832
-#>   parglm-LINPACK-3 1569 1608   1607 1648
-#>   parglm-LINPACK-4 1560 1611   1605 1743
-#>   parglm-LINPACK-5 1397 1439   1427 1537
-#>   parglm-LINPACK-6 1398 1421   1412 1471
-#>   parglm-LINPACK-7 1379 1473   1419 1713
-#>   parglm-LINPACK-8 1356 1457   1406 1846
-#>   parglm-LINPACK-9 1382 1418   1413 1465
-#>  parglm-LINPACK-10 1347 1372   1374 1393
-#>      parglm-FAST-1  449  510    491  592
-#>      parglm-FAST-2  387  414    408  488
-#>      parglm-FAST-3  372  414    414  460
-#>      parglm-FAST-4  367  423    405  527
-#>      parglm-FAST-5  381  431    387  675
-#>      parglm-FAST-6  348  413    395  584
-#>      parglm-FAST-7  347  374    368  406
-#>      parglm-FAST-8  348  393    381  454
-#>      parglm-FAST-9  348  407    387  556
-#>     parglm-FAST-10  338  373    372  440
-#>    parglm-LAPACK-1 1825 1885   1873 2058
-#>    parglm-LAPACK-2 1646 1670   1665 1733
-#>    parglm-LAPACK-3 1586 1617   1609 1685
-#>    parglm-LAPACK-4 1557 1598   1588 1676
-#>    parglm-LAPACK-5 1390 1444   1440 1580
-#>    parglm-LAPACK-6 1378 1399   1391 1451
-#>    parglm-LAPACK-7 1368 1411   1403 1489
-#>    parglm-LAPACK-8 1376 1403   1396 1475
-#>    parglm-LAPACK-9 1365 1420   1400 1597
-#>   parglm-LAPACK-10 1363 1413   1401 1507
+#> Error:
+#> ! error in evaluating the argument 'x' in selecting a method for function 'print': object of type 'closure' is not subsettable
 ```
 
 The plot below shows median run times versus the number of cores. Coloured
@@ -211,8 +201,8 @@ modmat_time <- microbenchmark(
   }, times = 10)
 modmat_time # time taken by `model.matrix` and `model.frame`
 #> Unit: milliseconds
-#>         expr       min        lq       mean    median         uq        max
-#>  modmat_time 75.486453 93.180659 98.3097262 95.229306 112.323805 121.203257
+#>         expr        min         lq        mean     median         uq       max
+#>  modmat_time 279.435634 291.566617 323.4503236 318.537503 323.368253 437.29064
 #>  neval
 #>     10
 ```
@@ -221,23 +211,43 @@ modmat_time # time taken by `model.matrix` and `model.frame`
 ``` r
 par(mar = c(4.5, 4.5, .5, 9))
 o <- aggregate(time ~ expr, out, median)[, 2] / 10^9
+#> Error:
+#> ! object 'out' not found
 ylim <- range(o, 0); ylim[2] <- ylim[2] + .04 * diff(ylim)
+#> Error:
+#> ! object 'o' not found
 
 o_linpack <- o[8L:(n_threads + 7L)]
+#> Error:
+#> ! object 'o' not found
 o_fast    <- o[(n_threads + 8L):(2L * n_threads + 7L)]
+#> Error:
+#> ! object 'o' not found
 o_lapack  <- o[(2L * n_threads + 8L):(3L * n_threads + 7L)]
+#> Error:
+#> ! object 'o' not found
 
 ref_cols <- c("#E69F00", "#56B4E9", "#009E73", "#0072B2", "#F0E442", "#D55E00", "#CC79A7")
 ref_lty  <- c("dashed", "dotted", "dotdash", "longdash", "44", "twodash", "1373")
 
 plot(1:n_threads, o_linpack, xlab = "Number of cores", yaxs = "i",
      ylim = ylim, ylab = "Run time (s)", pch = 16, cex = 1.4)
+#> Error:
+#> ! object 'o_linpack' not found
 points(1:n_threads, o_fast,   pch = 1, cex = 1.4, lwd = 2)
+#> Error:
+#> ! object 'o_fast' not found
 points(1:n_threads, o_lapack, pch = 4, cex = 1.4, lwd = 2)
+#> Error:
+#> ! object 'o_lapack' not found
 for (i in 1:7)
   abline(h = o[i], lty = ref_lty[i], col = ref_cols[i], lwd = 2)
+#> Error:
+#> ! object 'o' not found
 abline(h = median(modmat_time$time) / 10^9, lty = "solid", col = "black",
        lwd = 2)
+#> Error in `int_abline()`:
+#> ! plot.new has not been called yet
 usr <- par("usr")
 par(xpd = TRUE)
 legend(x = usr[2], y = usr[4], xjust = 0, yjust = 1,
@@ -249,12 +259,9 @@ legend(x = usr[2], y = usr[4], xjust = 0, yjust = 1,
        col = c(ref_cols, "black", "black", "black", "black"),
        pch = c(NA, NA, NA, NA, NA, NA, NA, NA, 16, 1, 4),
        bty = "n")
+#> Error:
+#> ! plot.new has not been called yet
 ```
-
-<div class="figure" style="text-align: center">
-<img src="img/show_run_times-1.png" alt="Plot of runtime versus number of cores." width="100%" />
-<p class="caption">Plot of runtime versus number of cores.</p>
-</div>
 
 The open circles are the `FAST` method and the filled circles are the `LINPACK`
 method. The `FAST` method, `speedglm`, `fastglm`, and `fastglm` (LDLT) all
@@ -284,16 +291,16 @@ microbenchmark::microbenchmark(
   `qr.qty LAPACK`  = qr.qty(qr2, df$y),
   times = 11)
 #> Unit: milliseconds
-#>            expr        min          lq        mean     median          uq
-#>      qr LINPACK 405.653672 417.4386915 423.2286798 418.273882 419.5840165
-#>       qr LAPACK 366.584813 368.9630590 378.3611275 371.411456 381.3625660
-#>  qr.qty LINPACK  45.758993  49.6602865  97.6999660  56.960808  84.8598935
-#>   qr.qty LAPACK 110.668717 110.8921875 116.2642069 111.939102 114.2420515
-#>         max neval
-#>  474.846625    11
-#>  403.544468    11
-#>  401.498322    11
-#>  155.756827    11
+#>            expr         min           lq         mean      median          uq
+#>      qr LINPACK 1697.264918 1753.0538155 1816.1242435 1805.924831 1873.116976
+#>       qr LAPACK 1097.745420 1136.4922375 1184.4250201 1157.152760 1234.590708
+#>  qr.qty LINPACK  465.946959  522.0160175  544.5687797  539.648334  568.954550
+#>   qr.qty LAPACK   95.541085   97.2002870  108.1788295  105.148529  116.616787
+#>          max neval
+#>  1962.163188    11
+#>  1291.536220    11
+#>   612.126726    11
+#>   130.150166    11
 ```
 
 ## Smaller datasets
@@ -313,98 +320,450 @@ threads and `parglm` effectively runs single-threaded regardless of
 
 ``` r
 invisible(run_and_plot(n = 100000L, p = 50L, n_threads = n_threads))
-#>               expr   min  mean median   max
-#>                glm 167.5 172.2  171.7 183.0
-#>           speedglm  64.1  71.4   68.2 106.7
-#>               glm2 170.6 194.5  174.0 290.1
-#>            fastglm 165.0 168.5  165.4 175.8
-#>     fastglm (LDLT)  53.7  54.9   54.2  56.9
-#>             bigglm 634.7 684.7  649.9 812.6
-#>   parglm-LINPACK-1 140.7 145.6  143.9 161.3
-#>   parglm-LINPACK-2 116.6 119.7  119.4 125.3
-#>   parglm-LINPACK-3 108.9 111.3  110.5 115.0
-#>   parglm-LINPACK-4 104.7 107.8  106.8 113.4
-#>   parglm-LINPACK-5  89.6  92.1   91.7  96.8
-#>   parglm-LINPACK-6  81.8  84.8   84.3  89.5
-#>   parglm-LINPACK-7  75.7  78.6   76.7  88.5
-#>   parglm-LINPACK-8  69.4  72.5   72.1  77.2
-#>   parglm-LINPACK-9  67.1  70.4   69.0  86.9
-#>  parglm-LINPACK-10  66.1  68.3   67.0  77.0
-#>      parglm-FAST-1  39.0  40.1   39.8  41.5
-#>      parglm-FAST-2  34.8  39.0   35.6  61.5
-#>      parglm-FAST-3  33.6  34.8   34.0  40.6
-#>      parglm-FAST-4  33.3  35.3   33.8  44.2
-#>      parglm-FAST-5  31.9  35.8   32.4  55.8
-#>      parglm-FAST-6  31.6  33.4   32.1  39.7
-#>      parglm-FAST-7  31.5  32.5   31.8  35.5
-#>      parglm-FAST-8  31.4  33.2   31.7  38.8
-#>      parglm-FAST-9  30.7  31.5   31.3  33.3
-#>     parglm-FAST-10  30.9  33.5   32.3  45.3
-#>    parglm-LAPACK-1 141.4 143.0  142.7 145.5
-#>    parglm-LAPACK-2 117.1 119.2  118.1 124.2
-#>    parglm-LAPACK-3 109.7 111.8  110.5 116.5
-#>    parglm-LAPACK-4 106.5 112.7  108.4 140.4
-#>    parglm-LAPACK-5  90.1  93.7   92.8  99.8
-#>    parglm-LAPACK-6  81.8  84.5   85.0  87.7
-#>    parglm-LAPACK-7  75.3  78.2   77.0  91.7
-#>    parglm-LAPACK-8  68.4  73.6   72.1  92.8
-#>    parglm-LAPACK-9  66.4  70.3   69.0  87.1
-#>   parglm-LAPACK-10  65.8  68.9   67.7  75.7
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Error in `wt[good] <- w^2`:
+#> ! NAs are not allowed in subscripted assignments
 ```
-
-<div class="figure" style="text-align: center">
-<img src="img/run_100k-1.png" alt="Plot of runtime versus number of cores for n = 100,000." width="100%" />
-<p class="caption">Plot of runtime versus number of cores for n = 100,000.</p>
-</div>
 
 ### n = 10,000
 
 
 ``` r
 invisible(run_and_plot(n = 10000L, p = 50L, n_threads = n_threads))
-#>               expr   min  mean median   max
-#>                glm 14.64 16.61  15.22 31.62
-#>           speedglm  6.87  7.58   7.70  8.00
-#>               glm2 14.59 15.43  15.52 15.93
-#>            fastglm 15.04 15.46  15.53 15.68
-#>     fastglm (LDLT)  5.16  5.27   5.27  5.36
-#>             bigglm 52.27 53.49  52.66 60.58
-#>   parglm-LINPACK-1 15.04 15.62  15.60 16.40
-#>   parglm-LINPACK-2 11.18 11.53  11.54 11.91
-#>   parglm-LINPACK-3  9.78 10.68   9.94 17.19
-#>   parglm-LINPACK-4  8.83  9.37   9.52  9.85
-#>   parglm-LINPACK-5  8.83  9.11   9.13  9.43
-#>   parglm-LINPACK-6  8.98  9.15   9.06  9.43
-#>   parglm-LINPACK-7  8.33  8.59   8.57  8.85
-#>   parglm-LINPACK-8  8.31  8.43   8.38  8.71
-#>   parglm-LINPACK-9  8.26  8.49   8.49  8.74
-#>  parglm-LINPACK-10  8.20  8.48   8.42  8.99
-#>      parglm-FAST-1  4.43  4.67   4.63  4.99
-#>      parglm-FAST-2  4.08  4.26   4.25  4.50
-#>      parglm-FAST-3  4.01  4.17   4.15  4.42
-#>      parglm-FAST-4  4.06  4.19   4.19  4.35
-#>      parglm-FAST-5  4.02  4.25   4.25  4.51
-#>      parglm-FAST-6  4.20  4.27   4.27  4.39
-#>      parglm-FAST-7  4.20  4.28   4.28  4.46
-#>      parglm-FAST-8  4.20  4.31   4.27  4.68
-#>      parglm-FAST-9  4.19  5.12   4.31 13.06
-#>     parglm-FAST-10  4.20  4.29   4.29  4.40
-#>    parglm-LAPACK-1 15.20 15.76  15.85 16.37
-#>    parglm-LAPACK-2 10.73 11.45  11.59 11.89
-#>    parglm-LAPACK-3  9.74 10.11  10.11 10.60
-#>    parglm-LAPACK-4  9.00  9.40   9.41  9.68
-#>    parglm-LAPACK-5  8.76  9.13   9.11  9.61
-#>    parglm-LAPACK-6  8.79  9.08   9.11  9.42
-#>    parglm-LAPACK-7  8.16  8.43   8.42  8.80
-#>    parglm-LAPACK-8  7.92  8.23   8.24  8.69
-#>    parglm-LAPACK-9  7.86  8.02   8.01  8.17
-#>   parglm-LAPACK-10  7.71  7.81   7.82  7.97
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning in method(x = structure(c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, :
+#> Non-full rank problem. Output may not be reliable.
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning in method(x = structure(c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, :
+#> Non-full rank problem. Output may not be reliable.
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning in method(x = structure(c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, :
+#> Non-full rank problem. Output may not be reliable.
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning in method(x = structure(c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, :
+#> Non-full rank problem. Output may not be reliable.
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning in method(x = structure(c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, :
+#> Non-full rank problem. Output may not be reliable.
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning in method(x = structure(c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, :
+#> Non-full rank problem. Output may not be reliable.
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Error in `wt[good] <- w^2`:
+#> ! NAs are not allowed in subscripted assignments
 ```
-
-<div class="figure" style="text-align: center">
-<img src="img/run_10k-1.png" alt="Plot of runtime versus number of cores for n = 10,000." width="100%" />
-<p class="caption">Plot of runtime versus number of cores for n = 10,000.</p>
-</div>
 
 ## Varying the number of coefficients
 
@@ -421,43 +780,273 @@ contrast `n = 100,000, p = 5` (where the overhead wins) with
 
 ``` r
 invisible(run_and_plot(n = 100000L, p = 5L, n_threads = n_threads))
-#>               expr  min mean median  max
-#>                glm 40.3 41.6   40.8 46.3
-#>           speedglm 29.4 30.1   29.9 32.9
-#>               glm2 42.3 43.2   42.8 45.4
-#>            fastglm 19.1 19.5   19.4 21.3
-#>     fastglm (LDLT) 16.0 16.7   16.4 19.9
-#>             bigglm 76.6 77.3   77.2 78.0
-#>   parglm-LINPACK-1 26.3 27.1   26.8 30.6
-#>   parglm-LINPACK-2 21.5 21.6   21.6 21.9
-#>   parglm-LINPACK-3 19.4 20.1   19.8 24.0
-#>   parglm-LINPACK-4 18.7 18.9   18.9 19.3
-#>   parglm-LINPACK-5 18.9 19.1   19.0 20.2
-#>   parglm-LINPACK-6 18.5 18.8   18.6 20.7
-#>   parglm-LINPACK-7 18.2 18.8   18.4 22.3
-#>   parglm-LINPACK-8 17.9 18.5   18.2 20.0
-#>   parglm-LINPACK-9 17.8 18.2   18.2 18.5
-#>  parglm-LINPACK-10 18.1 18.9   18.2 22.6
-#>      parglm-FAST-1 24.0 24.8   24.5 26.4
-#>      parglm-FAST-2 19.4 19.9   19.8 20.3
-#>      parglm-FAST-3 18.3 18.6   18.6 18.9
-#>      parglm-FAST-4 17.7 18.1   18.0 19.4
-#>      parglm-FAST-5 18.1 18.8   18.3 22.6
-#>      parglm-FAST-6 17.7 17.9   17.8 19.5
-#>      parglm-FAST-7 17.2 17.7   17.7 18.2
-#>      parglm-FAST-8 17.1 18.5   17.4 28.0
-#>      parglm-FAST-9 17.4 17.8   17.7 19.3
-#>     parglm-FAST-10 17.1 17.7   17.7 18.8
-#>    parglm-LAPACK-1 26.3 26.6   26.6 27.3
-#>    parglm-LAPACK-2 21.3 21.6   21.6 22.4
-#>    parglm-LAPACK-3 19.5 20.0   19.8 21.5
-#>    parglm-LAPACK-4 18.7 19.0   19.1 19.4
-#>    parglm-LAPACK-5 18.8 19.3   19.0 21.0
-#>    parglm-LAPACK-6 18.5 18.9   18.7 20.5
-#>    parglm-LAPACK-7 18.3 18.5   18.5 18.7
-#>    parglm-LAPACK-8 17.8 18.4   18.3 20.2
-#>    parglm-LAPACK-9 17.7 18.2   18.3 18.5
-#>   parglm-LAPACK-10 17.8 18.1   18.1 18.5
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#>               expr   min  mean median   max
+#>                glm  68.5 121.7  109.9 193.3
+#>           speedglm  42.4  64.7   65.3 132.7
+#>               glm2  71.2 105.9  114.1 139.9
+#>            fastglm  29.2  43.5   41.5  70.4
+#>     fastglm (LDLT)  22.5  32.4   25.0  75.1
+#>             bigglm 128.9 167.4  179.5 209.7
+#>   parglm-LINPACK-1  49.1  76.4   59.0 138.9
+#>   parglm-LINPACK-2  47.4  75.1   68.1 141.3
+#>   parglm-LINPACK-3  54.5 102.5   94.5 228.5
+#>   parglm-LINPACK-4  75.6 222.1  261.5 339.7
+#>   parglm-LINPACK-5 100.2 166.4  157.9 248.9
+#>   parglm-LINPACK-6 132.4 204.4  179.5 363.6
+#>   parglm-LINPACK-7 104.6 151.5  152.3 211.7
+#>   parglm-LINPACK-8 156.7 209.3  199.5 285.1
+#>   parglm-LINPACK-9  88.2 121.8  100.6 207.2
+#>  parglm-LINPACK-10  95.1 144.5  150.0 203.6
+#>  parglm-LINPACK-11  99.5 139.2  121.8 202.4
+#>  parglm-LINPACK-12 157.6 210.8  195.2 276.2
+#>  parglm-LINPACK-13  27.6  46.8   44.8  85.1
+#>  parglm-LINPACK-14  28.1  55.9   51.4 111.4
+#>  parglm-LINPACK-15  27.7  54.3   45.7  98.0
+#>  parglm-LINPACK-16  28.7  49.9   48.8  91.3
+#>  parglm-LINPACK-17  28.6  50.1   47.9  69.1
+#>  parglm-LINPACK-18  28.3  76.9   63.9 278.4
+#>  parglm-LINPACK-19  28.4  38.6   44.2  48.5
+#>  parglm-LINPACK-20  28.1  50.2   48.0 107.1
+#>  parglm-LINPACK-21  28.4  48.3   48.0  65.5
+#>  parglm-LINPACK-22  29.1  45.7   49.1  59.4
+#>  parglm-LINPACK-23  28.7  47.6   52.5  87.7
+#>  parglm-LINPACK-24  28.4  38.2   30.6  55.5
+#>      parglm-FAST-1  37.4  63.2   53.0 128.9
+#>      parglm-FAST-2  30.8  51.1   49.7  98.8
+#>      parglm-FAST-3  28.6  41.7   39.4  60.6
+#>      parglm-FAST-4  27.9  47.1   44.7  96.7
+#>      parglm-FAST-5  28.0  52.3   41.6 135.7
+#>      parglm-FAST-6  27.1  42.7   45.2  69.1
+#>      parglm-FAST-7  27.2  45.6   45.0  83.5
+#>      parglm-FAST-8  26.9  40.1   32.0  69.0
+#>      parglm-FAST-9  26.8  33.3   30.1  44.8
+#>     parglm-FAST-10  26.7  35.4   28.0  51.1
+#>     parglm-FAST-11  27.5  53.6   46.7  94.7
+#>     parglm-FAST-12  27.6  39.3   29.7  60.8
+#>     parglm-FAST-13  27.3  38.4   41.0  49.4
+#>     parglm-FAST-14  27.4  47.0   46.2  94.3
+#>     parglm-FAST-15  27.5  41.6   44.8  58.1
+#>     parglm-FAST-16  27.6  45.1   42.4  67.6
+#>     parglm-FAST-17  27.1  44.7   46.7  83.3
+#>     parglm-FAST-18  27.4  37.9   39.2  48.8
+#>     parglm-FAST-19  28.0  47.6   44.9 115.8
+#>     parglm-FAST-20  27.5  50.0   47.1  84.0
+#>     parglm-FAST-21  27.9  42.7   31.8  82.3
+#>     parglm-FAST-22  28.5  44.5   48.2  60.3
+#>     parglm-FAST-23  28.4  42.8   44.5  63.9
+#>     parglm-FAST-24  28.6  43.4   41.5  66.6
+#>    parglm-LAPACK-1  50.8  65.4   65.4  80.8
+#>    parglm-LAPACK-2  51.8  69.4   69.6  94.2
+#>    parglm-LAPACK-3  60.5 107.4   94.3 190.3
+#>    parglm-LAPACK-4  50.4 204.7  224.2 291.9
+#>    parglm-LAPACK-5 106.9 155.3  140.4 220.1
+#>    parglm-LAPACK-6 161.2 231.3  215.0 355.9
+#>    parglm-LAPACK-7 108.9 156.6  161.8 197.2
+#>    parglm-LAPACK-8 122.5 204.2  194.0 295.0
+#>    parglm-LAPACK-9  90.5 119.2   98.4 199.3
+#>   parglm-LAPACK-10  89.3 126.9  127.2 171.6
+#>   parglm-LAPACK-11 109.0 153.1  145.9 227.5
+#>   parglm-LAPACK-12  96.1 155.7  144.5 238.5
+#>   parglm-LAPACK-13  27.8  45.4   46.3  69.3
+#>   parglm-LAPACK-14  28.1  48.0   51.3  83.9
+#>   parglm-LAPACK-15  27.8  45.8   47.1  81.8
+#>   parglm-LAPACK-16  27.9  39.7   37.4  59.6
+#>   parglm-LAPACK-17  28.1  38.5   35.2  59.3
+#>   parglm-LAPACK-18  27.9  56.1   46.5 194.7
+#>   parglm-LAPACK-19  27.9  46.3   47.5  66.9
+#>   parglm-LAPACK-20  28.6  48.7   45.0  90.6
+#>   parglm-LAPACK-21  30.1  51.8   49.2 110.3
+#>   parglm-LAPACK-22  28.5  45.1   48.5  82.4
+#>   parglm-LAPACK-23  28.6  43.0   40.7  66.1
+#>   parglm-LAPACK-24  28.8  47.0   46.8  93.3
 ```
 
 <div class="figure" style="text-align: center">
@@ -470,49 +1059,13 @@ invisible(run_and_plot(n = 100000L, p = 5L, n_threads = n_threads))
 
 ``` r
 invisible(run_and_plot(n = 1000000L, p = 20L, n_threads = n_threads))
-#>               expr  min mean median  max
-#>                glm  932  958    957  989
-#>           speedglm  497  541    546  566
-#>               glm2  983 1015   1015 1050
-#>            fastglm  530  557    534  645
-#>     fastglm (LDLT)  259  271    271  289
-#>             bigglm 2499 2544   2548 2619
-#>   parglm-LINPACK-1  557  565    564  581
-#>   parglm-LINPACK-2  473  491    488  509
-#>   parglm-LINPACK-3  457  469    464  493
-#>   parglm-LINPACK-4  442  470    455  580
-#>   parglm-LINPACK-5  420  439    426  511
-#>   parglm-LINPACK-6  421  444    434  520
-#>   parglm-LINPACK-7  414  433    431  455
-#>   parglm-LINPACK-8  412  439    435  484
-#>   parglm-LINPACK-9  409  429    416  498
-#>  parglm-LINPACK-10  401  423    409  514
-#>      parglm-FAST-1  361  391    382  505
-#>      parglm-FAST-2  301  321    320  388
-#>      parglm-FAST-3  275  293    286  340
-#>      parglm-FAST-4  269  289    282  314
-#>      parglm-FAST-5  265  284    283  302
-#>      parglm-FAST-6  261  296    292  380
-#>      parglm-FAST-7  264  275    272  302
-#>      parglm-FAST-8  258  286    273  370
-#>      parglm-FAST-9  258  276    267  313
-#>     parglm-FAST-10  259  273    271  295
-#>    parglm-LAPACK-1  555  577    570  661
-#>    parglm-LAPACK-2  465  493    492  563
-#>    parglm-LAPACK-3  454  474    474  498
-#>    parglm-LAPACK-4  444  469    461  538
-#>    parglm-LAPACK-5  420  435    438  452
-#>    parglm-LAPACK-6  416  437    429  478
-#>    parglm-LAPACK-7  407  438    428  510
-#>    parglm-LAPACK-8  413  449    442  513
-#>    parglm-LAPACK-9  409  423    419  443
-#>   parglm-LAPACK-10  399  440    425  512
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Warning: parglm.fit: algorithm did not converge
+#> Error in `wt[good] <- w^2`:
+#> ! NAs are not allowed in subscripted assignments
 ```
-
-<div class="figure" style="text-align: center">
-<img src="img/run_1m_p20-1.png" alt="Plot of runtime versus number of cores for n = 1,000,000 and p = 20." width="100%" />
-<p class="caption">Plot of runtime versus number of cores for n = 1,000,000 and p = 20.</p>
-</div>
 
 ## Session info
 
@@ -520,18 +1073,21 @@ invisible(run_and_plot(n = 1000000L, p = 20L, n_threads = n_threads))
 ``` r
 sessionInfo()
 #> R version 4.6.0 (2026-04-24)
-#> Platform: aarch64-apple-darwin23
-#> Running under: macOS Tahoe 26.5
+#> Platform: x86_64-pc-linux-gnu
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
-#> BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib 
-#> LAPACK: /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+#> BLAS:   /usr/lib/x86_64-linux-gnu/atlas/libblas.so.3.10.3 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/libmkl_intel_lp64.so;  LAPACK version 3.8.0
 #> 
 #> locale:
-#> [1] C.UTF-8/C.UTF-8/C.UTF-8/C/C.UTF-8/C.UTF-8
+#>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+#>  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+#>  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+#> [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
 #> 
 #> time zone: Europe/London
-#> tzcode source: internal
+#> tzcode source: system (glibc)
 #> 
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
@@ -543,11 +1099,14 @@ sessionInfo()
 #> [10] Matrix_1.7-5         microbenchmark_1.5.0
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.6           knitr_1.51          rlang_1.2.0        
-#>  [4] xfun_0.57           otel_0.2.0          zoo_1.8-15         
-#>  [7] bigmemory_4.6.4     grid_4.6.0          evaluate_1.0.5     
-#> [10] bigmemory.sri_0.1.8 compiler_4.6.0      codetools_0.2-20   
-#> [13] sandwich_3.1-1      Rcpp_1.1.1-1.1      lattice_0.22-9     
-#> [16] digest_0.6.39       parallel_4.6.0      splines_4.6.0      
-#> [19] uuid_1.2-2          tools_4.6.0
+#>  [1] vctrs_0.7.3         cli_3.6.6           knitr_1.51         
+#>  [4] rlang_1.2.0         xfun_0.57           otel_0.2.0         
+#>  [7] glue_1.8.1          zoo_1.8-15          htmltools_0.5.9    
+#> [10] bigmemory_4.6.4     rmarkdown_2.31      grid_4.6.0         
+#> [13] evaluate_1.0.5      fastmap_1.2.0       lifecycle_1.0.5    
+#> [16] yaml_2.3.12         bigmemory.sri_0.1.8 compiler_4.6.0     
+#> [19] codetools_0.2-20    sandwich_3.1-1      Rcpp_1.1.1-1.1     
+#> [22] rstudioapi_0.18.0   lattice_0.22-9      digest_0.6.39      
+#> [25] pillar_1.11.1       splines_4.6.0       parallel_4.6.0     
+#> [28] uuid_1.2-2          tools_4.6.0         tictoc_1.2.1
 ```

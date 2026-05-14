@@ -1,3 +1,7 @@
+# parglm (development version)
+
+* Add missing `<thread>` include to fix build on older Apple SDKs.
+
 # parglm 0.1.9
 
 * Add **biglm**, **fastglm**, **glm2**, and **mgcv** to the timing comparison in the parglm.Rmd vignette. And add some timings for fewer observations and fewer coefficients.

@@ -33,15 +33,15 @@
 #ifndef THREAD_POOL_H
 #define THREAD_POOL_H
 
+#include <atomic>
+#include <condition_variable>
 #include <deque>
 #include <future>
 #include <memory>
-#include <functional>
-#include <iostream>
 #include <mutex>
-#include <condition_variable>
 #include <thread>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 // Just before listing 8.4

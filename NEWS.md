@@ -1,4 +1,4 @@
-# parglm (development version)
+# parglm 0.1.9-1
 
 * Add missing `<thread>` include to fix build on older Apple SDKs.
 

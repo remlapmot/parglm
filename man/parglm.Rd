@@ -90,7 +90,7 @@ element. The \code{qr} element in the object returned by \code{parglm}(\code{.fi
 matrix from the QR decomposition.
 }
 \description{
-Function like \code{\link{glm}} which can make the computation
+A function like \code{\link{glm}} which can make the computation
 in parallel. The function supports most families listed in \code{\link{family}}.
 See "\code{vignette("parglm", "parglm")}" for run time examples.
 }

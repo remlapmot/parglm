@@ -89,7 +89,7 @@ parglm <- function(
 #'
 #' @param epsilon positive convergence tolerance.
 #' @param maxit integer giving the maximal number of IWLS iterations.
-#' @param trace logical indicating if output should be produced doing estimation.
+#' @param trace logical indicating if output should be produced during estimation.
 #' @param nthreads number of cores to use. Defaults to
 #' \code{parallelly::availableCores(omit = 1L)}, which leaves one core free.
 #' You may get the best performance by using all available physical cores if
@@ -104,14 +104,14 @@ parglm <- function(
 #' @details
 #' The \code{LINPACK} method uses the same QR method as \code{\link{glm.fit}} for the final QR decomposition.
 #' This is the \code{dqrdc2} method described in \code{\link[base]{qr}}. All other QR
-#' decompositions but the last are made with \code{DGEQP3} from \code{LAPACK}.
+#' decompositions except the last are made with \code{DGEQP3} from \code{LAPACK}.
 #' See Wood, Goude, and Shaw (2015) for details on the QR method.
 #'
 #' The \code{FAST} method computes the Fisher information and then solves the normal
 #' equation. This is faster but less numerically stable.
 #'
 #' @references
-#' Wood, S.N., Goude, Y. & Shaw S. (2015) Generalized additive models for
+#' Wood, S.N., Goude, Y. & Shaw, S. (2015) Generalized additive models for
 #' large datasets. Journal of the Royal Statistical Society, Series C
 #' 64(1): 139-155.
 #'

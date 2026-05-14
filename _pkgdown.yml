@@ -4,7 +4,7 @@ template:
   light-switch: true
   math-rendering: mathjax
 development:
-  mode: auto
+  mode: release
 navbar:
   structure:
     left: [intro, reference, articles, news]

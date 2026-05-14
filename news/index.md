@@ -1,5 +1,9 @@
 # Changelog
 
+## parglm 0.1.9-1
+
+- Add missing `<thread>` include to fix build on older Apple SDKs.
+
 ## parglm 0.1.9
 
 CRAN release: 2026-05-12

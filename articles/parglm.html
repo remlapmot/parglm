@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">parglm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.9-1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@ Christoffersen and Tom Palmer</h4>
             
             <h4 data-toc-skip class="date">2026-05-12</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/remlapmot/parglm/blob/0.1.9/vignettes/parglm.Rmd" class="external-link"><code>vignettes/parglm.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/remlapmot/parglm/blob/pkgdown-fix-for-0-1-9-1/vignettes/parglm.Rmd" class="external-link"><code>vignettes/parglm.Rmd</code></a></small>
       <div class="d-none name"><code>parglm.Rmd</code></div>
     </div>
 
@@ -87,17 +87,14 @@ Christoffersen and Tom Palmer</h4>
 <p>The motivation for the <code>parglm</code> package is a parallel
 version of the <code>glm</code> function. It solves the iteratively
 re-weighted least squares using a QR decomposition with column pivoting
-with <code>DGEQP3</code> function from LAPACK. The computation is done
-in parallel as in the <code>bam</code> function in the <code>mgcv</code>
-package. The cost is an additional <span class="math inline">\(O(Mp^2 +
-p^3)\)</span> where <span class="math inline">\(p\)</span> is the number
-of coefficients and <span class="math inline">\(M\)</span> is the number
-chunks to be computed in parallel. The advantage is that you do not need
-to compile the package with an optimized BLAS or LAPACK which supports
-multithreading. The package also includes a method that computes the
-Fisher information and then solves the normal equation as in the
-<code>speedglm</code> package. This is faster but less numerically
-stable.</p>
+with the <code>DGEQP3</code> function from LAPACK. The computation is
+done in parallel as in the <code>bam</code> function in the
+<code>mgcv</code> package. The cost is an additional <span class="math inline">\(O(Mp^2 + p^3)\)</span> where <span class="math inline">\(p\)</span> is the number of coefficients and <span class="math inline">\(M\)</span> is the number of chunks to be computed
+in parallel. The advantage is that you do not need to compile the
+package with an optimized BLAS or LAPACK which supports multithreading.
+The package also includes a method that computes the Fisher information
+and then solves the normal equation as in the <code>speedglm</code>
+package. This is faster but less numerically stable.</p>
 <div class="section level2">
 <h2 id="example-of-computation-time">Example of computation time<a class="anchor" aria-label="anchor" href="#example-of-computation-time"></a>
 </h2>
@@ -325,7 +322,7 @@ decomposition (method 3) rather than the default column-pivoted QR
 lead to unstable solutions. You can alter the number of observations in
 each parallel chunk with the <code>block_size</code> argument of
 <code>parglm.control</code>.</p>
-<p>The single threaded performance of <code>parglm</code> may be slower
+<p>The single-threaded performance of <code>parglm</code> may be slower
 when there are more coefficients. The cause seems to be the difference
 between the LAPACK and LINPACK implementation. This is presumably due to
 either the QR decomposition method and/or the <code>qr.qty</code>

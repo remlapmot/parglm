@@ -1,6 +1,6 @@
 Package: parglm
 Title: Parallel GLM
-Version: 0.1.9
+Version: 0.1.9.9000
 Authors@R: c(
     person("Benjamin", "Christoffersen", , "boennecd@gmail.com", role = "aut",
            comment = c(ORCID = "0000-0002-7182-1346")),

@@ -40,6 +40,7 @@
 #include <iostream>
 #include <mutex>
 #include <condition_variable>
+#include <thread>
 #include <type_traits>
 
 // Just before listing 8.4

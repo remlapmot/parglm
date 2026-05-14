@@ -35,6 +35,8 @@ an example of run times and further details.
   : Fitting Generalized Linear Models in Parallel
 - [`parglm.control()`](https://remlapmot.github.io/parglm/dev/reference/parglm.control.md)
   : Auxiliary for Controlling GLM Fitting in Parallel
+- [`tidy_parglm_robust()`](https://remlapmot.github.io/parglm/dev/reference/tidy_parglm_robust.md)
+  : Tidy a parglm model with robust standard errors
 
 # Articles
 
@@ -42,5 +44,6 @@ an example of run times and further details.
 
 - [Introduction to the parglm
   package](https://remlapmot.github.io/parglm/dev/articles/parglm.md):
-- [Robust standard errors with parglm and the sandwich
-  package](https://remlapmot.github.io/parglm/dev/articles/sandwich.md):
+- [Robust standard errors with parglm and the sandwich package and
+  regression tables with
+  gtsummary](https://remlapmot.github.io/parglm/dev/articles/sandwich.md):

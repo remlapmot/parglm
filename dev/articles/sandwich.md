@@ -1,4 +1,4 @@
-# Robust standard errors with parglm and the sandwich package
+# Robust standard errors with parglm and the sandwich package and regression tables with gtsummary
 
 Since
 [`parglm()`](https://remlapmot.github.io/parglm/dev/reference/parglm.md)
@@ -124,8 +124,72 @@ vcovCL(fit, cluster = ~cluster)
 #> x2          -0.0006143826 -0.0002594062  0.0034916456
 ```
 
-## Note
+### Note
 
 `model = TRUE` (the default in `parglm`) must be set so that the model
 frame is stored, allowing `sandwich` to reconstruct the design matrix
 internally.
+
+## Regression tables with gtsummary
+
+The [`gtsummary`](https://cran.r-project.org/package=gtsummary) package
+produces publication-ready regression tables from model objects.
+[`parglm()`](https://remlapmot.github.io/parglm/dev/reference/parglm.md)
+models are supported directly because they inherit from `glm`.
+
+``` r
+
+library(gtsummary)
+```
+
+### Logistic regression
+
+We fit a logistic regression model with
+[`parglm()`](https://remlapmot.github.io/parglm/dev/reference/parglm.md)
+and pass it to
+[`tbl_regression()`](https://www.danieldsjoberg.com/gtsummary/reference/tbl_regression.html).
+Setting `exponentiate = TRUE` displays odds ratios with their confidence
+intervals.
+
+``` r
+
+set.seed(2)
+n2    <- 300
+x1_b  <- rnorm(n2)
+x2_b  <- rnorm(n2)
+y_bin <- rbinom(n2, 1, plogis(0.4 + 0.6 * x1_b - 0.4 * x2_b))
+dat_b <- data.frame(y = y_bin, x1 = x1_b, x2 = x2_b)
+
+fit_logistic <- parglm(y ~ x1 + x2, data = dat_b, family = binomial(),
+                       control = parglm.control(nthreads = 1L))
+
+suppressWarnings(
+  tbl_regression(fit_logistic, exponentiate = TRUE)
+)
+```
+
+| **Characteristic** | **OR** | **95% CI** | **p-value** |
+|----|----|----|----|
+| x1 | 1.50 | 1.20, 1.90 | \<0.001 |
+| x2 | 0.73 | 0.57, 0.93 | 0.012 |
+| Abbreviations: CI = Confidence Interval, OR = Odds Ratio |  |  |  |
+
+### Robust standard errors in a gtsummary table
+
+[`tidy_parglm_robust()`](https://remlapmot.github.io/parglm/dev/reference/tidy_parglm_robust.md)
+is a drop-in `tidy_fun` for
+[`tbl_regression()`](https://www.danieldsjoberg.com/gtsummary/reference/tbl_regression.html)
+that replaces the default model-based standard errors with sandwich
+estimates. Here we use cluster-robust standard errors for the Poisson
+model fitted earlier.
+
+``` r
+
+tbl_regression(fit, tidy_fun = tidy_parglm_robust)
+```
+
+| **Characteristic** | **log(IRR)** | **95% CI** | **p-value** |
+|----|----|----|----|
+| x1 | 0.30 | 0.15, 0.46 | \<0.001 |
+| x2 | -0.23 | -0.35, -0.12 | \<0.001 |
+| Abbreviations: CI = Confidence Interval, IRR = Incidence Rate Ratio |  |  |  |

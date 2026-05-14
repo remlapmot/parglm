@@ -2,15 +2,15 @@
 
 The motivation for the `parglm` package is a parallel version of the
 `glm` function. It solves the iteratively re-weighted least squares
-using a QR decomposition with column pivoting with `DGEQP3` function
+using a QR decomposition with column pivoting with the `DGEQP3` function
 from LAPACK. The computation is done in parallel as in the `bam`
 function in the `mgcv` package. The cost is an additional \\O(Mp^2 +
 p^3)\\ where \\p\\ is the number of coefficients and \\M\\ is the number
-chunks to be computed in parallel. The advantage is that you do not need
-to compile the package with an optimized BLAS or LAPACK which supports
-multithreading. The package also includes a method that computes the
-Fisher information and then solves the normal equation as in the
-`speedglm` package. This is faster but less numerically stable.
+of chunks to be computed in parallel. The advantage is that you do not
+need to compile the package with an optimized BLAS or LAPACK which
+supports multithreading. The package also includes a method that
+computes the Fisher information and then solves the normal equation as
+in the `speedglm` package. This is faster but less numerically stable.
 
 ## Example of computation time
 
@@ -249,7 +249,7 @@ advantage in terms of computation cost but may lead to unstable
 solutions. You can alter the number of observations in each parallel
 chunk with the `block_size` argument of `parglm.control`.
 
-The single threaded performance of `parglm` may be slower when there are
+The single-threaded performance of `parglm` may be slower when there are
 more coefficients. The cause seems to be the difference between the
 LAPACK and LINPACK implementation. This is presumably due to either the
 QR decomposition method and/or the `qr.qty` method. On Windows, `parglm`

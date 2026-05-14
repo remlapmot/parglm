@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">parglm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.8.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.9-1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,7 +25,7 @@
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/sandwich.html">Robust standard errors with parglm and the sandwich package</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/sandwich.html">Robust standard errors with parglm and the sandwich package and regression tables with gtsummary</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -81,7 +81,7 @@
 
 
 <dt id="arg-trace">trace<a class="anchor" aria-label="anchor" href="#arg-trace"></a></dt>
-<dd><p>logical indicating if output should be produced doing estimation.</p></dd>
+<dd><p>logical indicating if output should be produced during estimation.</p></dd>
 
 
 <dt id="arg-nthreads">nthreads<a class="anchor" aria-label="anchor" href="#arg-nthreads"></a></dt>
@@ -114,14 +114,14 @@ when the dataset is small). Do not set this argument directly.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The <code>LINPACK</code> method uses the same QR method as <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm.fit</a></code> for the final QR decomposition.
 This is the <code>dqrdc2</code> method described in <code><a href="https://rdrr.io/r/base/qr.html" class="external-link">qr</a></code>. All other QR
-decompositions but the last are made with <code>DGEQP3</code> from <code>LAPACK</code>.
+decompositions except the last are made with <code>DGEQP3</code> from <code>LAPACK</code>.
 See Wood, Goude, and Shaw (2015) for details on the QR method.</p>
 <p>The <code>FAST</code> method computes the Fisher information and then solves the normal
 equation. This is faster but less numerically stable.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>Wood, S.N., Goude, Y. &amp; Shaw S. (2015) Generalized additive models for
+    <p>Wood, S.N., Goude, Y. &amp; Shaw, S. (2015) Generalized additive models for
 large datasets. Journal of the Royal Statistical Society, Series C
 64(1): 139-155.</p>
     </div>

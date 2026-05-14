@@ -5,7 +5,7 @@ NULL
 #' @name parglm
 #' @title Fitting Generalized Linear Models in Parallel
 #'
-#' @description Function like \code{\link{glm}} which can make the computation
+#' @description A function like \code{\link{glm}} which can make the computation
 #' in parallel. The function supports most families listed in \code{\link{family}}.
 #' See "\code{vignette("parglm", "parglm")}" for run time examples.
 #'

@@ -42,6 +42,7 @@
 #include <condition_variable>
 #include <thread>
 #include <type_traits>
+#include <vector>
 
 // Just before listing 8.4
 class join_threads

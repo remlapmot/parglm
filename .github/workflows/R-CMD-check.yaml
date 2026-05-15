@@ -17,7 +17,7 @@ jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})${{ matrix.config.strict-includes && ' [strict includes]' || '' }}
 
     strategy:
       fail-fast: false
@@ -43,6 +43,7 @@ jobs:
           - { os: ubuntu-24.04-arm, r: 'release' }
           - { os: macos-15-intel, r: 'release' }
           - { os: macos-15-intel, r: 'oldrel-1' }
+          - { os: macos-15-intel, r: 'release', strict-includes: true }
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -58,6 +59,12 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: ${{ matrix.config.rspm || 'true' }}
+
+      - name: Enforce explicit C++ includes
+        if: matrix.config.strict-includes
+        run: |
+          mkdir -p ~/.R
+          echo 'CXXFLAGS += -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' >> ~/.R/Makevars
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:

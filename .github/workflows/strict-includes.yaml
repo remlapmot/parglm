@@ -1,12 +1,11 @@
-# Check that all C++ standard library headers are explicitly included.
-# Uses _LIBCPP_REMOVE_TRANSITIVE_INCLUDES to simulate the stricter header
-# isolation seen on older Apple SDKs (e.g. MacOSX11.3.1) where missing
-# explicit includes cause build failures.
+# Build against MacOSX11.3 SDK to replicate the header environment seen on
+# CRAN's r-release-macos-x86_64 / r-oldrel-macos machines, where missing
+# explicit C++ standard library includes cause build failures.
 on:
-  # push:
-  #   branches: [main, master]
-  # pull_request:
-  #   branches: [main, master]
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
   workflow_dispatch:
 
 name: strict-includes
@@ -17,7 +16,7 @@ jobs:
   strict-includes:
     runs-on: macos-15-intel
 
-    name: macos-15-intel (release) [strict includes]
+    name: macos-15-intel (release) [MacOSX11.3 SDK]
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -26,17 +25,18 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Install MacOSX11.3 SDK
+        run: |
+          curl -fsSL https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX11.3.sdk.tar.xz \
+            | sudo tar xJ -C /Library/Developer/CommandLineTools/SDKs/
+          echo "SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk" >> "$GITHUB_ENV"
+
       - uses: r-lib/actions/setup-pandoc@v2
 
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: release
           use-public-rspm: true
-
-      - name: Enforce explicit C++ includes
-        run: |
-          mkdir -p ~/.R
-          echo 'CXXFLAGS += -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' >> ~/.R/Makevars
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:

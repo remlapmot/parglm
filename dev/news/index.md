@@ -1,6 +1,14 @@
 # Changelog
 
+## parglm (development version)
+
+- Fix a few minor grammar errors in the documentation.
+- Add missing include to fix build on MacOSX11.3.1 SDK.
+- Fix thread_pool.h includes: add missing, remove unused, alphabetise.
+
 ## parglm 0.1.9-1
+
+CRAN release: 2026-05-14
 
 - Add missing `<thread>` include to fix build on older Apple SDKs.
 

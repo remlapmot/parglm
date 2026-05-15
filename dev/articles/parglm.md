@@ -183,10 +183,10 @@ The plot below shows median run times versus the number of cores.
 Coloured horizontal lines show the single-threaded reference times for
 `glm`, `speedglm`, `glm2`, `fastglm`, `bigglm`, and `bam`. We could have
 used `glm.fit` and `parglm.fit`. This would make the relative difference
-bigger as both call e.g., `model.matrix` and `model.frame` which do take
-some time. To show this point, we first compute how much time this takes
-and then we make the plot. The black solid line is the computation time
-of `model.matrix` and `model.frame`.
+bigger as both call, e.g., `model.matrix` and `model.frame` which do
+take some time. To show this point, we first compute how much time this
+takes and then we make the plot. The black solid line is the computation
+time of `model.matrix` and `model.frame`.
 
 ``` r
 
@@ -251,8 +251,8 @@ chunk with the `block_size` argument of `parglm.control`.
 
 The single-threaded performance of `parglm` may be slower when there are
 more coefficients. The cause seems to be the difference between the
-LAPACK and LINPACK implementation. This is presumably due to either the
-QR decomposition method and/or the `qr.qty` method. On Windows, `parglm`
+LAPACK and LINPACK implementation. This is presumably due to the QR
+decomposition method and/or the `qr.qty` method. On Windows, `parglm`
 does seem slower when built with `Rtools` and the reason seems to be the
 `qr.qty` method in LAPACK, `dormqr`, which is slower than the LINPACK
 method, `dqrsl`. Below is an illustration of the computation times on

@@ -1,6 +1,6 @@
 # Fitting Generalized Linear Models in Parallel
 
-Function like [`glm`](https://rdrr.io/r/stats/glm.html) which can make
+A function like [`glm`](https://rdrr.io/r/stats/glm.html) which can make
 the computation in parallel. The function supports most families listed
 in [`family`](https://rdrr.io/r/stats/family.html). See
 "[`vignette("parglm", "parglm")`](https://remlapmot.github.io/parglm/dev/articles/parglm.md)"

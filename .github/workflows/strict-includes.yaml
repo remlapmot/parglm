@@ -1,0 +1,50 @@
+# Check that all C++ standard library headers are explicitly included.
+# Uses _LIBCPP_REMOVE_TRANSITIVE_INCLUDES to simulate the stricter header
+# isolation seen on older Apple SDKs (e.g. MacOSX11.3.1) where missing
+# explicit includes cause build failures.
+on:
+  # push:
+  #   branches: [main, master]
+  # pull_request:
+  #   branches: [main, master]
+  workflow_dispatch:
+
+name: strict-includes
+
+permissions: read-all
+
+jobs:
+  strict-includes:
+    runs-on: macos-15-intel
+
+    name: macos-15-intel (release) [strict includes]
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+          use-public-rspm: true
+
+      - name: Enforce explicit C++ includes
+        run: |
+          mkdir -p ~/.R
+          echo 'CXXFLAGS += -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES' >> ~/.R/Makevars
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+          upgrade: 'TRUE'
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'

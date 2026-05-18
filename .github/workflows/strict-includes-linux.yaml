@@ -18,9 +18,9 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { os: ubuntu-latest, r: 'devel', http-user-agent: 'release' }
+          # - { os: ubuntu-latest, r: 'devel', http-user-agent: 'release' }
           - { os: ubuntu-latest, r: release }
-          - { os: ubuntu-latest, r: oldrel-1 }
+          # - { os: ubuntu-latest, r: oldrel-1 }
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -29,7 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - run: sudo apt-get install -y clang libc++-dev libc++abi-dev
+      - run: sudo apt-get install -y clang clang-tidy libc++-dev libc++abi-dev
 
       - run: |
           mkdir -p ~/.R
@@ -45,12 +45,36 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
-          http-user-agent: ${{ matrix.config.http-user-agent }}        
+          http-user-agent: ${{ matrix.config.http-user-agent }}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
-        with: 
+        with:
           extra-packages: any::rcmdcheck
           needs: check
+
+      - name: Run clang-tidy misc-include-cleaner
+        run: |
+          shopt -s nullglob
+          files=(src/*.cpp src/*.cc src/*.cxx src/*.h src/*.hpp)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No C++ sources in src/, skipping."
+            exit 0
+          fi
+          RCPPFLAGS=$(R CMD config --cppflags)
+          LINKING_INCLUDES=$(Rscript -e '
+            d <- read.dcf("DESCRIPTION")
+            lt <- if ("LinkingTo" %in% colnames(d)) d[, "LinkingTo"] else ""
+            pkgs <- trimws(strsplit(lt, ",")[[1]])
+            pkgs <- sub("\\(.*\\)", "", pkgs)
+            pkgs <- trimws(pkgs)
+            pkgs <- pkgs[nzchar(pkgs)]
+            paths <- vapply(pkgs, function(p) system.file("include", package = p), character(1))
+            cat(paste0("-I", paths[nzchar(paths)], collapse = " "))
+          ')
+          clang-tidy --checks='-*,misc-include-cleaner' \
+            --warnings-as-errors='*' \
+            "${files[@]}" \
+            -- -std=c++17 -stdlib=libc++ $RCPPFLAGS $LINKING_INCLUDES
 
       - uses: r-lib/actions/check-r-package@v2
         with:

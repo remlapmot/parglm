@@ -1,0 +1,58 @@
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+name: strict-includes-linux.yaml
+
+permissions: read-all
+
+jobs:
+  strict-includes-linux:
+    runs-on: ubuntu-latest
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { os: ubuntu-latest, r: 'devel', http-user-agent: 'release' }
+          - { os: ubuntu-latest, r: release }
+          - { os: ubuntu-latest, r: oldrel-1 }
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - run: sudo apt-get install -y clang libc++-dev libc++abi-dev
+
+      - run: |
+          mkdir -p ~/.R
+          cat > ~/.R/Makevars <<'EOF'
+          CXX = clang++ -stdlib=libc++
+          CXX11 = clang++ -stdlib=libc++
+          CXX14 = clang++ -stdlib=libc++
+          CXX17 = clang++ -stdlib=libc++
+          CXX20 = clang++ -stdlib=libc++
+          CPPFLAGS = -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES=1
+          EOF
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}        
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with: 
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'

@@ -40,11 +40,18 @@ jobs:
             echo "No C++ sources, skipping."
             exit 0
           fi
-          iwyu_tool.py -p . "${sources[@]}" 2>&1 | tee iwyu.log || true
+          if command -v iwyu_tool >/dev/null; then
+            IWYU_TOOL=iwyu_tool
+          elif command -v iwyu_tool.py >/dev/null; then
+            IWYU_TOOL=iwyu_tool.py
+          else
+            echo "iwyu_tool not found in PATH"; exit 1
+          fi
+          "$IWYU_TOOL" -p . "${sources[@]}" 2>&1 | tee iwyu.log || true
 
       - name: Upload IWYU report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: iwyu-report
           path: iwyu.log

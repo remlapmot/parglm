@@ -7,7 +7,8 @@ test_that("'parglm' works when package is not attached",{
   expect_silent(
     local({
       detach("package:parglm", unload = TRUE, force = TRUE)
-      parglm::parglm(mpg ~ gear , data = datasets::mtcars)
+      parglm::parglm(mpg ~ gear , data = datasets::mtcars,
+                     control = parglm::parglm.control(nthreads = 2L))
       library(parglm)
     },
     envir= new.env(parent = environment(glm))))
@@ -40,8 +41,9 @@ test_that("default nthreads in parglm.control() uses parallelly::availableCores(
   )
 })
 
-test_that("parglm() works without specifying nthreads", {
-  expect_silent(parglm(mpg ~ wt + hp, data = mtcars, family = Gamma(link = "log")))
+test_that("parglm() works with Gamma log-link family", {
+  expect_silent(parglm(mpg ~ wt + hp, data = mtcars, family = Gamma(link = "log"),
+                       control = parglm.control(nthreads = 2L)))
 })
 
 test_that("summary() and vcov() return coefficients in formula order with LAPACK method", {
@@ -75,13 +77,13 @@ test_that("summary() and vcov() return coefficients in formula order with LAPACK
   expect_equal(vcov(fp), vcov(fg), tolerance = 1e-4)
 })
 
-test_that("nthreads = 3L is used when set explicitly", {
-  expect_equal(parglm.control(nthreads = 3L)$nthreads, 3L)
+test_that("nthreads = 2L is used when set explicitly", {
+  expect_equal(parglm.control(nthreads = 2L)$nthreads, 2L)
 
-  # iris has 150 rows (>= 16 * 3 = 48), so 3 threads should not be reduced
+  # iris has 150 rows (>= 16 * 2 = 32), so 2 threads should not be reduced
   expect_silent(
     parglm(Sepal.Length ~ Sepal.Width + Petal.Length, data = iris,
-           control = parglm.control(nthreads = 3L))
+           control = parglm.control(nthreads = 2L))
   )
 })
 

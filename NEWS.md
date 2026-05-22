@@ -1,4 +1,4 @@
-# parglm (development version)
+# parglm 0.1.10
 
 * Fix a few minor grammar errors in the documentation.
 * Add missing <vector> include to fix build on MacOSX11.3.1 SDK.

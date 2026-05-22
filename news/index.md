@@ -1,5 +1,14 @@
 # Changelog
 
+## parglm 0.1.10
+
+CRAN release: 2026-05-22
+
+- Fix a few minor grammar errors in the documentation.
+- Add missing include to fix build on MacOSX11.3.1 SDK.
+- Fix thread_pool.h includes: add missing, remove unused, alphabetise.
+- Ensure tests use a maximum of 2 cores due to CRAN requirement.
+
 ## parglm 0.1.9-1
 
 CRAN release: 2026-05-14

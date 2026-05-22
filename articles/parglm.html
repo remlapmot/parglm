@@ -13,8 +13,8 @@
     }
   };
 </script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Introduction to the parglm package">
 </head>
@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">parglm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.9-1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@ Christoffersen and Tom Palmer</h4>
             
             <h4 data-toc-skip class="date">2026-05-12</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/remlapmot/parglm/blob/pkgdown-fix-for-0-1-9-1/vignettes/parglm.Rmd" class="external-link"><code>vignettes/parglm.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/remlapmot/parglm/blob/master/vignettes/parglm.Rmd" class="external-link"><code>vignettes/parglm.Rmd</code></a></small>
       <div class="d-none name"><code>parglm.Rmd</code></div>
     </div>
 
@@ -260,7 +260,7 @@ Coloured horizontal lines show the single-threaded reference times for
 <code>glm</code>, <code>speedglm</code>, <code>glm2</code>,
 <code>fastglm</code>, <code>bigglm</code>, and <code>bam</code>. We
 could have used <code>glm.fit</code> and <code>parglm.fit</code>. This
-would make the relative difference bigger as both call e.g.,
+would make the relative difference bigger as both call, e.g.,
 <code>model.matrix</code> and <code>model.frame</code> which do take
 some time. To show this point, we first compute how much time this takes
 and then we make the plot. The black solid line is the computation time
@@ -325,8 +325,8 @@ each parallel chunk with the <code>block_size</code> argument of
 <p>The single-threaded performance of <code>parglm</code> may be slower
 when there are more coefficients. The cause seems to be the difference
 between the LAPACK and LINPACK implementation. This is presumably due to
-either the QR decomposition method and/or the <code>qr.qty</code>
-method. On Windows, <code>parglm</code> does seem slower when built with
+the QR decomposition method and/or the <code>qr.qty</code> method. On
+Windows, <code>parglm</code> does seem slower when built with
 <code>Rtools</code> and the reason seems to be the <code>qr.qty</code>
 method in LAPACK, <code>dormqr</code>, which is slower than the LINPACK
 method, <code>dqrsl</code>. Below is an illustration of the computation

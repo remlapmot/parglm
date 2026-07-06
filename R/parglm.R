@@ -171,6 +171,20 @@ parglm.fit <- function(
   xnames <- dimnames(x)[[2L]]
   ynames <- if(is.matrix(y)) rownames(y) else names(y)
 
+  # as in the binomial family's initialize expression: a factor, character, or
+  # logical response is converted to a 0/1 outcome with the first level as
+  # failure
+  if(NCOL(y) == 1L && family$family %in% c("binomial", "quasibinomial")) {
+    if(is.character(y))
+      y <- factor(y)
+    if(is.factor(y))
+      y <- y != levels(y)[1L]
+    y <- as.vector(y, mode = "numeric")
+    names(y) <- ynames
+    if(any(y < 0 | y > 1))
+      stop("y values must be 0 <= y <= 1")
+  }
+
   n_trials <- rep(1, NROW(y))
   if(NCOL(y) == 2L && family$family %in% c("binomial", "quasibinomial")) {
     n_trials <- y[, 1L] + y[, 2L]

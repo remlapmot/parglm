@@ -206,6 +206,34 @@ test_that("parglm warns rather than errors when starting values cannot be found"
   )
 })
 
+test_that("binomial families accept factor, character, and logical responses", {
+  # as glm: the first factor level is failure, all other levels are success
+  d <- datasets::mtcars
+  d$amf <- factor(ifelse(d$am == 1, "yes", "no"))
+  fit_glm <- glm(amf ~ mpg, binomial(), data = d)
+
+  fit_fac <- parglm(amf ~ mpg, binomial(), data = d,
+                    control = parglm.control(nthreads = 1L))
+  expect_equal(coef(fit_fac), coef(fit_glm))
+
+  d$amc <- ifelse(d$am == 1, "yes", "no")
+  fit_chr <- parglm(amc ~ mpg, binomial(), data = d,
+                    control = parglm.control(nthreads = 1L))
+  expect_equal(coef(fit_chr), coef(fit_glm), check.attributes = FALSE)
+
+  d$aml <- d$am == 1
+  fit_lgl <- parglm(aml ~ mpg, binomial(), data = d,
+                    control = parglm.control(nthreads = 1L))
+  expect_equal(coef(fit_lgl), coef(fit_glm), check.attributes = FALSE)
+
+  # as glm: numeric responses outside [0, 1] are an error
+  d$bad <- d$am + 1
+  expect_error(
+    parglm(bad ~ mpg, binomial(), data = d,
+           control = parglm.control(nthreads = 1L)),
+    regexp = "y values must be 0 <= y <= 1")
+})
+
 test_that("a block_size smaller than the number of coefficients works", {
   # the C++ code rounds block_size to a multiple of the cache line size which
   # used to floor it below the number of coefficients and write out of bounds

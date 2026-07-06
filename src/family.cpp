@@ -491,7 +491,7 @@ double inverse_gaussian_identity::initialize(double y, double weight) const {
 }
 
 std::string inverse_gaussian_identity::name() const {
-  return "inverse_gaussian_inverse";
+  return "inverse_gaussian_identity";
 }
 
 /*----------------------------------------------------------------------------*/

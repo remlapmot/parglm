@@ -19,6 +19,17 @@ inline size_t floor_mult(size_t const num, size_t const denom){
   return std::max(tmp, static_cast<size_t>(1L)) * denom;
 }
 
+/* the block size must be at least p so that each chunk has more rows than
+ * columns; otherwise the R matrices from the chunk QRs have fewer rows than
+ * columns and the stacking code writes out of bounds */
+inline size_t get_block_size(size_t const b_size, size_t const p){
+  size_t const mult = cacheline_size() / sizeof(double),
+              floor = floor_mult(b_size, mult);
+  if(floor >= p)
+    return floor;
+  return (p + mult - 1L) / mult * mult;
+}
+
 /* data holder class */
 class data_holder_base {
 public:
@@ -46,7 +57,7 @@ public:
     X(X), Ys(Ys), weights(weights), offsets(offsets), eta(Ys.n_elem),
     mu(Ys.n_elem),
     max_threads(max_threads), p(p), n(n), family(std::move(family)),
-    block_size(floor_mult(b_size, cacheline_size() / sizeof(double)))
+    block_size(get_block_size(b_size, p))
   { }
 };
 

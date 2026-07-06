@@ -205,3 +205,21 @@ test_that("parglm warns rather than errors when starting values cannot be found"
     regexp = "cannot find valid starting values"
   )
 })
+
+test_that("a block_size smaller than the number of coefficients works", {
+  # the C++ code rounds block_size to a multiple of the cache line size which
+  # used to floor it below the number of coefficients and write out of bounds
+  set.seed(77)
+  n <- 200
+  X <- cbind(1, matrix(rnorm(n * 20), n))
+  y <- rnorm(n)
+  fit_lm <- lm.fit(X, y)
+
+  for(method in c("LINPACK", "LAPACK", "FAST")){
+    fit <- parglm.fit(
+      X, y, family = gaussian(),
+      control = list(nthreads = 2L, block_size = 21, method = method))
+    expect_equal(unname(fit$coefficients), unname(fit_lm$coefficients),
+                 info = method)
+  }
+})

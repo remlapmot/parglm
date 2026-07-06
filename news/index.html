@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">parglm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +50,15 @@
       <small>Source: <a href="https://github.com/remlapmot/parglm/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.0" id="parglm-020">parglm 0.2.0<a class="anchor" aria-label="anchor" href="#parglm-020"></a></h2>
+<ul><li>
+<code>parglm</code> now accepts factor, character, and logical responses for the binomial and quasibinomial families like <code>glm</code> does, and errors on numeric responses outside [0, 1].</li>
+<li>Fix an out-of-bounds write when a user-supplied <code>block_size</code> was rounded down below the number of coefficients. The block size is now kept at or above the number of coefficients.</li>
+<li>Zero the working response for zero-weight observations in the IWLS step so a non-finite value (e.g. from a zero <code>mu.eta</code>) cannot poison the QR decomposition.</li>
+<li>Fix <code>inverse_gaussian_identity::name()</code> which returned the name of the inverse link (internal).</li>
+<li>Remove the unused <code>R_F::R_rev_piv</code> member function.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.10" id="parglm-0110">parglm 0.1.10<a class="anchor" aria-label="anchor" href="#parglm-0110"></a></h2><p class="text-muted">CRAN release: 2026-05-22</p>
 <ul><li>Fix a few minor grammar errors in the documentation.</li>

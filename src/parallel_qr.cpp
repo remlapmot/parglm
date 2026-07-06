@@ -35,13 +35,6 @@ void set_p_qr_working_memory(size_t const max_m, size_t const max_n,
   }
 }
 
-arma::mat R_F::R_rev_piv() const {
-  arma::mat result(R.n_rows, R.n_cols, arma::fill::none);
-  for(arma::uword j = 0; j < R.n_cols; ++j)
-    result.col(pivot[j]) = R.col(j);
-  return result;
-}
-
 qr_parallel::worker::worker
   (std::unique_ptr<qr_data_generator> generator,
    thread_pool &th_pool):

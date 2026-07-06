@@ -30,8 +30,6 @@ struct R_F {
   arma::uvec pivot;
   arma::mat F;
   arma::mat dev;
-
-  arma::mat R_rev_piv() const;
 };
 
 struct qr_dqrls_res {

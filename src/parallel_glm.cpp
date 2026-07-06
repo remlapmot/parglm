@@ -179,7 +179,10 @@ class parallelglm_class_QR {
         if(is_good)
           continue;
 
+        /* also zero the working response; it may be non-finite (e.g. from a
+         * zero mu_eta_val) and 0 * inf = nan would poison the QR */
         w[i] = 0.;
+        z[i] = 0.;
       }
 
       const arma::uword p = data.X.n_cols;

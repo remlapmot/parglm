@@ -15,7 +15,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/remlapmot/parglm/blob/master/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/remlapmot/parglm/blob/0.2.0/DESCRIPTION)
 
 Christoffersen B, Palmer T (2026). *parglm: Parallel GLM*. R package
 version 0.2.0, <https://github.com/remlapmot/parglm>.

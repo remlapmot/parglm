@@ -2,6 +2,8 @@
 
 ## parglm 0.2.0
 
+CRAN release: 2026-07-06
+
 - `parglm` now accepts factor, character, and logical responses for the
   binomial and quasibinomial families like `glm` does, and errors on
   numeric responses outside \[0, 1\].

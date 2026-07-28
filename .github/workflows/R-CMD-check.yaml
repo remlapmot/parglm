@@ -59,6 +59,17 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: ${{ matrix.config.rspm || 'true' }}
 
+      # Matrix >= 1.7-6 includes <libintl.h>, which is not in the macOS SDK.
+      # There are no macOS binaries for r-devel, so Matrix is built from source
+      # there and fails without the CRAN static gettext build. The libraries go
+      # to /opt/R/$(uname -m), which is already on the compiler search path.
+      - name: Install gettext static library (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          sudo mkdir -p /opt/R
+          sudo chown -R "$(id -un)" /opt/R
+          R -e 'source("https://mac.R-project.org/bin/install.R"); install.libs("gettext")'
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck

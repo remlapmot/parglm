@@ -11,18 +11,20 @@ export(parglm.fit)
 export(tidy_parglm_robust)
 importFrom(Matrix,qr.R)
 importFrom(Rcpp,sourceCpp)
-importFrom(stats,Gamma)
-importFrom(stats,binomial)
-importFrom(stats,coef)
-importFrom(stats,gaussian)
-importFrom(stats,glm)
-importFrom(stats,hatvalues)
-importFrom(stats,inverse.gaussian)
-importFrom(stats,model.matrix)
-importFrom(stats,poisson)
-importFrom(stats,quasibinomial)
-importFrom(stats,quasipoisson)
-importFrom(stats,summary.glm)
-importFrom(stats,vcov)
-importFrom(stats,weighted.mean)
+importFrom(stats,
+  Gamma,
+  binomial,
+  coef,
+  gaussian,
+  glm,
+  hatvalues,
+  inverse.gaussian,
+  model.matrix,
+  poisson,
+  quasibinomial,
+  quasipoisson,
+  summary.glm,
+  vcov,
+  weighted.mean
+)
 useDynLib(parglm)

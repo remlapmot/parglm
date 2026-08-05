@@ -27,7 +27,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">parglm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.9.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.2.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -93,7 +93,7 @@ alternative covariance matrices.</p>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/remlapmot/parglm" class="external-link">parglm</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sandwich.R-Forge.R-project.org/" class="external-link">sandwich</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://zeileis.codeberg.page/sandwich/" class="external-link">sandwich</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">lmtest</span><span class="op">)</span></span></code></pre></div>
 <p>We simulate a Poisson dataset with 20 clusters of 10 observations
 each, where a cluster-level random effect induces within-cluster
@@ -136,7 +136,7 @@ effects induce overdispersion.</p>
 <div class="section level2">
 <h2 id="heteroskedasticity-consistent-hc-standard-errors">Heteroskedasticity-consistent (HC) standard errors<a class="anchor" aria-label="anchor" href="#heteroskedasticity-consistent-hc-standard-errors"></a>
 </h2>
-<p><code><a href="https://sandwich.R-Forge.R-project.org/reference/vcovHC.html" class="external-link">vcovHC()</a></code> computes sandwich standard errors that are
+<p><code><a href="https://zeileis.codeberg.page/sandwich/reference/vcovHC.html" class="external-link">vcovHC()</a></code> computes sandwich standard errors that are
 robust to misspecification of the variance function. HC3 (the default)
 is recommended for small to moderate samples.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -154,7 +154,7 @@ is recommended for small to moderate samples.</p>
 <div class="section level2">
 <h2 id="cluster-robust-standard-errors">Cluster-robust standard errors<a class="anchor" aria-label="anchor" href="#cluster-robust-standard-errors"></a>
 </h2>
-<p><code><a href="https://sandwich.R-Forge.R-project.org/reference/vcovCL.html" class="external-link">vcovCL()</a></code> accounts for within-cluster correlation, which
+<p><code><a href="https://zeileis.codeberg.page/sandwich/reference/vcovCL.html" class="external-link">vcovCL()</a></code> accounts for within-cluster correlation, which
 is the appropriate correction here.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html" class="external-link">coeftest</a></span><span class="op">(</span><span class="va">fit</span>, vcov <span class="op">=</span> <span class="va">vcovCL</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">cluster</span><span class="op">)</span></span>
@@ -176,12 +176,12 @@ random effects.</p>
 </h2>
 <p>The covariance matrices themselves are also available:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://sandwich.R-Forge.R-project.org/reference/vcovHC.html" class="external-link">vcovHC</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"HC3"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://zeileis.codeberg.page/sandwich/reference/vcovHC.html" class="external-link">vcovHC</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"HC3"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;               (Intercept)            x1           x2</span></span>
 <span><span class="co">#&gt; (Intercept)  0.0048154924 -1.496148e-03 1.564757e-04</span></span>
 <span><span class="co">#&gt; x1          -0.0014961477  6.205443e-03 9.089414e-05</span></span>
 <span><span class="co">#&gt; x2           0.0001564757  9.089414e-05 3.444771e-03</span></span>
-<span><span class="fu"><a href="https://sandwich.R-Forge.R-project.org/reference/vcovCL.html" class="external-link">vcovCL</a></span><span class="op">(</span><span class="va">fit</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">cluster</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://zeileis.codeberg.page/sandwich/reference/vcovCL.html" class="external-link">vcovCL</a></span><span class="op">(</span><span class="va">fit</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">cluster</span><span class="op">)</span></span>
 <span><span class="co">#&gt;               (Intercept)            x1            x2</span></span>
 <span><span class="co">#&gt; (Intercept)  0.0171271937  0.0006650872 -0.0006143826</span></span>
 <span><span class="co">#&gt; x1           0.0006650872  0.0020526462 -0.0002594062</span></span>
@@ -1197,7 +1197,7 @@ standard errors for the Poisson model fitted earlier.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

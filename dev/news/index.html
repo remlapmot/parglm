@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">parglm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.9.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.2.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,16 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="parglm-development-version">parglm (development version)<a class="anchor" aria-label="anchor" href="#parglm-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.0" id="parglm-020">parglm 0.2.0<a class="anchor" aria-label="anchor" href="#parglm-020"></a></h2><p class="text-muted">CRAN release: 2026-07-06</p>
+<ul><li>
+<code>parglm</code> now accepts factor, character, and logical responses for the binomial and quasibinomial families like <code>glm</code> does, and errors on numeric responses outside [0, 1].</li>
+<li>Fix an out-of-bounds write when a user-supplied <code>block_size</code> was rounded down below the number of coefficients. The block size is now kept at or above the number of coefficients.</li>
+<li>Zero the working response for zero-weight observations in the IWLS step so a non-finite value (e.g. from a zero <code>mu.eta</code>) cannot poison the QR decomposition.</li>
+<li>Fix <code>inverse_gaussian_identity::name()</code> which returned the name of the inverse link (internal).</li>
+<li>Remove the unused <code>R_F::R_rev_piv</code> member function.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.10" id="parglm-0110">parglm 0.1.10<a class="anchor" aria-label="anchor" href="#parglm-0110"></a></h2><p class="text-muted">CRAN release: 2026-05-22</p>
 <ul><li>Fix a few minor grammar errors in the documentation.</li>
 <li>Add missing <vector> include to fix build on MacOSX11.3.1 SDK.</vector></li>
 <li>Fix thread_pool.h includes: add missing, remove unused, alphabetise.</li>
@@ -138,7 +147,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

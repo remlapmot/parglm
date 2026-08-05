@@ -28,10 +28,10 @@ tidy_parglm_robust(
 
   the robust variance-covariance estimator. A string is passed as the
   `type` argument to
-  [`vcovHC`](https://sandwich.R-Forge.R-project.org/reference/vcovHC.html)
+  [`vcovHC`](https://zeileis.codeberg.page/sandwich/reference/vcovHC.html)
   (e.g. `"HC3"`). A function is called as `vcov.(x)` and should return a
   covariance matrix (use this for cluster-robust SEs via
-  [`vcovCL`](https://sandwich.R-Forge.R-project.org/reference/vcovCL.html)).
+  [`vcovCL`](https://zeileis.codeberg.page/sandwich/reference/vcovCL.html)).
   A matrix is used directly. Defaults to `"HC3"`.
 
 - conf.int:

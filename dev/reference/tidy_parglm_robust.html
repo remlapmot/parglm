@@ -17,7 +17,7 @@ intervals via sandwich and lmtest."><meta name="robots" content="noindex"></head
 
     <a class="navbar-brand me-2" href="../index.html">parglm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.9.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.2.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,10 +83,10 @@ intervals via <span class="pkg">sandwich</span> and <span class="pkg">lmtest</sp
 
 <dt id="arg-vcov-">vcov.<a class="anchor" aria-label="anchor" href="#arg-vcov-"></a></dt>
 <dd><p>the robust variance-covariance estimator. A string is passed
-as the <code>type</code> argument to <code><a href="https://sandwich.R-Forge.R-project.org/reference/vcovHC.html" class="external-link">vcovHC</a></code> (e.g.
+as the <code>type</code> argument to <code><a href="https://zeileis.codeberg.page/sandwich/reference/vcovHC.html" class="external-link">vcovHC</a></code> (e.g.
 <code>"HC3"</code>). A function is called as <code>vcov.(x)</code> and should return
 a covariance matrix (use this for cluster-robust SEs via
-<code><a href="https://sandwich.R-Forge.R-project.org/reference/vcovCL.html" class="external-link">vcovCL</a></code>). A matrix is used directly.
+<code><a href="https://zeileis.codeberg.page/sandwich/reference/vcovCL.html" class="external-link">vcovCL</a></code>). A matrix is used directly.
 Defaults to <code>"HC3"</code>.</p></dd>
 
 
@@ -127,7 +127,7 @@ interface of <code><a href="https://www.danieldsjoberg.com/gtsummary/reference/t
 <span></span>
 <span><span class="co"># Cluster-robust</span></span>
 <span><span class="fu">tbl_regression</span><span class="op">(</span><span class="va">fit</span>, tidy_fun <span class="op">=</span> \<span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="fu"><a href="../reference/tidy_parglm_robust.html">tidy_parglm_robust</a></span><span class="op">(</span></span>
-<span>  <span class="va">x</span>, vcov. <span class="op">=</span> \<span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="fu">sandwich</span><span class="fu">::</span><span class="fu"><a href="https://sandwich.R-Forge.R-project.org/reference/vcovCL.html" class="external-link">vcovCL</a></span><span class="op">(</span><span class="va">m</span>, cluster <span class="op">=</span> <span class="op">~</span> <span class="va">cluster_var</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="va">x</span>, vcov. <span class="op">=</span> \<span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="fu">sandwich</span><span class="fu">::</span><span class="fu"><a href="https://zeileis.codeberg.page/sandwich/reference/vcovCL.html" class="external-link">vcovCL</a></span><span class="op">(</span><span class="va">m</span>, cluster <span class="op">=</span> <span class="op">~</span> <span class="va">cluster_var</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 
     </div>
 
@@ -159,7 +159,7 @@ interface of <code><a href="https://www.danieldsjoberg.com/gtsummary/reference/t
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

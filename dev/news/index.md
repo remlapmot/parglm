@@ -1,6 +1,25 @@
 # Changelog
 
-## parglm (development version)
+## parglm 0.2.0
+
+CRAN release: 2026-07-06
+
+- `parglm` now accepts factor, character, and logical responses for the
+  binomial and quasibinomial families like `glm` does, and errors on
+  numeric responses outside \[0, 1\].
+- Fix an out-of-bounds write when a user-supplied `block_size` was
+  rounded down below the number of coefficients. The block size is now
+  kept at or above the number of coefficients.
+- Zero the working response for zero-weight observations in the IWLS
+  step so a non-finite value (e.g. from a zero `mu.eta`) cannot poison
+  the QR decomposition.
+- Fix `inverse_gaussian_identity::name()` which returned the name of the
+  inverse link (internal).
+- Remove the unused `R_F::R_rev_piv` member function.
+
+## parglm 0.1.10
+
+CRAN release: 2026-05-22
 
 - Fix a few minor grammar errors in the documentation.
 - Add missing include to fix build on MacOSX11.3.1 SDK.

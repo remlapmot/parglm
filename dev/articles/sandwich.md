@@ -63,7 +63,7 @@ coeftest(fit)
 
 ## Heteroskedasticity-consistent (HC) standard errors
 
-[`vcovHC()`](https://sandwich.R-Forge.R-project.org/reference/vcovHC.html)
+[`vcovHC()`](https://zeileis.codeberg.page/sandwich/reference/vcovHC.html)
 computes sandwich standard errors that are robust to misspecification of
 the variance function. HC3 (the default) is recommended for small to
 moderate samples.
@@ -84,7 +84,7 @@ coeftest(fit, vcov = vcovHC)
 
 ## Cluster-robust standard errors
 
-[`vcovCL()`](https://sandwich.R-Forge.R-project.org/reference/vcovCL.html)
+[`vcovCL()`](https://zeileis.codeberg.page/sandwich/reference/vcovCL.html)
 accounts for within-cluster correlation, which is the appropriate
 correction here.
 

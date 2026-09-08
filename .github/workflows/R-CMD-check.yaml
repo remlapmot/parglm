@@ -70,11 +70,23 @@ jobs:
           sudo chown -R "$(id -un)" /opt/R
           R -e 'source("https://mac.R-project.org/bin/install.R"); install.libs("gettext")'
 
-      # On arm64 macOS, R-devel (4.7.0) reports .Platform$pkgType as
-      # "macos.binary.arm64" and R.Version()$os as "darwin23", whereas pak's
-      # repository is only published under mac.binary.big-sur-arm64/darwin20.
-      # The URL the action builds therefore 404s and pak is never installed.
-      # Install it from CRAN/P3M instead until the pak repo catches up.
+      # R-devel's arm64 macOS build uses LLVM flang rather than gfortran and
+      # hardcodes FC=/opt/R/flang-23/bin/flang in Makeconf, which is not on the
+      # runner image, so any package with Fortran sources fails to build. CRAN
+      # ships the (currently experimental) compiler; it needs SDKROOT set.
+      # https://mac.R-project.org/tools/
+      - name: Install flang (macOS arm64, r-devel)
+        if: runner.os == 'macOS' && runner.arch == 'ARM64' && matrix.config.r == 'devel'
+        run: |
+          curl -fsSL https://mac.R-project.org/tools/flang-23.1.0-darwin23.tar.xz |
+            sudo tar xJf - -C /
+          echo "SDKROOT=$(xcrun --show-sdk-path)" >> "$GITHUB_ENV"
+
+      # On arm64 macOS, R-devel (4.7.0) renamed .Platform$pkgType from
+      # "mac.binary.sonoma-arm64" to "macos.binary.arm64", and pak's repository
+      # is not published under the new name. The URL the action builds
+      # therefore 404s and pak is never installed, so the job fails at the
+      # following step. Install pak from CRAN/P3M until the repo catches up.
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck

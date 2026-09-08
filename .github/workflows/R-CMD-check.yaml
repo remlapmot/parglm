@@ -70,11 +70,17 @@ jobs:
           sudo chown -R "$(id -un)" /opt/R
           R -e 'source("https://mac.R-project.org/bin/install.R"); install.libs("gettext")'
 
+      # On arm64 macOS, R-devel (4.7.0) reports .Platform$pkgType as
+      # "macos.binary.arm64" and R.Version()$os as "darwin23", whereas pak's
+      # repository is only published under mac.binary.big-sur-arm64/darwin20.
+      # The URL the action builds therefore 404s and pak is never installed.
+      # Install it from CRAN/P3M instead until the pak repo catches up.
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
           needs: check
           upgrade: 'TRUE'
+          pak-version: ${{ (runner.os == 'macOS' && matrix.config.r == 'devel') && 'repo' || 'stable' }}
 
       - uses: r-lib/actions/check-r-package@v2
         with:

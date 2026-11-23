@@ -1,5 +1,5 @@
-render:
-    Rscript -e "devtools::install()" && time Rscript vignettes/precompile.R && oxipng vignettes/img/*.png
+render: install
+    time Rscript vignettes/precompile.R && oxipng vignettes/img/*.png
 opt:
     oxipng vignettes/img/*.png
 check: docs
@@ -16,3 +16,5 @@ dev:
     Rscript -e "pak::local_install_dev_deps()"
 build: docs render
     Rscript -e "devtools::build()"
+install:
+    Rscript -e "devtools::install()"

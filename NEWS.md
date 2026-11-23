@@ -1,6 +1,8 @@
 # parglm (development version)
 
 * Add a `predict()` method for `parglm` objects so that `predict(..., se.fit = TRUE)` works. Previously it failed with "argument is not a QR decomposition" because `stats::predict.lm()` calls `base::qr.R()` on the `qr` element.
+* The `weights` (working weights) element is now computed from the linear predictor at the start of the final iteration, as in `glm.fit()`, so it is consistent with the R matrix of the QR decomposition. Previously it was computed at the final fitted values, so `sandwich::vcovCL()`, `vcovHC()`, and `hatvalues()` differed slightly from `glm` unless the fit was fully converged.
+* `hatvalues()` now returns a named vector like `glm`.
 
 # parglm 0.2.0
 

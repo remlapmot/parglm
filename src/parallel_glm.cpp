@@ -70,6 +70,9 @@ struct parallelglm_res {
   const arma::uword rank;
   const arma::vec eta;
   const arma::vec mu;
+  /* eta at the start of the final iteration, i.e., the eta that the working
+   * weights used for R are computed from */
+  const arma::vec eta_old;
 };
 
 const double double_one = 1., double_zero = 0.;
@@ -413,6 +416,7 @@ public:
     arma::uword i, rank = 0L;
     double dev = 0.;
     std::unique_ptr<R_F> R_f_out;
+    arma::vec eta_old;
     thread_pool th_pool(data.max_threads);
     qr_parallel pool(std::vector<std::unique_ptr<qr_data_generator>>(),
                      th_pool);
@@ -481,6 +485,7 @@ public:
       }
 
       double devold = dev;
+      eta_old = data.eta;
       data.beta = &beta;
       dev = set_eta_n_mu(data, false, pool, false);
 
@@ -490,7 +495,7 @@ public:
 
     return { beta, *R_f_out.get(), dev,
              std::min(static_cast<arma::uword>(i + 1L), it_max),
-             i < it_max, rank, data.eta, data.mu };
+             i < it_max, rank, data.eta, data.mu, eta_old };
   }
 };
 
@@ -532,5 +537,6 @@ Rcpp::List parallelglm(
     Rcpp::Named("rank")   = result.rank,
 
     Rcpp::Named("eta")    = Rcpp::wrap(result.eta),
-    Rcpp::Named("mu")     = Rcpp::wrap(result.mu));
+    Rcpp::Named("mu")     = Rcpp::wrap(result.mu),
+    Rcpp::Named("eta_old") = Rcpp::wrap(result.eta_old));
 }

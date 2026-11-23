@@ -267,8 +267,16 @@ parglm.fit <- function(
   eta <- drop(fit$eta)
   mu  <- drop(fit$mu)
   mu.eta.val <- family$mu.eta(eta)
-  good <- (weights > 0) & (mu.eta.val != 0)
-  w <- sqrt((weights[good] * mu.eta.val[good]^2) / family$variance(mu)[good])
+
+  # as in `glm.fit`, the working weights are those from the start of the final
+  # iteration, which are the ones used to compute R. This keeps the weights
+  # consistent with R, e.g., in sandwich::vcovCL() and hatvalues()
+  eta_old <- drop(fit$eta_old)
+  fit$eta_old <- NULL
+  mu.eta.old <- family$mu.eta(eta_old)
+  good <- (weights > 0) & (mu.eta.old != 0)
+  w <- sqrt((weights[good] * mu.eta.old[good]^2) /
+              family$variance(family$linkinv(eta_old))[good])
 
   wt <- rep.int(0, nobs)
   wt[good] <- w^2
@@ -375,7 +383,9 @@ hatvalues.parglm <- function(model, ...) {
   Xw  <- X[, pvt[seq_len(rnk)], drop = FALSE] * sqrt(wts)
   R   <- model$R[seq_len(rnk), seq_len(rnk), drop = FALSE]
   Z   <- forwardsolve(t(R), t(Xw))
-  colSums(Z^2)
+  h   <- colSums(Z^2)
+  names(h) <- names(wts)
+  h
 }
 
 .check_fam <- function(family){

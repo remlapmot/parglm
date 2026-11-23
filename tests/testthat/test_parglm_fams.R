@@ -3,7 +3,7 @@ context("testing results with various link functions agianst `glm.fit`")
 to_check <- c(
   "coefficients", "residuals", "fitted.values", "rank",
   "family", "linear.predictors", "deviance", "aic", "null.deviance",
-  "prior.weights", "df.residual", "df.null",
+  "weights", "prior.weights", "df.residual", "df.null",
   "boundary", "formula", "terms", "data",
   "offset", "contrasts", "xlevels")
 

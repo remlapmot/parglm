@@ -354,6 +354,19 @@ vcov.parglm <- function(object, complete = TRUE, ...) {
 }
 
 #' @export
+predict.parglm <- function(object, ...) {
+  # stats::predict.lm(), which predict.glm() calls when se.fit = TRUE, uses
+  # base::qr.R() on object$qr. That errors unless the object inherits from
+  # "qr", and it only reads R from the $qr element. Pass on a minimal "qr"
+  # object holding R, so functions that also need Q (e.g. qr.Q()) still error
+  # rather than give wrong results.
+  object$qr <- structure(
+    list(qr = object$qr$R, rank = object$qr$rank, pivot = object$qr$pivot),
+    class = "qr")
+  NextMethod()
+}
+
+#' @export
 hatvalues.parglm <- function(model, ...) {
   wts <- model$weights
   X   <- model.matrix(model)

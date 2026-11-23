@@ -251,3 +251,47 @@ test_that("a block_size smaller than the number of coefficients works", {
                  info = method)
   }
 })
+
+test_that("predict() with se.fit = TRUE matches glm", {
+  set.seed(1)
+  n  <- 500
+  df <- data.frame(x1 = rnorm(n), g = factor(sample(letters[1:3], n, TRUE)),
+                   w = runif(n, .5, 2))
+  df$y <- rbinom(n, 1, plogis(df$x1 + (df$g == "b")))
+  nd <- df[1:5, ]
+
+  fg <- suppressWarnings(
+    glm(y ~ x1 + g, data = df, family = binomial(), weights = w))
+  fp <- suppressWarnings(
+    parglm(y ~ x1 + g, data = df, family = binomial(), weights = w,
+           control = parglm.control(nthreads = 2L)))
+
+  for (type in c("link", "response", "terms")) {
+    expect_equal(predict(fp, type = type, se.fit = TRUE),
+                 predict(fg, type = type, se.fit = TRUE), tolerance = 1e-6)
+    expect_equal(predict(fp, nd, type = type, se.fit = TRUE),
+                 predict(fg, nd, type = type, se.fit = TRUE), tolerance = 1e-6)
+  }
+
+  # the qr element of the fitted object is unchanged
+  expect_s3_class(fp$qr, "parglmqr")
+  expect_false(inherits(fp$qr, "qr"))
+})
+
+test_that("predict() with se.fit = TRUE matches glm with a non-trivial LAPACK pivot", {
+  set.seed(1)
+  n  <- 500
+  x1 <- rnorm(n)
+  x2 <- rnorm(n) * 100
+  x3 <- rnorm(n) * 0.01
+  y  <- rpois(n, exp(0.5 + 0.3 * x1 + 0.01 * x2 + 30 * x3))
+  df <- data.frame(y = y, x1 = x1, x2 = x2, x3 = x3)
+
+  fg <- glm(y ~ x1 + x2 + x3, data = df, family = poisson())
+  fp <- parglm(y ~ x1 + x2 + x3, data = df, family = poisson(),
+               control = parglm.control(nthreads = 1L, method = "LAPACK"))
+  expect_false(identical(fp$qr$pivot, seq_along(coef(fp))))
+
+  expect_equal(predict(fp, df[1:5, ], se.fit = TRUE),
+               predict(fg, df[1:5, ], se.fit = TRUE), tolerance = 1e-4)
+})

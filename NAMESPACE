@@ -2,6 +2,7 @@
 
 S3method(confint,parglm)
 S3method(hatvalues,parglm)
+S3method(predict,parglm)
 S3method(qr,R.parglmqr)
 S3method(summary,parglm)
 S3method(vcov,parglm)

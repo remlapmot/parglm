@@ -1,3 +1,7 @@
+# parglm (development version)
+
+* Add a `predict()` method for `parglm` objects so that `predict(..., se.fit = TRUE)` works. Previously it failed with "argument is not a QR decomposition" because `stats::predict.lm()` calls `base::qr.R()` on the `qr` element.
+
 # parglm 0.2.0
 
 * `parglm` now accepts factor, character, and logical responses for the binomial and quasibinomial families like `glm` does, and errors on numeric responses outside [0, 1].

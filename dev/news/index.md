@@ -1,5 +1,25 @@
 # Changelog
 
+## parglm (development version)
+
+- Add a [`predict()`](https://rdrr.io/r/stats/predict.html) method for
+  `parglm` objects so that `predict(..., se.fit = TRUE)` works.
+  Previously it failed with “argument is not a QR decomposition” because
+  [`stats::predict.lm()`](https://rdrr.io/r/stats/predict.lm.html) calls
+  [`base::qr.R()`](https://rdrr.io/r/base/qraux.html) on the `qr`
+  element.
+- The `weights` (working weights) element is now computed from the
+  linear predictor at the start of the final iteration, as in
+  [`glm.fit()`](https://rdrr.io/r/stats/glm.html), so it is consistent
+  with the R matrix of the QR decomposition. Previously it was computed
+  at the final fitted values, so
+  [`sandwich::vcovCL()`](https://zeileis.codeberg.page/sandwich/reference/vcovCL.html),
+  [`vcovHC()`](https://zeileis.codeberg.page/sandwich/reference/vcovHC.html),
+  and [`hatvalues()`](https://rdrr.io/r/stats/influence.measures.html)
+  differed slightly from `glm` unless the fit was fully converged.
+- [`hatvalues()`](https://rdrr.io/r/stats/influence.measures.html) now
+  returns a named vector like `glm`.
+
 ## parglm 0.2.0
 
 CRAN release: 2026-07-06

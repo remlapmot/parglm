@@ -63,7 +63,7 @@ coeftest(fit)
 
 ## Heteroskedasticity-consistent (HC) standard errors
 
-[`vcovHC()`](https://sandwich.R-Forge.R-project.org/reference/vcovHC.html)
+[`vcovHC()`](https://zeileis.codeberg.page/sandwich/reference/vcovHC.html)
 computes sandwich standard errors that are robust to misspecification of
 the variance function. HC3 (the default) is recommended for small to
 moderate samples.
@@ -84,7 +84,7 @@ coeftest(fit, vcov = vcovHC)
 
 ## Cluster-robust standard errors
 
-[`vcovCL()`](https://sandwich.R-Forge.R-project.org/reference/vcovCL.html)
+[`vcovCL()`](https://zeileis.codeberg.page/sandwich/reference/vcovCL.html)
 accounts for within-cluster correlation, which is the appropriate
 correction here.
 
@@ -96,7 +96,7 @@ coeftest(fit, vcov = vcovCL, cluster = ~cluster)
 #> 
 #>              Estimate Std. Error z value  Pr(>|z|)    
 #> (Intercept)  0.680296   0.130871  5.1982 2.012e-07 ***
-#> x1           0.301561   0.045306  6.6561 2.813e-11 ***
+#> x1           0.301561   0.045306  6.6560 2.813e-11 ***
 #> x2          -0.233887   0.059090 -3.9581 7.554e-05 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -114,14 +114,14 @@ The covariance matrices themselves are also available:
 
 vcovHC(fit, type = "HC3")
 #>               (Intercept)            x1           x2
-#> (Intercept)  0.0048154924 -1.496148e-03 1.564757e-04
-#> x1          -0.0014961477  6.205443e-03 9.089414e-05
-#> x2           0.0001564757  9.089414e-05 3.444771e-03
+#> (Intercept)  0.0048155490 -1.496199e-03 1.564819e-04
+#> x1          -0.0014961988  6.205504e-03 9.090233e-05
+#> x2           0.0001564819  9.090233e-05 3.444794e-03
 vcovCL(fit, cluster = ~cluster)
 #>               (Intercept)            x1            x2
-#> (Intercept)  0.0171271937  0.0006650872 -0.0006143826
-#> x1           0.0006650872  0.0020526462 -0.0002594062
-#> x2          -0.0006143826 -0.0002594062  0.0034916456
+#> (Intercept)  0.0171273485  0.0006650278 -0.0006143712
+#> x1           0.0006650278  0.0020526571 -0.0002594001
+#> x2          -0.0006143712 -0.0002594001  0.0034916686
 ```
 
 ### Note

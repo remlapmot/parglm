@@ -1,5 +1,11 @@
 render: install
     time Rscript vignettes/precompile.R && oxipng vignettes/img/*.png
+blas:
+    ln -sf libRblas.vecLib.dylib "$(Rscript -e 'cat(R.home("lib"))')/libRblas.dylib"
+    Rscript -e 'cat(extSoftVersion()[["BLAS"]], "\n")'
+blas-ref:
+    ln -sf libRblas.0.dylib "$(Rscript -e 'cat(R.home("lib"))')/libRblas.dylib"
+    Rscript -e 'cat(extSoftVersion()[["BLAS"]], "\n")'
 opt:
     oxipng vignettes/img/*.png
 check: docs

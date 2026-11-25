@@ -183,12 +183,14 @@ computation times on this machine.
 ```{r check_qr_qty, cache = 1}
 qr1 <- qr(X)
 qr2 <- qr(X, LAPACK = TRUE)
-microbenchmark::microbenchmark(
+qr_times <- microbenchmark::microbenchmark(
   `qr LINPACK`     = qr(X),
   `qr LAPACK`      = qr(X, LAPACK = TRUE),
   `qr.qty LINPACK` = qr.qty(qr1, df$y),
   `qr.qty LAPACK`  = qr.qty(qr2, df$y),
   times = 11)
+print(summary(qr_times, unit = "ms", include_cld = FALSE), # times in ms
+      row.names = FALSE)
 ```
 
 ## Smaller datasets

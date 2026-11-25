@@ -20,7 +20,7 @@ rhub:
     Rscript -e "rhub::rhub_check(platforms = c('atlas', 'c23', 'clang-asan', 'clang-ubsan', 'ubuntu-release', 'valgrind'))"
 dev:
     Rscript -e "pak::local_install_dev_deps()"
-build: docs render
+build: docs
     Rscript -e "devtools::build()"
 install:
     Rscript -e "devtools::install()"

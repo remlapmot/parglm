@@ -105,7 +105,7 @@ out <- eval(cl)
 ```
 
 ```{r show_out}
-s <- summary(out) # result from `microbenchmark`
+s <- summary(out, include_cld = FALSE) # result from `microbenchmark`
 print(s[, c("expr", "min", "mean", "median", "max")], digits  = 3,
       row.names	= FALSE)
 ```
@@ -241,7 +241,7 @@ run_and_plot <- function(n, p, n_threads, times = 11L, seed = 68024947) {
       mf <- model.frame(y ~ ., df); model.matrix(terms(mf), mf)
     }, times = 10)
 
-  s <- summary(out)
+  s <- summary(out, include_cld = FALSE)
   print(s[, c("expr", "min", "mean", "median", "max")], digits = 3,
         row.names = FALSE)
 

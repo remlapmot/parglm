@@ -47,11 +47,11 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/remlapmot/parglm/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/remlapmot/parglm/blob/0.2.1/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.1" id="parglm-021">parglm 0.2.1<a class="anchor" aria-label="anchor" href="#parglm-021"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.1" id="parglm-021">parglm 0.2.1<a class="anchor" aria-label="anchor" href="#parglm-021"></a></h2><p class="text-muted">CRAN release: 2026-11-25</p>
 <ul><li>Add a <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> method for <code>parglm</code> objects so that <code>predict(..., se.fit = TRUE)</code> works. Previously it failed with “argument is not a QR decomposition” because <code><a href="https://rdrr.io/r/stats/predict.lm.html" class="external-link">stats::predict.lm()</a></code> calls <code><a href="https://rdrr.io/r/base/qraux.html" class="external-link">base::qr.R()</a></code> on the <code>qr</code> element.</li>
 <li>The <code>weights</code> (working weights) element is now computed from the linear predictor at the start of the final iteration, as in <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm.fit()</a></code>, so it is consistent with the R matrix of the QR decomposition. Previously it was computed at the final fitted values, so <code><a href="https://zeileis.codeberg.page/sandwich/reference/vcovCL.html" class="external-link">sandwich::vcovCL()</a></code>, <code><a href="https://zeileis.codeberg.page/sandwich/reference/vcovHC.html" class="external-link">vcovHC()</a></code>, and <code><a href="https://rdrr.io/r/stats/influence.measures.html" class="external-link">hatvalues()</a></code> differed slightly from <code>glm</code> unless the fit was fully converged.</li>
 <li>

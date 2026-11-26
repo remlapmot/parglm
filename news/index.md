@@ -2,6 +2,8 @@
 
 ## parglm 0.2.1
 
+CRAN release: 2026-11-25
+
 - Add a [`predict()`](https://rdrr.io/r/stats/predict.html) method for
   `parglm` objects so that `predict(..., se.fit = TRUE)` works.
   Previously it failed with “argument is not a QR decomposition” because
